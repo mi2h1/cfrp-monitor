@@ -6,7 +6,7 @@
   restrict_lvl: 1
   acquisition_mode: auto
   newsapi_query:
-    q: CFRP OR "carbon fiber"
+    q: ""
     domains: compositesworld.com
     pageSize: 100
     days_back: 30
