@@ -2,3 +2,4 @@ feedparser
 PyYAML
 supabase
 requests
+python-dateutil
