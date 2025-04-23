@@ -9,6 +9,7 @@
     q: CFRP OR "carbon fiber"
     domains: compositesworld.com
     pageSize: 100
+    days_back: 7
 
 - name: arXiv cond-mat materials
   domain: export.arxiv.org
