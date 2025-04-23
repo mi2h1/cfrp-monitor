@@ -22,41 +22,41 @@ def upsert_row(row):
     err = getattr(resp, "error", None) or (resp.get("error") if isinstance(resp, dict) else None)
     print("UPSERT", "ERROR:" if err else "OK:", err or row["url"])
 
-# ---------- ★ NewsAPI --------------------------------------------------
+# ---------- NewsAPI --------------------------------------------------
 def handle_newsapi(src):
     key = os.getenv("NEWSAPI_KEY")
     if not key:
         print("⚠️  NEWSAPI_KEY 未設定 → skip:", src["name"]); return
 
-    qinfo = src["newsapi_query"]
-    days  = int(qinfo.get("days_back", 1))           # default 1
-    params = {
-        "q":       qinfo.get("q", ""),
-        "domains": qinfo.get("domains", ""),
+    qinfo   = src["newsapi_query"]
+    days    = int(qinfo.get("days_back", 1))        # デフォ 1 日
+    params  = {
+        "q"       : qinfo.get("q", ""),             # 空でも OK
+        "domains" : qinfo.get("domains", ""),
         "pageSize": qinfo.get("pageSize", 100),
-        "from":    (TODAY - datetime.timedelta(days=days)).isoformat(),
+        "from"    : (TODAY - datetime.timedelta(days=days)).isoformat(),
         "language": qinfo.get("language", "en"),
-        "sortBy":  "publishedAt",
-        "apiKey":  key,
+        "sortBy"  : "publishedAt",
+        "apiKey"  : key,
     }
     r = requests.get("https://newsapi.org/v2/everything", params=params, timeout=30)
     data = r.json()
     save_raw(f'{src["name"]}-newsapi', data)
 
-    # ▼ ここでステータスと件数を必ず表示
     print(f"▶ NewsAPI {src['name']} → status: {data.get('status')}  articles: {len(data.get('articles', []))}")
 
     if data.get("status") != "ok":
-        return                                       # API キー誤りなど
+        return                                      # APIキー誤りなど
 
     for art in data["articles"]:
         upsert_row({
             "src_type": src.get("category"),
-            "title":    art.get("title"),
-            "url":      art.get("url"),
+            "title"   : art.get("title"),
+            "url"     : art.get("url"),
             "pub_date": safe_date(art.get("publishedAt")),
         })
-# -----------------------------------------------------------------------
+# --------------------------------------------------------------------
+
 
 with open("seed_sources.yml", encoding="utf-8") as f:
     seeds = yaml.safe_load(f)
