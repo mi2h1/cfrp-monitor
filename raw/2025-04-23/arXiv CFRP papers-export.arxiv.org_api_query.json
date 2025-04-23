@@ -475,104 +475,6 @@
     ]
   },
   {
-    "id": "http://arxiv.org/abs/2007.12902v1",
-    "guidislink": true,
-    "link": "http://arxiv.org/abs/2007.12902v1",
-    "updated": "2020-07-25T10:31:57Z",
-    "updated_parsed": [
-      2020,
-      7,
-      25,
-      10,
-      31,
-      57,
-      5,
-      207,
-      0
-    ],
-    "published": "2020-07-25T10:31:57Z",
-    "published_parsed": [
-      2020,
-      7,
-      25,
-      10,
-      31,
-      57,
-      5,
-      207,
-      0
-    ],
-    "title": "Industrial manufacturing and characterization of multiscale CFRP\n  laminates made from prepregs containing graphene-related materials",
-    "title_detail": {
-      "type": "text/plain",
-      "language": null,
-      "base": "",
-      "value": "Industrial manufacturing and characterization of multiscale CFRP\n  laminates made from prepregs containing graphene-related materials"
-    },
-    "summary": "The introduction of graphene-related materials (GRMs) in carbon\nfibre-reinforced polymers (CFRP) has been proved to enhance their mechanical\nand electrical properties. However, methodologies to produce the 3-phase\nmaterials (multiscale composites) at an industrial scale and in an efficient\nmanner are still lacking. In this paper, multiscale CFRP composites containing\ndifferent GRMs have been manufactured following standard procedures currently\nused in the aerospace industry with the aim to evaluate its potential\napplication. Graphite nanoplateletelets (GNPs), in situ exfoliated graphene\noxide (GO) and reduced graphene oxide (rGO) have been dispersed into an epoxy\nresin to subsequently impregnate aeronautical grade carbon fibre tape. The\nresulting prepregs have been used for manufacturing laminates by hand lay-up\nand autoclave curing at 180 {\\deg}C. Abroad characterization campaign has been\ncarried out to understand the behaviour of the different multiscale laminates\nmanufactured. The degree of cure, glass transition temperature and degradation\ntemperature have been evaluated by thermal evolution techniques. Similarly,\ntheir mechanical properties (tensile, flexural, in-plane shear, interlaminar\nshear and mode I interlaminar fracture toughness) have been analysed together\nwith their electrical conductivity. The manufacturing process resulted\nappropriated for producing three-phase laminates and their quality was as good\nas in conventional CFRPs. The addition ofGOand rGO resulted in an enhancement\nof the in-plane shear properties and delamination resistance while the addition\nofGNPimproved the electrical conductivity.",
-    "summary_detail": {
-      "type": "text/plain",
-      "language": null,
-      "base": "",
-      "value": "The introduction of graphene-related materials (GRMs) in carbon\nfibre-reinforced polymers (CFRP) has been proved to enhance their mechanical\nand electrical properties. However, methodologies to produce the 3-phase\nmaterials (multiscale composites) at an industrial scale and in an efficient\nmanner are still lacking. In this paper, multiscale CFRP composites containing\ndifferent GRMs have been manufactured following standard procedures currently\nused in the aerospace industry with the aim to evaluate its potential\napplication. Graphite nanoplateletelets (GNPs), in situ exfoliated graphene\noxide (GO) and reduced graphene oxide (rGO) have been dispersed into an epoxy\nresin to subsequently impregnate aeronautical grade carbon fibre tape. The\nresulting prepregs have been used for manufacturing laminates by hand lay-up\nand autoclave curing at 180 {\\deg}C. Abroad characterization campaign has been\ncarried out to understand the behaviour of the different multiscale laminates\nmanufactured. The degree of cure, glass transition temperature and degradation\ntemperature have been evaluated by thermal evolution techniques. Similarly,\ntheir mechanical properties (tensile, flexural, in-plane shear, interlaminar\nshear and mode I interlaminar fracture toughness) have been analysed together\nwith their electrical conductivity. The manufacturing process resulted\nappropriated for producing three-phase laminates and their quality was as good\nas in conventional CFRPs. The addition ofGOand rGO resulted in an enhancement\nof the in-plane shear properties and delamination resistance while the addition\nofGNPimproved the electrical conductivity."
-    },
-    "authors": [
-      {
-        "name": "Veronica Rodriguez-Garcia"
-      },
-      {
-        "name": "Julio Gomez"
-      },
-      {
-        "name": "Francesco Cristiano"
-      },
-      {
-        "name": "Maria R. Gude"
-      }
-    ],
-    "author_detail": {
-      "name": "Maria R. Gude"
-    },
-    "author": "Maria R. Gude",
-    "arxiv_doi": "10.1088/2053-1591/aba0eb",
-    "links": [
-      {
-        "title": "doi",
-        "href": "http://dx.doi.org/10.1088/2053-1591/aba0eb",
-        "rel": "related",
-        "type": "text/html"
-      },
-      {
-        "href": "http://arxiv.org/abs/2007.12902v1",
-        "rel": "alternate",
-        "type": "text/html"
-      },
-      {
-        "title": "pdf",
-        "href": "http://arxiv.org/pdf/2007.12902v1",
-        "rel": "related",
-        "type": "application/pdf"
-      }
-    ],
-    "arxiv_journal_ref": "Materials Research Express 7 (2020) 075601",
-    "arxiv_primary_category": {
-      "term": "physics.app-ph",
-      "scheme": "http://arxiv.org/schemas/atom"
-    },
-    "tags": [
-      {
-        "term": "physics.app-ph",
-        "scheme": "http://arxiv.org/schemas/atom",
-        "label": null
-      },
-      {
-        "term": "cond-mat.mtrl-sci",
-        "scheme": "http://arxiv.org/schemas/atom",
-        "label": null
-      }
-    ]
-  },
-  {
     "id": "http://arxiv.org/abs/1801.09775v1",
     "guidislink": true,
     "link": "http://arxiv.org/abs/1801.09775v1",
@@ -666,6 +568,104 @@
       },
       {
         "term": "physics.data-an",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2007.12902v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2007.12902v1",
+    "updated": "2020-07-25T10:31:57Z",
+    "updated_parsed": [
+      2020,
+      7,
+      25,
+      10,
+      31,
+      57,
+      5,
+      207,
+      0
+    ],
+    "published": "2020-07-25T10:31:57Z",
+    "published_parsed": [
+      2020,
+      7,
+      25,
+      10,
+      31,
+      57,
+      5,
+      207,
+      0
+    ],
+    "title": "Industrial manufacturing and characterization of multiscale CFRP\n  laminates made from prepregs containing graphene-related materials",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Industrial manufacturing and characterization of multiscale CFRP\n  laminates made from prepregs containing graphene-related materials"
+    },
+    "summary": "The introduction of graphene-related materials (GRMs) in carbon\nfibre-reinforced polymers (CFRP) has been proved to enhance their mechanical\nand electrical properties. However, methodologies to produce the 3-phase\nmaterials (multiscale composites) at an industrial scale and in an efficient\nmanner are still lacking. In this paper, multiscale CFRP composites containing\ndifferent GRMs have been manufactured following standard procedures currently\nused in the aerospace industry with the aim to evaluate its potential\napplication. Graphite nanoplateletelets (GNPs), in situ exfoliated graphene\noxide (GO) and reduced graphene oxide (rGO) have been dispersed into an epoxy\nresin to subsequently impregnate aeronautical grade carbon fibre tape. The\nresulting prepregs have been used for manufacturing laminates by hand lay-up\nand autoclave curing at 180 {\\deg}C. Abroad characterization campaign has been\ncarried out to understand the behaviour of the different multiscale laminates\nmanufactured. The degree of cure, glass transition temperature and degradation\ntemperature have been evaluated by thermal evolution techniques. Similarly,\ntheir mechanical properties (tensile, flexural, in-plane shear, interlaminar\nshear and mode I interlaminar fracture toughness) have been analysed together\nwith their electrical conductivity. The manufacturing process resulted\nappropriated for producing three-phase laminates and their quality was as good\nas in conventional CFRPs. The addition ofGOand rGO resulted in an enhancement\nof the in-plane shear properties and delamination resistance while the addition\nofGNPimproved the electrical conductivity.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "The introduction of graphene-related materials (GRMs) in carbon\nfibre-reinforced polymers (CFRP) has been proved to enhance their mechanical\nand electrical properties. However, methodologies to produce the 3-phase\nmaterials (multiscale composites) at an industrial scale and in an efficient\nmanner are still lacking. In this paper, multiscale CFRP composites containing\ndifferent GRMs have been manufactured following standard procedures currently\nused in the aerospace industry with the aim to evaluate its potential\napplication. Graphite nanoplateletelets (GNPs), in situ exfoliated graphene\noxide (GO) and reduced graphene oxide (rGO) have been dispersed into an epoxy\nresin to subsequently impregnate aeronautical grade carbon fibre tape. The\nresulting prepregs have been used for manufacturing laminates by hand lay-up\nand autoclave curing at 180 {\\deg}C. Abroad characterization campaign has been\ncarried out to understand the behaviour of the different multiscale laminates\nmanufactured. The degree of cure, glass transition temperature and degradation\ntemperature have been evaluated by thermal evolution techniques. Similarly,\ntheir mechanical properties (tensile, flexural, in-plane shear, interlaminar\nshear and mode I interlaminar fracture toughness) have been analysed together\nwith their electrical conductivity. The manufacturing process resulted\nappropriated for producing three-phase laminates and their quality was as good\nas in conventional CFRPs. The addition ofGOand rGO resulted in an enhancement\nof the in-plane shear properties and delamination resistance while the addition\nofGNPimproved the electrical conductivity."
+    },
+    "authors": [
+      {
+        "name": "Veronica Rodriguez-Garcia"
+      },
+      {
+        "name": "Julio Gomez"
+      },
+      {
+        "name": "Francesco Cristiano"
+      },
+      {
+        "name": "Maria R. Gude"
+      }
+    ],
+    "author_detail": {
+      "name": "Maria R. Gude"
+    },
+    "author": "Maria R. Gude",
+    "arxiv_doi": "10.1088/2053-1591/aba0eb",
+    "links": [
+      {
+        "title": "doi",
+        "href": "http://dx.doi.org/10.1088/2053-1591/aba0eb",
+        "rel": "related",
+        "type": "text/html"
+      },
+      {
+        "href": "http://arxiv.org/abs/2007.12902v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2007.12902v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_journal_ref": "Materials Research Express 7 (2020) 075601",
+    "arxiv_primary_category": {
+      "term": "physics.app-ph",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "physics.app-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cond-mat.mtrl-sci",
         "scheme": "http://arxiv.org/schemas/atom",
         "label": null
       }
@@ -772,6 +772,100 @@
     ]
   },
   {
+    "id": "http://arxiv.org/abs/2010.10988v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2010.10988v1",
+    "updated": "2020-10-21T13:26:21Z",
+    "updated_parsed": [
+      2020,
+      10,
+      21,
+      13,
+      26,
+      21,
+      2,
+      295,
+      0
+    ],
+    "published": "2020-10-21T13:26:21Z",
+    "published_parsed": [
+      2020,
+      10,
+      21,
+      13,
+      26,
+      21,
+      2,
+      295,
+      0
+    ],
+    "title": "Adhesion mechanism of temperature effects on Sn coating on the carbon\n  fiber reinforced polymer substrate by cold spray",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Adhesion mechanism of temperature effects on Sn coating on the carbon\n  fiber reinforced polymer substrate by cold spray"
+    },
+    "summary": "Metalization of carbon fiber reinforced polymers (CFRPs) composites by the\nsurface modification method to enhance their electrical conductivity, thermal\nconductivity, electromagnetic shielding, erosion, and radiation protection, has\na significant meaning in the aerospace field. In this study, Sn coating was\nsuccessfully fabricated on the CFRP composite substrate via low-pressure cold\nspray under four gas temperatures (473K, 523K, 573K, and 623K). Their bonding\nmechanism was explored via the surface observation after peel-off adhesion\nstrength, accompanying with surface temperature distribution investigation. The\nresults indicates that we cannot obtain coating at 623 K, the epoxy matrix of\nthe CFRP substrate was gradually eroded during deposition over 523 K.\nMeanwhile, Sn particles melt under 623 K condition. Three kinds of interfaces:\nSn/epoxy, Sn/CF, and Sn/CF/epoxy are revealed as characteristics with respect\nto different gas temperatures to explore the bonding mechanisms.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Metalization of carbon fiber reinforced polymers (CFRPs) composites by the\nsurface modification method to enhance their electrical conductivity, thermal\nconductivity, electromagnetic shielding, erosion, and radiation protection, has\na significant meaning in the aerospace field. In this study, Sn coating was\nsuccessfully fabricated on the CFRP composite substrate via low-pressure cold\nspray under four gas temperatures (473K, 523K, 573K, and 623K). Their bonding\nmechanism was explored via the surface observation after peel-off adhesion\nstrength, accompanying with surface temperature distribution investigation. The\nresults indicates that we cannot obtain coating at 623 K, the epoxy matrix of\nthe CFRP substrate was gradually eroded during deposition over 523 K.\nMeanwhile, Sn particles melt under 623 K condition. Three kinds of interfaces:\nSn/epoxy, Sn/CF, and Sn/CF/epoxy are revealed as characteristics with respect\nto different gas temperatures to explore the bonding mechanisms."
+    },
+    "authors": [
+      {
+        "name": "Jiayu Sun"
+      },
+      {
+        "name": "Shaoyun Zhou"
+      },
+      {
+        "name": "Kenta Yamanakab"
+      },
+      {
+        "name": "Yuji Ichikawa"
+      },
+      {
+        "name": "Hiroki Saito"
+      },
+      {
+        "name": "Kazuhiro Ogawa"
+      },
+      {
+        "name": "Akihiko Chiba"
+      }
+    ],
+    "author_detail": {
+      "name": "Akihiko Chiba"
+    },
+    "author": "Akihiko Chiba",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2010.10988v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2010.10988v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cond-mat.mtrl-sci",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
     "id": "http://arxiv.org/abs/1810.09529v1",
     "guidislink": true,
     "link": "http://arxiv.org/abs/1810.09529v1",
@@ -871,100 +965,6 @@
     "tags": [
       {
         "term": "physics.app-ph",
-        "scheme": "http://arxiv.org/schemas/atom",
-        "label": null
-      }
-    ]
-  },
-  {
-    "id": "http://arxiv.org/abs/2010.10988v1",
-    "guidislink": true,
-    "link": "http://arxiv.org/abs/2010.10988v1",
-    "updated": "2020-10-21T13:26:21Z",
-    "updated_parsed": [
-      2020,
-      10,
-      21,
-      13,
-      26,
-      21,
-      2,
-      295,
-      0
-    ],
-    "published": "2020-10-21T13:26:21Z",
-    "published_parsed": [
-      2020,
-      10,
-      21,
-      13,
-      26,
-      21,
-      2,
-      295,
-      0
-    ],
-    "title": "Adhesion mechanism of temperature effects on Sn coating on the carbon\n  fiber reinforced polymer substrate by cold spray",
-    "title_detail": {
-      "type": "text/plain",
-      "language": null,
-      "base": "",
-      "value": "Adhesion mechanism of temperature effects on Sn coating on the carbon\n  fiber reinforced polymer substrate by cold spray"
-    },
-    "summary": "Metalization of carbon fiber reinforced polymers (CFRPs) composites by the\nsurface modification method to enhance their electrical conductivity, thermal\nconductivity, electromagnetic shielding, erosion, and radiation protection, has\na significant meaning in the aerospace field. In this study, Sn coating was\nsuccessfully fabricated on the CFRP composite substrate via low-pressure cold\nspray under four gas temperatures (473K, 523K, 573K, and 623K). Their bonding\nmechanism was explored via the surface observation after peel-off adhesion\nstrength, accompanying with surface temperature distribution investigation. The\nresults indicates that we cannot obtain coating at 623 K, the epoxy matrix of\nthe CFRP substrate was gradually eroded during deposition over 523 K.\nMeanwhile, Sn particles melt under 623 K condition. Three kinds of interfaces:\nSn/epoxy, Sn/CF, and Sn/CF/epoxy are revealed as characteristics with respect\nto different gas temperatures to explore the bonding mechanisms.",
-    "summary_detail": {
-      "type": "text/plain",
-      "language": null,
-      "base": "",
-      "value": "Metalization of carbon fiber reinforced polymers (CFRPs) composites by the\nsurface modification method to enhance their electrical conductivity, thermal\nconductivity, electromagnetic shielding, erosion, and radiation protection, has\na significant meaning in the aerospace field. In this study, Sn coating was\nsuccessfully fabricated on the CFRP composite substrate via low-pressure cold\nspray under four gas temperatures (473K, 523K, 573K, and 623K). Their bonding\nmechanism was explored via the surface observation after peel-off adhesion\nstrength, accompanying with surface temperature distribution investigation. The\nresults indicates that we cannot obtain coating at 623 K, the epoxy matrix of\nthe CFRP substrate was gradually eroded during deposition over 523 K.\nMeanwhile, Sn particles melt under 623 K condition. Three kinds of interfaces:\nSn/epoxy, Sn/CF, and Sn/CF/epoxy are revealed as characteristics with respect\nto different gas temperatures to explore the bonding mechanisms."
-    },
-    "authors": [
-      {
-        "name": "Jiayu Sun"
-      },
-      {
-        "name": "Shaoyun Zhou"
-      },
-      {
-        "name": "Kenta Yamanakab"
-      },
-      {
-        "name": "Yuji Ichikawa"
-      },
-      {
-        "name": "Hiroki Saito"
-      },
-      {
-        "name": "Kazuhiro Ogawa"
-      },
-      {
-        "name": "Akihiko Chiba"
-      }
-    ],
-    "author_detail": {
-      "name": "Akihiko Chiba"
-    },
-    "author": "Akihiko Chiba",
-    "links": [
-      {
-        "href": "http://arxiv.org/abs/2010.10988v1",
-        "rel": "alternate",
-        "type": "text/html"
-      },
-      {
-        "title": "pdf",
-        "href": "http://arxiv.org/pdf/2010.10988v1",
-        "rel": "related",
-        "type": "application/pdf"
-      }
-    ],
-    "arxiv_primary_category": {
-      "term": "cond-mat.mtrl-sci",
-      "scheme": "http://arxiv.org/schemas/atom"
-    },
-    "tags": [
-      {
-        "term": "cond-mat.mtrl-sci",
         "scheme": "http://arxiv.org/schemas/atom",
         "label": null
       }
@@ -1521,6 +1521,104 @@
     ]
   },
   {
+    "id": "http://arxiv.org/abs/2105.10411v2",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2105.10411v2",
+    "updated": "2021-12-02T04:02:53Z",
+    "updated_parsed": [
+      2021,
+      12,
+      2,
+      4,
+      2,
+      53,
+      3,
+      336,
+      0
+    ],
+    "published": "2021-05-21T15:31:15Z",
+    "published_parsed": [
+      2021,
+      5,
+      21,
+      15,
+      31,
+      15,
+      4,
+      141,
+      0
+    ],
+    "title": "Concurrent n-scale modeling for non-orthogonal woven composite",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Concurrent n-scale modeling for non-orthogonal woven composite"
+    },
+    "summary": "Concurrent analysis of composite materials can provide the interaction among\nscales for better composite design, analysis, and performance prediction. A\ndata-driven concurrent n-scale modeling theory ($\\textrm{FExSCA}^\\textrm{n-1}$)\nis proposed in this paper utilizing a mechanistic reduced order model (ROM)\ncalled self-consistent clustering analysis (SCA). We demonstrated this theory\nwith a $\\textrm{FExSCA}^2$ approach to study the 3-scale woven carbon fiber\nreinforced polymer (CFRP) laminate structure. $\\textrm{FExSCA}^2$ significantly\nreduced expensive 3D nested composite representative volume elements (RVEs)\ncomputation for woven and unidirectional (UD) composite structures by\ndeveloping a material database. The modeling procedure is established by\nintegrating the material database into a woven CFRP structural numerical model,\nformulating a concurrent 3-scale modeling framework. This framework provides an\naccurate prediction for the structural performance (e.g., nonlinear structural\nbehavior under tensile load), as well as the woven and UD physics field\nevolution. The concurrent modeling results are validated against physical tests\nthat link structural performance to the basic material microstructures. The\nproposed methodology provides a comprehensive predictive modeling procedure\napplicable to general composite materials aiming to reduce laborious\nexperiments needed.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Concurrent analysis of composite materials can provide the interaction among\nscales for better composite design, analysis, and performance prediction. A\ndata-driven concurrent n-scale modeling theory ($\\textrm{FExSCA}^\\textrm{n-1}$)\nis proposed in this paper utilizing a mechanistic reduced order model (ROM)\ncalled self-consistent clustering analysis (SCA). We demonstrated this theory\nwith a $\\textrm{FExSCA}^2$ approach to study the 3-scale woven carbon fiber\nreinforced polymer (CFRP) laminate structure. $\\textrm{FExSCA}^2$ significantly\nreduced expensive 3D nested composite representative volume elements (RVEs)\ncomputation for woven and unidirectional (UD) composite structures by\ndeveloping a material database. The modeling procedure is established by\nintegrating the material database into a woven CFRP structural numerical model,\nformulating a concurrent 3-scale modeling framework. This framework provides an\naccurate prediction for the structural performance (e.g., nonlinear structural\nbehavior under tensile load), as well as the woven and UD physics field\nevolution. The concurrent modeling results are validated against physical tests\nthat link structural performance to the basic material microstructures. The\nproposed methodology provides a comprehensive predictive modeling procedure\napplicable to general composite materials aiming to reduce laborious\nexperiments needed."
+    },
+    "authors": [
+      {
+        "name": "Jiaying Gao"
+      },
+      {
+        "name": "Satyajit Mojumder"
+      },
+      {
+        "name": "Weizhao Zhang"
+      },
+      {
+        "name": "Hengyang Li"
+      },
+      {
+        "name": "Derick Suarez"
+      },
+      {
+        "name": "Chunwang He"
+      },
+      {
+        "name": "Jian Cao"
+      },
+      {
+        "name": "Wing Kam Liu"
+      }
+    ],
+    "author_detail": {
+      "name": "Wing Kam Liu"
+    },
+    "author": "Wing Kam Liu",
+    "arxiv_comment": "12 Figures",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2105.10411v2",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2105.10411v2",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cond-mat.mtrl-sci",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
     "id": "http://arxiv.org/abs/2012.01562v1",
     "guidislink": true,
     "link": "http://arxiv.org/abs/2012.01562v1",
@@ -1625,104 +1723,6 @@
     "tags": [
       {
         "term": "astro-ph.IM",
-        "scheme": "http://arxiv.org/schemas/atom",
-        "label": null
-      }
-    ]
-  },
-  {
-    "id": "http://arxiv.org/abs/2105.10411v2",
-    "guidislink": true,
-    "link": "http://arxiv.org/abs/2105.10411v2",
-    "updated": "2021-12-02T04:02:53Z",
-    "updated_parsed": [
-      2021,
-      12,
-      2,
-      4,
-      2,
-      53,
-      3,
-      336,
-      0
-    ],
-    "published": "2021-05-21T15:31:15Z",
-    "published_parsed": [
-      2021,
-      5,
-      21,
-      15,
-      31,
-      15,
-      4,
-      141,
-      0
-    ],
-    "title": "Concurrent n-scale modeling for non-orthogonal woven composite",
-    "title_detail": {
-      "type": "text/plain",
-      "language": null,
-      "base": "",
-      "value": "Concurrent n-scale modeling for non-orthogonal woven composite"
-    },
-    "summary": "Concurrent analysis of composite materials can provide the interaction among\nscales for better composite design, analysis, and performance prediction. A\ndata-driven concurrent n-scale modeling theory ($\\textrm{FExSCA}^\\textrm{n-1}$)\nis proposed in this paper utilizing a mechanistic reduced order model (ROM)\ncalled self-consistent clustering analysis (SCA). We demonstrated this theory\nwith a $\\textrm{FExSCA}^2$ approach to study the 3-scale woven carbon fiber\nreinforced polymer (CFRP) laminate structure. $\\textrm{FExSCA}^2$ significantly\nreduced expensive 3D nested composite representative volume elements (RVEs)\ncomputation for woven and unidirectional (UD) composite structures by\ndeveloping a material database. The modeling procedure is established by\nintegrating the material database into a woven CFRP structural numerical model,\nformulating a concurrent 3-scale modeling framework. This framework provides an\naccurate prediction for the structural performance (e.g., nonlinear structural\nbehavior under tensile load), as well as the woven and UD physics field\nevolution. The concurrent modeling results are validated against physical tests\nthat link structural performance to the basic material microstructures. The\nproposed methodology provides a comprehensive predictive modeling procedure\napplicable to general composite materials aiming to reduce laborious\nexperiments needed.",
-    "summary_detail": {
-      "type": "text/plain",
-      "language": null,
-      "base": "",
-      "value": "Concurrent analysis of composite materials can provide the interaction among\nscales for better composite design, analysis, and performance prediction. A\ndata-driven concurrent n-scale modeling theory ($\\textrm{FExSCA}^\\textrm{n-1}$)\nis proposed in this paper utilizing a mechanistic reduced order model (ROM)\ncalled self-consistent clustering analysis (SCA). We demonstrated this theory\nwith a $\\textrm{FExSCA}^2$ approach to study the 3-scale woven carbon fiber\nreinforced polymer (CFRP) laminate structure. $\\textrm{FExSCA}^2$ significantly\nreduced expensive 3D nested composite representative volume elements (RVEs)\ncomputation for woven and unidirectional (UD) composite structures by\ndeveloping a material database. The modeling procedure is established by\nintegrating the material database into a woven CFRP structural numerical model,\nformulating a concurrent 3-scale modeling framework. This framework provides an\naccurate prediction for the structural performance (e.g., nonlinear structural\nbehavior under tensile load), as well as the woven and UD physics field\nevolution. The concurrent modeling results are validated against physical tests\nthat link structural performance to the basic material microstructures. The\nproposed methodology provides a comprehensive predictive modeling procedure\napplicable to general composite materials aiming to reduce laborious\nexperiments needed."
-    },
-    "authors": [
-      {
-        "name": "Jiaying Gao"
-      },
-      {
-        "name": "Satyajit Mojumder"
-      },
-      {
-        "name": "Weizhao Zhang"
-      },
-      {
-        "name": "Hengyang Li"
-      },
-      {
-        "name": "Derick Suarez"
-      },
-      {
-        "name": "Chunwang He"
-      },
-      {
-        "name": "Jian Cao"
-      },
-      {
-        "name": "Wing Kam Liu"
-      }
-    ],
-    "author_detail": {
-      "name": "Wing Kam Liu"
-    },
-    "author": "Wing Kam Liu",
-    "arxiv_comment": "12 Figures",
-    "links": [
-      {
-        "href": "http://arxiv.org/abs/2105.10411v2",
-        "rel": "alternate",
-        "type": "text/html"
-      },
-      {
-        "title": "pdf",
-        "href": "http://arxiv.org/pdf/2105.10411v2",
-        "rel": "related",
-        "type": "application/pdf"
-      }
-    ],
-    "arxiv_primary_category": {
-      "term": "cond-mat.mtrl-sci",
-      "scheme": "http://arxiv.org/schemas/atom"
-    },
-    "tags": [
-      {
-        "term": "cond-mat.mtrl-sci",
         "scheme": "http://arxiv.org/schemas/atom",
         "label": null
       }
@@ -2997,6 +2997,92 @@
     ]
   },
   {
+    "id": "http://arxiv.org/abs/2504.15560v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2504.15560v1",
+    "updated": "2025-04-22T03:30:32Z",
+    "updated_parsed": [
+      2025,
+      4,
+      22,
+      3,
+      30,
+      32,
+      1,
+      112,
+      0
+    ],
+    "published": "2025-04-22T03:30:32Z",
+    "published_parsed": [
+      2025,
+      4,
+      22,
+      3,
+      30,
+      32,
+      1,
+      112,
+      0
+    ],
+    "title": "Antenna Technology Readiness for the Black Hole Explorer (BHEX) Mission",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Antenna Technology Readiness for the Black Hole Explorer (BHEX) Mission"
+    },
+    "summary": "The Black Hole Explorer (BHEX) will be the first sub-mm wavelength Space\nVery-Long-Baseline Interferometry (VLBI) mission. It targets astronomical\nimaging with the highest ever spatial resolution to enable detection of the\nphoton ring of a supermassive black hole. BHEX is being proposed for launch in\n2031 as a NASA Small Explorers mission. BHEX science goals and mission\nopportunity require a high precision lightweight spaceborne antenna. A survey\nof the technology landscape for realizing such an antenna is presented.\nTechnology readiness (TRL) for the antenna is discussed and assessed to be at\nTRL 5. An update on our technology maturation efforts is provided. Design\nstudies leading to the conceptual design of a metallized carbon fiber\nreinforced plastic (CFRP) technology based antenna with a mass of only $\\dim\n50$ kg, incorporating a 3.4 m primary reflector with a surface precision of <\n40 $\\mu$m to allow efficient operation up to 320 GHz are outlined. Current\nplans anticipate attaining TRL6 in 2026 for the BHEX antenna. Completed design\nstudies point to a large margin in surface precision which opens up\nopportunities for applications beyond BHEX, at significantly higher THz\nfrequencies.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "The Black Hole Explorer (BHEX) will be the first sub-mm wavelength Space\nVery-Long-Baseline Interferometry (VLBI) mission. It targets astronomical\nimaging with the highest ever spatial resolution to enable detection of the\nphoton ring of a supermassive black hole. BHEX is being proposed for launch in\n2031 as a NASA Small Explorers mission. BHEX science goals and mission\nopportunity require a high precision lightweight spaceborne antenna. A survey\nof the technology landscape for realizing such an antenna is presented.\nTechnology readiness (TRL) for the antenna is discussed and assessed to be at\nTRL 5. An update on our technology maturation efforts is provided. Design\nstudies leading to the conceptual design of a metallized carbon fiber\nreinforced plastic (CFRP) technology based antenna with a mass of only $\\dim\n50$ kg, incorporating a 3.4 m primary reflector with a surface precision of <\n40 $\\mu$m to allow efficient operation up to 320 GHz are outlined. Current\nplans anticipate attaining TRL6 in 2026 for the BHEX antenna. Completed design\nstudies point to a large margin in surface precision which opens up\nopportunities for applications beyond BHEX, at significantly higher THz\nfrequencies."
+    },
+    "authors": [
+      {
+        "name": "T. K. Sridharan"
+      },
+      {
+        "name": "R. Lehmensiek"
+      },
+      {
+        "name": "S. Schwarz"
+      },
+      {
+        "name": "D. P. Marrone"
+      }
+    ],
+    "author_detail": {
+      "name": "D. P. Marrone"
+    },
+    "author": "D. P. Marrone",
+    "arxiv_comment": "5 pages, 3 figures, Proc. Int. Conf. Electromagn. Adv. Appl. (ICEAA),\n  Palermo, Italy, Sep. 2025, submitted",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2504.15560v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2504.15560v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "astro-ph.IM",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "astro-ph.IM",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
     "id": "http://arxiv.org/abs/1703.00044v1",
     "guidislink": true,
     "link": "http://arxiv.org/abs/1703.00044v1",
@@ -3079,91 +3165,6 @@
       },
       {
         "term": "physics.pop-ph",
-        "scheme": "http://arxiv.org/schemas/atom",
-        "label": null
-      }
-    ]
-  },
-  {
-    "id": "http://arxiv.org/abs/2106.14841v1",
-    "guidislink": true,
-    "link": "http://arxiv.org/abs/2106.14841v1",
-    "updated": "2021-06-28T16:38:09Z",
-    "updated_parsed": [
-      2021,
-      6,
-      28,
-      16,
-      38,
-      9,
-      0,
-      179,
-      0
-    ],
-    "published": "2021-06-28T16:38:09Z",
-    "published_parsed": [
-      2021,
-      6,
-      28,
-      16,
-      38,
-      9,
-      0,
-      179,
-      0
-    ],
-    "title": "Gaussian Process Regression for Active Sensing Probabilistic Structural\n  Health Monitoring: Experimental Assessment Across Multiple Damage and Loading\n  Scenarios",
-    "title_detail": {
-      "type": "text/plain",
-      "language": null,
-      "base": "",
-      "value": "Gaussian Process Regression for Active Sensing Probabilistic Structural\n  Health Monitoring: Experimental Assessment Across Multiple Damage and Loading\n  Scenarios"
-    },
-    "summary": "In the near future, Structural Health Monitoring (SHM) technologies will be\ncapable of overcoming the drawbacks in the current maintenance and life-cycle\nmanagement paradigms, namely: cost, increased downtime, less-than-optimal\nsafety management paradigm and the limited applicability of fully-autonomous\noperations. In the context of SHM, one of the most challenging tasks is damage\nquantification. Current methods face accuracy and/or robustness issues when it\ncomes to varying operating and environmental conditions. In addition, the\ndamage/no-damage paradigm of current frameworks does not offer much information\nto maintainers on the ground for proper decision-making. In this study, a novel\nstructural damage quantification framework is proposed based on widely-used\nDamage Indices (DIs) and Gaussian Process Regression Models (GPRMs). The\nnovelty lies in calculating the probability of an incoming test DI point\noriginating from a specific state, which allows for probability-educated\ndecision-making. This framework is applied to three test cases: a Carbon\nFiber-Reinforced Plastic (CFRP) coupon with attached weights as simulated\ndamage, an aluminum coupon with a notch, and an aluminum coupon with attached\nweights as simulated damage under varying loading states. The state prediction\nmethod presented herein is applied to single-state quantification in the first\ntwo test cases, as well as the third one assuming the loading state is known.\nFinally, the proposed method is applied to the third test case assuming neither\nthe damage size nor the load is known in order to predict both simultaneously\nfrom incoming DI test points. In applying this framework, two forms of GPRMs\n(standard and variational heteroscedastic) are used in order to critically\nassess their performances with respect to the three test cases.",
-    "summary_detail": {
-      "type": "text/plain",
-      "language": null,
-      "base": "",
-      "value": "In the near future, Structural Health Monitoring (SHM) technologies will be\ncapable of overcoming the drawbacks in the current maintenance and life-cycle\nmanagement paradigms, namely: cost, increased downtime, less-than-optimal\nsafety management paradigm and the limited applicability of fully-autonomous\noperations. In the context of SHM, one of the most challenging tasks is damage\nquantification. Current methods face accuracy and/or robustness issues when it\ncomes to varying operating and environmental conditions. In addition, the\ndamage/no-damage paradigm of current frameworks does not offer much information\nto maintainers on the ground for proper decision-making. In this study, a novel\nstructural damage quantification framework is proposed based on widely-used\nDamage Indices (DIs) and Gaussian Process Regression Models (GPRMs). The\nnovelty lies in calculating the probability of an incoming test DI point\noriginating from a specific state, which allows for probability-educated\ndecision-making. This framework is applied to three test cases: a Carbon\nFiber-Reinforced Plastic (CFRP) coupon with attached weights as simulated\ndamage, an aluminum coupon with a notch, and an aluminum coupon with attached\nweights as simulated damage under varying loading states. The state prediction\nmethod presented herein is applied to single-state quantification in the first\ntwo test cases, as well as the third one assuming the loading state is known.\nFinally, the proposed method is applied to the third test case assuming neither\nthe damage size nor the load is known in order to predict both simultaneously\nfrom incoming DI test points. In applying this framework, two forms of GPRMs\n(standard and variational heteroscedastic) are used in order to critically\nassess their performances with respect to the three test cases."
-    },
-    "authors": [
-      {
-        "name": "Ahmad Amer"
-      },
-      {
-        "name": "Fotis Kopsaftopoulos"
-      }
-    ],
-    "author_detail": {
-      "name": "Fotis Kopsaftopoulos"
-    },
-    "author": "Fotis Kopsaftopoulos",
-    "arxiv_comment": "47 pages, 34 figures",
-    "links": [
-      {
-        "href": "http://arxiv.org/abs/2106.14841v1",
-        "rel": "alternate",
-        "type": "text/html"
-      },
-      {
-        "title": "pdf",
-        "href": "http://arxiv.org/pdf/2106.14841v1",
-        "rel": "related",
-        "type": "application/pdf"
-      }
-    ],
-    "arxiv_primary_category": {
-      "term": "eess.SP",
-      "scheme": "http://arxiv.org/schemas/atom"
-    },
-    "tags": [
-      {
-        "term": "eess.SP",
-        "scheme": "http://arxiv.org/schemas/atom",
-        "label": null
-      },
-      {
-        "term": "stat.AP",
         "scheme": "http://arxiv.org/schemas/atom",
         "label": null
       }
@@ -3255,6 +3256,91 @@
     "tags": [
       {
         "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2106.14841v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2106.14841v1",
+    "updated": "2021-06-28T16:38:09Z",
+    "updated_parsed": [
+      2021,
+      6,
+      28,
+      16,
+      38,
+      9,
+      0,
+      179,
+      0
+    ],
+    "published": "2021-06-28T16:38:09Z",
+    "published_parsed": [
+      2021,
+      6,
+      28,
+      16,
+      38,
+      9,
+      0,
+      179,
+      0
+    ],
+    "title": "Gaussian Process Regression for Active Sensing Probabilistic Structural\n  Health Monitoring: Experimental Assessment Across Multiple Damage and Loading\n  Scenarios",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Gaussian Process Regression for Active Sensing Probabilistic Structural\n  Health Monitoring: Experimental Assessment Across Multiple Damage and Loading\n  Scenarios"
+    },
+    "summary": "In the near future, Structural Health Monitoring (SHM) technologies will be\ncapable of overcoming the drawbacks in the current maintenance and life-cycle\nmanagement paradigms, namely: cost, increased downtime, less-than-optimal\nsafety management paradigm and the limited applicability of fully-autonomous\noperations. In the context of SHM, one of the most challenging tasks is damage\nquantification. Current methods face accuracy and/or robustness issues when it\ncomes to varying operating and environmental conditions. In addition, the\ndamage/no-damage paradigm of current frameworks does not offer much information\nto maintainers on the ground for proper decision-making. In this study, a novel\nstructural damage quantification framework is proposed based on widely-used\nDamage Indices (DIs) and Gaussian Process Regression Models (GPRMs). The\nnovelty lies in calculating the probability of an incoming test DI point\noriginating from a specific state, which allows for probability-educated\ndecision-making. This framework is applied to three test cases: a Carbon\nFiber-Reinforced Plastic (CFRP) coupon with attached weights as simulated\ndamage, an aluminum coupon with a notch, and an aluminum coupon with attached\nweights as simulated damage under varying loading states. The state prediction\nmethod presented herein is applied to single-state quantification in the first\ntwo test cases, as well as the third one assuming the loading state is known.\nFinally, the proposed method is applied to the third test case assuming neither\nthe damage size nor the load is known in order to predict both simultaneously\nfrom incoming DI test points. In applying this framework, two forms of GPRMs\n(standard and variational heteroscedastic) are used in order to critically\nassess their performances with respect to the three test cases.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "In the near future, Structural Health Monitoring (SHM) technologies will be\ncapable of overcoming the drawbacks in the current maintenance and life-cycle\nmanagement paradigms, namely: cost, increased downtime, less-than-optimal\nsafety management paradigm and the limited applicability of fully-autonomous\noperations. In the context of SHM, one of the most challenging tasks is damage\nquantification. Current methods face accuracy and/or robustness issues when it\ncomes to varying operating and environmental conditions. In addition, the\ndamage/no-damage paradigm of current frameworks does not offer much information\nto maintainers on the ground for proper decision-making. In this study, a novel\nstructural damage quantification framework is proposed based on widely-used\nDamage Indices (DIs) and Gaussian Process Regression Models (GPRMs). The\nnovelty lies in calculating the probability of an incoming test DI point\noriginating from a specific state, which allows for probability-educated\ndecision-making. This framework is applied to three test cases: a Carbon\nFiber-Reinforced Plastic (CFRP) coupon with attached weights as simulated\ndamage, an aluminum coupon with a notch, and an aluminum coupon with attached\nweights as simulated damage under varying loading states. The state prediction\nmethod presented herein is applied to single-state quantification in the first\ntwo test cases, as well as the third one assuming the loading state is known.\nFinally, the proposed method is applied to the third test case assuming neither\nthe damage size nor the load is known in order to predict both simultaneously\nfrom incoming DI test points. In applying this framework, two forms of GPRMs\n(standard and variational heteroscedastic) are used in order to critically\nassess their performances with respect to the three test cases."
+    },
+    "authors": [
+      {
+        "name": "Ahmad Amer"
+      },
+      {
+        "name": "Fotis Kopsaftopoulos"
+      }
+    ],
+    "author_detail": {
+      "name": "Fotis Kopsaftopoulos"
+    },
+    "author": "Fotis Kopsaftopoulos",
+    "arxiv_comment": "47 pages, 34 figures",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2106.14841v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2106.14841v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "eess.SP",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "eess.SP",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "stat.AP",
         "scheme": "http://arxiv.org/schemas/atom",
         "label": null
       }
