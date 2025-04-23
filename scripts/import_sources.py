@@ -1,44 +1,49 @@
 #!/usr/bin/env python3
-"""
-CSV → Supabase.sources   one-shot importer
-"""
-
 import os, pandas as pd, urllib.parse, datetime as dt
 from supabase import create_client, Client
 
-# ── Supabase client ───────────────────────────────
+CSV = "data/CFRP_情報源リスト_完全包括版.csv"   # ← 置き場所に合わせて調整
+
+# ── Supabase ──────────────────────────────────────────
 sb: Client = create_client(os.getenv("SUPABASE_URL"),
                            os.getenv("SUPABASE_KEY"))
 
-# ── 列名 → sources 列へのマッピング  ────────────────
-CSV = "data/CFRP_情報源リスト_完全包括版.csv"
-df  = pd.read_csv(CSV).fillna("")
-
-def domain(url: str) -> str:
+# 列名 → ソース列変換ヘルパ
+def get_domain(url: str) -> str:
     return urllib.parse.urlparse(str(url)).netloc.lower()
 
-def mode(flag: str) -> str:           # 自動収集列 → acquisition_mode
-    return "auto" if flag.strip() in ("〇", "○", "Yes", "yes", "Y") else "manual"
+def normalize_category(cat: str) -> str:
+    if "ニュース" in cat:   return "news"
+    if "論文"   in cat:     return "paper"
+    if "特許"   in cat:     return "patent"
+    if "ブログ" in cat:     return "blog"
+    return "other"
 
-def category(cat: str) -> str:        # カテゴリ列 → 独自コード
-    m = {"ニュース": "news", "論文": "paper", "特許": "patent"}
-    return m.get(cat.strip(), "other")
+def mode(flag: str) -> str:
+    return "auto" if str(flag).strip() in ("〇","○","Yes","yes","Y","自動","可") else "manual"
 
+# ── CSV 読み込み ──────────────────────────────────────
+df = pd.read_csv(CSV).fillna("")
+
+imported, skipped = 0, 0
 for _, r in df.iterrows():
-    row = {
-        # 必須
-        "domain":           domain(r["URL"]),
-        "category":         category(r["カテゴリ"]),
-        "acquisition_mode": mode(r["自動収集"]),
-        # 任意（無ければデフォルト）
-        "relevance":        int(r.get("優先度", 3) or 3),
-        "access_level":     int(r.get("アクセスレベル", 1) or 1),
-        "restrict_lvl":     int(r.get("制約度", 0) or 0),
-        "country_code":     r.get("国コード") or None,
-        "policy_url":       r.get("利用規約 URL") or f'https://{domain(r["URL"])}/robots.txt',
-        "last_checked":     dt.datetime.utcnow().isoformat(),
-    }
-    # upsert on "domain"
-    sb.table("sources").upsert(row, on_conflict="domain").execute()
+    url = str(r["URL"]).strip()
+    if not url:
+        skipped += 1
+        continue
 
-print(f"✅ imported {len(df)} rows into sources")
+    row = {
+        "domain":           get_domain(url),
+        "category":         normalize_category(r["情報カテゴリ"]),
+        "acquisition_mode": mode(r["自動収集"]),
+        "relevance":        int(r.get("優先度", 3) or 3),
+        "access_level":     2 if mode(r["自動収集"])=="auto" else 1,
+        "country_code":     r.get("国・地域") or None,
+        "policy_url":       f'https://{get_domain(url)}/robots.txt',
+        "last_checked":     dt.datetime.utcnow().isoformat()
+    }
+
+    sb.table("sources").upsert(row, on_conflict="domain").execute()
+    imported += 1
+
+print(f"✅ imported {imported} rows  (skipped {skipped} without URL)")
