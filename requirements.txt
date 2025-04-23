@@ -3,3 +3,5 @@ PyYAML
 supabase
 requests
 python-dateutil
+trafilatura>=1.6.0
+readability-lxml>=0.8.1 
