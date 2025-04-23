@@ -11,7 +11,11 @@ RAW_DIR = pathlib.Path("raw") / TODAY
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 
 def save_raw(name, data):
-    (RAW_DIR / f"{name}.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
+    path = RAW_DIR / f"{name}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    # default=str を追加して「非 JSON 対応オブジェクトは文字列化」
+    json.dump(data, path.open("w", encoding="utf-8"),
+              ensure_ascii=False, indent=2, default=str)
 
 with open("seed_sources.yml") as f:
     seeds = yaml.safe_load(f)
@@ -30,8 +34,10 @@ for s in seeds:
                     "url": e.get("link"),
                     "pub_date": e.get("published", "")[:10],
                 }, on_conflict="url").execute()
-    elif "api" in s:             # API
-        r = requests.get(s["api"], timeout=30)
-        save_raw(s["name"], r.json() if r.headers.get("content-type","").startswith("application/json") else r.text)
-        # ここに API 用パースを追加
+    elif "api" in s:                          # API 定義も Atom/RSS 想定
+        resp = requests.get(s["api"], timeout=30)
+        feed = feedparser.parse(resp.text)
+        save_raw(s["name"], feed)             # ← ここも同じ関数で OK
+        data_iter = feed.entries
+
 print("done!")
