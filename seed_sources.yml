@@ -1,15 +1,9 @@
 - name: CompositesWorld
   domain: compositesworld.com
   category: news
-  relevance: 3
-  access_level: 3        # API
-  restrict_lvl: 1
   acquisition_mode: auto
-  newsapi_query:
-    q: ""
-    domains: compositesworld.com
-    pageSize: 100
-    days_back: 30
+  urls:
+    - https://www.compositesworld.com/rss/news       # ← 公式 RSS  
 
 - name: arXiv cond-mat materials
   domain: export.arxiv.org
