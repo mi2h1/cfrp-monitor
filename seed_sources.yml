@@ -1,15 +1,14 @@
 - name: CompositesWorld
-  domain: compositesworld.com
   category: news
-  acquisition_mode: auto
   urls:
-    - https://www.compositesworld.com/rss/news       # ← 公式 RSS  
+    - https://www.compositesworld.com/rss/news
+  parser: rss              # 省略可（デフォルト rss）
 
-- name: arXiv cond-mat materials
-  domain: export.arxiv.org
+- name: arXiv CFRP papers
   category: paper
-  relevance: 3
-  access_level: 3   # API
-  restrict_lvl: 0
-  acquisition_mode: auto
   api: https://export.arxiv.org/api/query?search_query=all:CFRP&max_results=50
+  parser: rss              # Atom も feedparser で OK
+  ua: "CFRPbot/0.1 (+https://github.com/yourrepo; you@example.com)"
+  http_fallback: true
+  retry: 3
+  backoff: 1
