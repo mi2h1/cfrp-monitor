@@ -1,4 +1,8 @@
 name: CFRP Daily Crawl
+
+permissions:
+  contents: write     # ← これを追加
+  
 on:
   schedule:
     - cron:  '0 5 * * *'   # 14:00 JST
