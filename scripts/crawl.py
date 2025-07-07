@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, yaml, json, datetime, pathlib, requests, trafilatura
+import os, json, datetime, pathlib, requests, trafilatura
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from readability import Document
@@ -65,17 +65,28 @@ def fetch_article_body(url: str) -> str | None:
         return None
 
 
-# ── ソース読み込み ────────────────────────────────────
-with open("seed_sources.yml", encoding="utf-8") as f:
-    sources = yaml.safe_load(f)
+# ── ソース読み込み（Supabaseから） ────────────────────────
+sources_result = supabase.table("sources").select("*").eq("acquisition_mode", "auto").execute()
+sources = sources_result.data
+
+print(f"📊 自動収集対象: {len(sources)} 件")
 
 # ── メインループ ────────────────────────────────────
 for src in sources:
-    if src.get("acquisition_mode", "auto") != "auto":
+    # sourcesテーブルのカラムからseed_sources.yml互換の設定を構築
+    cfg = {
+        **DEFAULT_CFG,
+        "ua": src.get("ua") or DEFAULT_CFG["ua"],
+        "http_fallback": src.get("http_fallback", False),
+        "retry": src.get("retry_count", 3),
+        "backoff": src.get("backoff_factor", 1.0),
+        "parser": src.get("parser", "rss")
+    }
+    
+    urls = src.get("urls") or []
+    if not urls:
+        print(f"⚠️  URL未設定: {src.get('name', src.get('domain'))}")
         continue
-
-    cfg  = {**DEFAULT_CFG, **src}
-    urls = cfg.get("urls") or [cfg.get("url") or cfg.get("api")]
 
     for feed_url in urls:
         entries = fetch_and_parse(feed_url, cfg)
@@ -96,6 +107,7 @@ for src in sources:
 
             upsert({
                 "src_type": src["category"],
+                "source_id": src["id"],  # 外部キー追加
                 "title"   : e.get("title"),
                 "url"     : e.get("link") or e.get("id"),
                 "pub_date": safe_date(e.get("published") or e.get("updated")),
