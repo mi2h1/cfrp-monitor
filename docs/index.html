@@ -80,6 +80,15 @@
                     </select>
                 </div>
                 <div class="col-auto">
+                    <label for="itemsPerPage" class="form-label">表示件数:</label>
+                    <select id="itemsPerPage" class="form-select form-select-sm">
+                        <option value="10">10件</option>
+                        <option value="30">30件</option>
+                        <option value="50">50件</option>
+                        <option value="100" selected>100件</option>
+                    </select>
+                </div>
+                <div class="col-auto">
                     <button id="refreshBtn" class="btn btn-primary btn-sm">更新</button>
                 </div>
             </div>
@@ -93,6 +102,15 @@
         </div>
 
         <div id="articlesContainer" style="display: none;"></div>
+        
+        <!-- ページネーション -->
+        <nav id="pagination" aria-label="記事ページネーション" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div id="pageInfo" class="text-muted"></div>
+                <ul class="pagination pagination-sm mb-0" id="paginationList">
+                </ul>
+            </div>
+        </nav>
     </div>
 
     <script>
@@ -104,6 +122,7 @@
         
         let articles = [];
         let sources = [];
+        let currentPage = 1;
 
         // 初期化
         document.addEventListener('DOMContentLoaded', async () => {
@@ -144,9 +163,11 @@
                 if (error) throw error;
                 
                 articles = data || [];
+                currentPage = 1; // ページをリセット
                 renderArticles();
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('articlesContainer').style.display = 'block';
+                document.getElementById('pagination').style.display = 'block';
             } catch (error) {
                 console.error('記事読み込みエラー:', error);
                 document.getElementById('loading').innerHTML = 
@@ -169,13 +190,33 @@
         function renderArticles() {
             const container = document.getElementById('articlesContainer');
             const filteredArticles = filterAndSortArticles();
+            const itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
             
             if (filteredArticles.length === 0) {
                 container.innerHTML = '<div class="alert alert-info">該当する記事がありません</div>';
+                document.getElementById('pagination').style.display = 'none';
                 return;
             }
 
-            container.innerHTML = filteredArticles.map(article => createArticleCard(article)).join('');
+            // ページネーション計算
+            const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedArticles = filteredArticles.slice(startIndex, endIndex);
+
+            // ページが範囲外の場合は1ページ目に戻す
+            if (currentPage > totalPages && totalPages > 0) {
+                currentPage = 1;
+                renderArticles();
+                return;
+            }
+
+            // 記事表示
+            container.innerHTML = paginatedArticles.map(article => createArticleCard(article)).join('');
+            
+            // ページネーション表示
+            renderPagination(filteredArticles.length, itemsPerPage, totalPages);
+            document.getElementById('pagination').style.display = 'block';
         }
 
         // フィルタリングとソート
@@ -206,6 +247,80 @@
             });
 
             return filtered;
+        }
+
+        // ページネーション表示
+        function renderPagination(totalItems, itemsPerPage, totalPages) {
+            const pageInfo = document.getElementById('pageInfo');
+            const paginationList = document.getElementById('paginationList');
+            
+            // ページ情報表示
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+            pageInfo.textContent = `${startItem}-${endItem} / ${totalItems}件 (${currentPage}/${totalPages}ページ)`;
+            
+            // ページネーションボタン生成
+            paginationList.innerHTML = '';
+            
+            // 前へボタン
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1}">前へ</a>`;
+            paginationList.appendChild(prevLi);
+            
+            // ページ番号ボタン
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            // 調整
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            // 最初のページが見えない場合
+            if (startPage > 1) {
+                const firstLi = document.createElement('li');
+                firstLi.className = 'page-item';
+                firstLi.innerHTML = '<a class="page-link" href="#" data-page="1">1</a>';
+                paginationList.appendChild(firstLi);
+                
+                if (startPage > 2) {
+                    const ellipsisLi = document.createElement('li');
+                    ellipsisLi.className = 'page-item disabled';
+                    ellipsisLi.innerHTML = '<span class="page-link">...</span>';
+                    paginationList.appendChild(ellipsisLi);
+                }
+            }
+            
+            // ページ番号
+            for (let i = startPage; i <= endPage; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+                paginationList.appendChild(li);
+            }
+            
+            // 最後のページが見えない場合
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsisLi = document.createElement('li');
+                    ellipsisLi.className = 'page-item disabled';
+                    ellipsisLi.innerHTML = '<span class="page-link">...</span>';
+                    paginationList.appendChild(ellipsisLi);
+                }
+                
+                const lastLi = document.createElement('li');
+                lastLi.className = 'page-item';
+                lastLi.innerHTML = `<a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a>`;
+                paginationList.appendChild(lastLi);
+            }
+            
+            // 次へボタン
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1}">次へ</a>`;
+            paginationList.appendChild(nextLi);
         }
 
         // 記事カードを作成
@@ -305,9 +420,12 @@
 
         // イベントリスナーを設定
         function setupEventListeners() {
-            // フィルター・ソート変更時
-            ['statusFilter', 'flaggedFilter', 'sourceFilter', 'sortOrder'].forEach(id => {
-                document.getElementById(id).addEventListener('change', renderArticles);
+            // フィルター・ソート・表示件数変更時
+            ['statusFilter', 'flaggedFilter', 'sourceFilter', 'sortOrder', 'itemsPerPage'].forEach(id => {
+                document.getElementById(id).addEventListener('change', () => {
+                    currentPage = 1; // ページをリセット
+                    renderArticles();
+                });
             });
 
             // 更新ボタン
@@ -321,6 +439,20 @@
             document.getElementById('articlesContainer').addEventListener('click', async (e) => {
                 if (e.target.classList.contains('save-btn')) {
                     await saveArticle(e.target.dataset.id);
+                }
+            });
+
+            // ページネーションクリックのイベント委譲
+            document.getElementById('paginationList').addEventListener('click', (e) => {
+                e.preventDefault();
+                if (e.target.classList.contains('page-link') && !e.target.closest('.disabled')) {
+                    const page = parseInt(e.target.dataset.page);
+                    if (page && page !== currentPage) {
+                        currentPage = page;
+                        renderArticles();
+                        // ページトップにスクロール
+                        document.getElementById('articlesContainer').scrollIntoView({ behavior: 'smooth' });
+                    }
                 }
             });
         }
