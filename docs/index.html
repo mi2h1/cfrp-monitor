@@ -73,6 +73,13 @@
                     </select>
                 </div>
                 <div class="col-auto">
+                    <label for="sortOrder" class="form-label">並び順:</label>
+                    <select id="sortOrder" class="form-select form-select-sm">
+                        <option value="desc">新しい順</option>
+                        <option value="asc">古い順</option>
+                    </select>
+                </div>
+                <div class="col-auto">
                     <button id="refreshBtn" class="btn btn-primary btn-sm">更新</button>
                 </div>
             </div>
@@ -161,7 +168,7 @@
         // 記事を表示
         function renderArticles() {
             const container = document.getElementById('articlesContainer');
-            const filteredArticles = filterArticles();
+            const filteredArticles = filterAndSortArticles();
             
             if (filteredArticles.length === 0) {
                 container.innerHTML = '<div class="alert alert-info">該当する記事がありません</div>';
@@ -171,18 +178,34 @@
             container.innerHTML = filteredArticles.map(article => createArticleCard(article)).join('');
         }
 
-        // フィルタリング
-        function filterArticles() {
+        // フィルタリングとソート
+        function filterAndSortArticles() {
             const statusFilter = document.getElementById('statusFilter').value;
             const flaggedFilter = document.getElementById('flaggedFilter').value;
             const sourceFilter = document.getElementById('sourceFilter').value;
+            const sortOrder = document.getElementById('sortOrder').value;
 
-            return articles.filter(article => {
+            // フィルタリング
+            let filtered = articles.filter(article => {
                 if (statusFilter && article.status !== statusFilter) return false;
                 if (flaggedFilter && String(article.flagged) !== flaggedFilter) return false;
                 if (sourceFilter && article.source_id !== sourceFilter) return false;
                 return true;
             });
+
+            // ソート
+            filtered.sort((a, b) => {
+                const dateA = new Date(a.pub_date || a.added_at || 0);
+                const dateB = new Date(b.pub_date || b.added_at || 0);
+                
+                if (sortOrder === 'asc') {
+                    return dateA - dateB; // 古い順
+                } else {
+                    return dateB - dateA; // 新しい順
+                }
+            });
+
+            return filtered;
         }
 
         // 記事カードを作成
@@ -282,8 +305,8 @@
 
         // イベントリスナーを設定
         function setupEventListeners() {
-            // フィルター変更時
-            ['statusFilter', 'flaggedFilter', 'sourceFilter'].forEach(id => {
+            // フィルター・ソート変更時
+            ['statusFilter', 'flaggedFilter', 'sourceFilter', 'sortOrder'].forEach(id => {
                 document.getElementById(id).addEventListener('change', renderArticles);
             });
 
