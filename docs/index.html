@@ -333,14 +333,8 @@
                     saveBtn.classList.replace('btn-outline-success', 'btn-success');
                 }, 2000);
                 
-                // 記事データを更新
-                const articleIndex = articles.findIndex(a => a.id === articleId);
-                if (articleIndex !== -1) {
-                    articles[articleIndex].status = status;
-                    articles[articleIndex].flagged = flagged;
-                    articles[articleIndex].comments = comments;
-                    articles[articleIndex].reviewed_at = new Date().toISOString();
-                }
+                // 最新データを再取得
+                await loadArticles();
                 
             } catch (error) {
                 console.error('保存エラー:', error);
