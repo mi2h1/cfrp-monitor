@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFRP記事管理ダッシュボード</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .article-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            padding: 1rem;
+        }
+        .article-meta {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .article-body {
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+        .status-badge {
+            font-size: 0.8rem;
+        }
+        .flagged {
+            border-left: 4px solid #dc3545;
+        }
+        .controls {
+            background-color: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <header class="mb-4">
+            <h1 class="h2">CFRP記事管理ダッシュボード</h1>
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="statusFilter" class="form-label">ステータス:</label>
+                    <select id="statusFilter" class="form-select form-select-sm">
+                        <option value="">全て</option>
+                        <option value="unread">未読</option>
+                        <option value="reviewed">確認済み</option>
+                        <option value="flagged">フラグ付き</option>
+                        <option value="archived">アーカイブ</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label for="flaggedFilter" class="form-label">重要:</label>
+                    <select id="flaggedFilter" class="form-select form-select-sm">
+                        <option value="">全て</option>
+                        <option value="true">重要のみ</option>
+                        <option value="false">通常のみ</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label for="sourceFilter" class="form-label">ソース:</label>
+                    <select id="sourceFilter" class="form-select form-select-sm">
+                        <option value="">全て</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button id="refreshBtn" class="btn btn-primary btn-sm">更新</button>
+                </div>
+            </div>
+        </header>
+
+        <div id="loading" class="loading">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">読み込み中...</span>
+            </div>
+            <p>記事を読み込んでいます...</p>
+        </div>
+
+        <div id="articlesContainer" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Supabaseの設定（実際の値に置き換えてください）
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let articles = [];
+        let sources = [];
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadSources();
+            await loadArticles();
+            setupEventListeners();
+        });
+
+        // ソース一覧を読み込み
+        async function loadSources() {
+            try {
+                const { data, error } = await supabase
+                    .from('sources')
+                    .select('id, name, domain')
+                    .order('name');
+                
+                if (error) throw error;
+                
+                sources = data || [];
+                populateSourceFilter();
+            } catch (error) {
+                console.error('ソース読み込みエラー:', error);
+            }
+        }
+
+        // 記事一覧を読み込み
+        async function loadArticles() {
+            try {
+                const { data, error } = await supabase
+                    .from('items')
+                    .select(`
+                        *,
+                        sources(name, domain)
+                    `)
+                    .order('pub_date', { ascending: false })
+                    .limit(100);
+                
+                if (error) throw error;
+                
+                articles = data || [];
+                renderArticles();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('articlesContainer').style.display = 'block';
+            } catch (error) {
+                console.error('記事読み込みエラー:', error);
+                document.getElementById('loading').innerHTML = 
+                    '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
+            }
+        }
+
+        // ソースフィルターを設定
+        function populateSourceFilter() {
+            const select = document.getElementById('sourceFilter');
+            sources.forEach(source => {
+                const option = document.createElement('option');
+                option.value = source.id;
+                option.textContent = source.name || source.domain;
+                select.appendChild(option);
+            });
+        }
+
+        // 記事を表示
+        function renderArticles() {
+            const container = document.getElementById('articlesContainer');
+            const filteredArticles = filterArticles();
+            
+            if (filteredArticles.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">該当する記事がありません</div>';
+                return;
+            }
+
+            container.innerHTML = filteredArticles.map(article => createArticleCard(article)).join('');
+        }
+
+        // フィルタリング
+        function filterArticles() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const flaggedFilter = document.getElementById('flaggedFilter').value;
+            const sourceFilter = document.getElementById('sourceFilter').value;
+
+            return articles.filter(article => {
+                if (statusFilter && article.status !== statusFilter) return false;
+                if (flaggedFilter && String(article.flagged) !== flaggedFilter) return false;
+                if (sourceFilter && article.source_id !== sourceFilter) return false;
+                return true;
+            });
+        }
+
+        // 記事カードを作成
+        function createArticleCard(article) {
+            const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
+            const pubDate = article.pub_date ? new Date(article.pub_date).toLocaleDateString('ja-JP') : '不明';
+            const flaggedClass = article.flagged ? 'flagged' : '';
+            
+            return `
+                <div class="article-card ${flaggedClass}" data-id="${article.id}">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="mb-1">
+                            <a href="${article.url}" target="_blank" class="text-decoration-none">
+                                ${escapeHtml(article.title || 'タイトルなし')}
+                            </a>
+                        </h5>
+                        <span class="badge bg-${getStatusColor(article.status)} status-badge">
+                            ${getStatusLabel(article.status)}
+                        </span>
+                    </div>
+                    
+                    <div class="article-meta mb-2">
+                        <span class="me-3">📅 ${pubDate}</span>
+                        <span class="me-3">📰 ${sourceName}</span>
+                        ${article.flagged ? '<span class="badge bg-danger">重要</span>' : ''}
+                    </div>
+                    
+                    ${article.body ? `
+                        <div class="article-body">
+                            ${escapeHtml(article.body.substring(0, 300))}${article.body.length > 300 ? '...' : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="controls">
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                <label class="form-label small">ステータス:</label>
+                                <select class="form-select form-select-sm status-select" data-id="${article.id}">
+                                    <option value="unread" ${article.status === 'unread' ? 'selected' : ''}>未読</option>
+                                    <option value="reviewed" ${article.status === 'reviewed' ? 'selected' : ''}>確認済み</option>
+                                    <option value="flagged" ${article.status === 'flagged' ? 'selected' : ''}>フラグ付き</option>
+                                    <option value="archived" ${article.status === 'archived' ? 'selected' : ''}>アーカイブ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small">重要:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input flagged-check" type="checkbox" 
+                                           data-id="${article.id}" ${article.flagged ? 'checked' : ''}>
+                                    <label class="form-check-label small">重要フラグ</label>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <label class="form-label small">コメント:</label>
+                                <textarea class="form-control form-control-sm comment-textarea" 
+                                         data-id="${article.id}" rows="2" 
+                                         placeholder="コメントを入力...">${escapeHtml(article.comments || '')}</textarea>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <button class="btn btn-success btn-sm save-btn" data-id="${article.id}">保存</button>
+                            ${article.reviewed_at ? `<small class="text-muted ms-2">最終更新: ${new Date(article.reviewed_at).toLocaleString('ja-JP')}</small>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ステータスの色を取得
+        function getStatusColor(status) {
+            const colors = {
+                'unread': 'secondary',
+                'reviewed': 'success',
+                'flagged': 'warning',
+                'archived': 'dark'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        // ステータスのラベルを取得
+        function getStatusLabel(status) {
+            const labels = {
+                'unread': '未読',
+                'reviewed': '確認済み',
+                'flagged': 'フラグ付き',
+                'archived': 'アーカイブ'
+            };
+            return labels[status] || '未読';
+        }
+
+        // HTMLエスケープ
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // イベントリスナーを設定
+        function setupEventListeners() {
+            // フィルター変更時
+            ['statusFilter', 'flaggedFilter', 'sourceFilter'].forEach(id => {
+                document.getElementById(id).addEventListener('change', renderArticles);
+            });
+
+            // 更新ボタン
+            document.getElementById('refreshBtn').addEventListener('click', async () => {
+                document.getElementById('refreshBtn').disabled = true;
+                await loadArticles();
+                document.getElementById('refreshBtn').disabled = false;
+            });
+
+            // 保存ボタンのイベント委譲
+            document.getElementById('articlesContainer').addEventListener('click', async (e) => {
+                if (e.target.classList.contains('save-btn')) {
+                    await saveArticle(e.target.dataset.id);
+                }
+            });
+        }
+
+        // 記事を保存
+        async function saveArticle(articleId) {
+            const card = document.querySelector(`[data-id="${articleId}"]`);
+            const status = card.querySelector('.status-select').value;
+            const flagged = card.querySelector('.flagged-check').checked;
+            const comments = card.querySelector('.comment-textarea').value;
+            
+            try {
+                const { error } = await supabase
+                    .from('items')
+                    .update({
+                        status: status,
+                        flagged: flagged,
+                        comments: comments || null,
+                        reviewed_at: new Date().toISOString()
+                    })
+                    .eq('id', articleId);
+                
+                if (error) throw error;
+                
+                // UIを更新
+                const saveBtn = card.querySelector('.save-btn');
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = '保存済み';
+                saveBtn.classList.replace('btn-success', 'btn-outline-success');
+                
+                setTimeout(() => {
+                    saveBtn.textContent = originalText;
+                    saveBtn.classList.replace('btn-outline-success', 'btn-success');
+                }, 2000);
+                
+                // 記事データを更新
+                const articleIndex = articles.findIndex(a => a.id === articleId);
+                if (articleIndex !== -1) {
+                    articles[articleIndex].status = status;
+                    articles[articleIndex].flagged = flagged;
+                    articles[articleIndex].comments = comments;
+                    articles[articleIndex].reviewed_at = new Date().toISOString();
+                }
+                
+            } catch (error) {
+                console.error('保存エラー:', error);
+                alert('保存に失敗しました: ' + error.message);
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
