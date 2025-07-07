@@ -61,7 +61,7 @@ def fetch_article_body(url: str) -> str | None:
         r.raise_for_status()
         return extract_html_body(r.text)
     except Exception as e:
-        print("⚠️ body fetch failed:", url, "->", e)
+        print("body fetch failed:", url, "->", e)
         return None
 
 
@@ -69,7 +69,7 @@ def fetch_article_body(url: str) -> str | None:
 sources_result = supabase.table("sources").select("*").eq("acquisition_mode", "auto").execute()
 sources = sources_result.data
 
-print(f"📊 自動収集対象: {len(sources)} 件")
+print(f"自動収集対象: {len(sources)} 件")
 
 # ── メインループ ────────────────────────────────────
 for src in sources:
@@ -85,7 +85,7 @@ for src in sources:
     
     urls = src.get("urls") or []
     if not urls:
-        print(f"⚠️  URL未設定: {src.get('name', src.get('domain'))}")
+        print(f"URL未設定: {src.get('name', src.get('domain'))}")
         continue
 
     for feed_url in urls:
@@ -114,4 +114,4 @@ for src in sources:
                 "body"    : body,
             })
 
-print("✅ crawl finished")
+print("crawl finished")
