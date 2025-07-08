@@ -139,6 +139,39 @@
         .btn-close-edit {
             margin-left: auto;
         }
+        .rss-test-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 2px solid #0d6efd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 1050;
+            display: none;
+        }
+        .rss-test-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
+            display: none;
+        }
+        .rss-article-preview {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -243,6 +276,23 @@
         </div>
 
         <div id="sourcesContainer" style="display: none;"></div>
+    </div>
+
+    <!-- RSSテストモーダル -->
+    <div class="rss-test-overlay" onclick="closeRssTestModal()"></div>
+    <div class="rss-test-modal" id="rssTestModal">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">RSSフィードテスト</h5>
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="closeRssTestModal()">✕ 閉じる</button>
+        </div>
+        <div id="rssTestContent">
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">読み込み中...</span>
+                </div>
+                <p class="mt-2">RSSフィードを取得中...</p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -449,7 +499,7 @@
                                            value="${escapeHtml(url)}" placeholder="https://example.com/feed.xml">
                                     <div class="url-actions">
                                         <button class="btn btn-outline-primary btn-sm test-url-btn" 
-                                                data-url="${escapeHtml(url)}" title="URLをテスト">
+                                                data-url="${escapeHtml(url)}" title="RSS記事を取得テスト">
                                             🔍
                                         </button>
                                         <button class="btn btn-outline-danger btn-sm remove-url-btn" 
@@ -718,38 +768,127 @@
             urlItem.remove();
         }
 
-        // URLをテスト
+        // URLをテスト（RSS記事取得）
         async function testUrl(button) {
             const url = button.dataset.url || button.closest('.url-item').querySelector('.url-input').value;
             if (!url) return;
             
-            button.disabled = true;
-            button.innerHTML = '⏳';
+            // モーダルを開く
+            openRssTestModal(url);
+        }
+
+        // RSSテストモーダルを開く
+        function openRssTestModal(url) {
+            const modal = document.getElementById('rssTestModal');
+            const overlay = document.querySelector('.rss-test-overlay');
+            const content = document.getElementById('rssTestContent');
+            
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+            
+            // ローディング表示
+            content.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">読み込み中...</span>
+                    </div>
+                    <p class="mt-2">RSSフィードを取得中...</p>
+                    <p class="small text-muted">${escapeHtml(url)}</p>
+                </div>
+            `;
+            
+            // RSSを取得してテスト
+            testRssFeed(url);
+        }
+
+        // RSSテストモーダルを閉じる
+        function closeRssTestModal() {
+            document.getElementById('rssTestModal').style.display = 'none';
+            document.querySelector('.rss-test-overlay').style.display = 'none';
+        }
+
+        // RSSフィードをテスト
+        async function testRssFeed(url) {
+            const content = document.getElementById('rssTestContent');
             
             try {
-                // CORS制限があるため、簡易的なチェックのみ
-                const response = await fetch(url, {
-                    method: 'HEAD',
-                    mode: 'no-cors'
-                });
+                // CORSプロキシを使用（無料の公開プロキシ）
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
                 
-                button.innerHTML = '✅';
-                button.className = 'btn btn-outline-success btn-sm test-url-btn';
-                setTimeout(() => {
-                    button.innerHTML = '🔍';
-                    button.className = 'btn btn-outline-primary btn-sm test-url-btn';
-                }, 3000);
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                
+                if (!data.contents) {
+                    throw new Error('フィードの取得に失敗しました');
+                }
+                
+                // XMLをパース
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(data.contents, 'text/xml');
+                
+                // エラーチェック
+                const parseError = xml.querySelector('parsererror');
+                if (parseError) {
+                    throw new Error('無効なXMLフォーマット');
+                }
+                
+                // RSS/Atomフィードの解析
+                const items = xml.querySelectorAll('item, entry');
+                if (items.length === 0) {
+                    throw new Error('記事が見つかりません');
+                }
+                
+                // 最初の記事を取得
+                const firstItem = items[0];
+                const title = firstItem.querySelector('title')?.textContent || 'タイトルなし';
+                const link = firstItem.querySelector('link')?.textContent || 
+                            firstItem.querySelector('link')?.getAttribute('href') || '';
+                const description = firstItem.querySelector('description, summary, content')?.textContent || '';
+                const pubDate = firstItem.querySelector('pubDate, published, updated')?.textContent || '';
+                
+                // 結果を表示
+                content.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6>✅ RSSフィードの取得に成功しました！</h6>
+                        <p class="mb-1">記事数: ${items.length}件</p>
+                    </div>
+                    
+                    <h6>最新記事のプレビュー:</h6>
+                    <div class="rss-article-preview">
+                        <h6 class="text-primary">${escapeHtml(title)}</h6>
+                        ${pubDate ? `<p class="small text-muted mb-2">📅 ${new Date(pubDate).toLocaleString('ja-JP')}</p>` : ''}
+                        ${link ? `<p class="small mb-2">🔗 <a href="${escapeHtml(link)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 400px;">${escapeHtml(link)}</a></p>` : ''}
+                        ${description ? `<div class="small">${escapeHtml(description.substring(0, 200))}${description.length > 200 ? '...' : ''}</div>` : ''}
+                    </div>
+                    
+                    <div class="mt-3 text-muted small">
+                        <p class="mb-1">URL: ${escapeHtml(url)}</p>
+                        <p class="mb-0">フォーマット: ${xml.documentElement.tagName === 'rss' ? 'RSS' : 'Atom'}</p>
+                    </div>
+                `;
                 
             } catch (error) {
-                button.innerHTML = '❌';
-                button.className = 'btn btn-outline-danger btn-sm test-url-btn';
-                setTimeout(() => {
-                    button.innerHTML = '🔍';
-                    button.className = 'btn btn-outline-primary btn-sm test-url-btn';
-                }, 3000);
+                content.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>❌ エラーが発生しました</h6>
+                        <p class="mb-0">${escapeHtml(error.message)}</p>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <p class="small text-muted">考えられる原因:</p>
+                        <ul class="small text-muted">
+                            <li>URLが正しくない</li>
+                            <li>RSS/Atomフィードではない</li>
+                            <li>サーバーがアクセスを拒否している</li>
+                            <li>ネットワークエラー</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-muted small">
+                        <p class="mb-0">テストURL: ${escapeHtml(url)}</p>
+                    </div>
+                `;
             }
-            
-            button.disabled = false;
         }
 
         // URL形式チェック
