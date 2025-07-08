@@ -116,8 +116,8 @@ function filterAndSortArticles() {
 
     // ソート
     filtered.sort((a, b) => {
-        const dateA = new Date(a.pub_date || a.added_at || 0);
-        const dateB = new Date(b.pub_date || b.added_at || 0);
+        const dateA = new Date(a.published_at || a.added_at || 0);
+        const dateB = new Date(b.published_at || b.added_at || 0);
         
         if (sortOrder === 'asc') {
             return dateA - dateB; // 古い順
@@ -132,7 +132,7 @@ function filterAndSortArticles() {
 // コンパクトな記事カードを作成
 function createCompactArticleCard(article) {
     const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
-    const pubDate = article.pub_date ? new Date(article.pub_date).toLocaleDateString('ja-JP') : '不明';
+    const pubDate = article.published_at ? new Date(article.published_at).toLocaleDateString('ja-JP') : '不明';
     const flaggedClass = article.flagged ? 'flagged' : '';
     
     return `
@@ -167,7 +167,7 @@ function createCompactArticleCard(article) {
 // 詳細編集用の記事カードを作成
 function createDetailArticleCard(article) {
     const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
-    const pubDate = article.pub_date ? new Date(article.pub_date).toLocaleDateString('ja-JP') : '不明';
+    const pubDate = article.published_at ? new Date(article.published_at).toLocaleDateString('ja-JP') : '不明';
     const flaggedClass = article.flagged ? 'flagged' : '';
     
     return `

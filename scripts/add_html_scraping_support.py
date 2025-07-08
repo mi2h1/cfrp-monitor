@@ -267,12 +267,12 @@ def parse_html_news_page(url: str, config: dict) -> List[Dict]:
                     
                     # 日付抽出（親要素から）
                     date_elem = link.find_parent().find(text=re.compile(r'\\d{4}[/-]\\d{1,2}[/-]\\d{1,2}'))
-                    pub_date = date_elem if date_elem else None
+                    published_at = date_elem if date_elem else None
                     
                     articles.append({
                         'title': title,
                         'link': full_url,
-                        'published': pub_date,
+                        'published': published_at,
                         'id': full_url,  # RSS の 'id' 相当
                         'summary': ''  # 後で詳細ページから取得
                     })

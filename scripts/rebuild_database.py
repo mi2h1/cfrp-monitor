@@ -173,7 +173,7 @@ def rebuild_items_from_raw():
                             "source_id": source_id,
                             "title": entry.get("title"),
                             "url": entry.get("link") or entry.get("id"),
-                            "pub_date": safe_date(entry.get("published") or entry.get("updated")),
+                            "published_at": safe_date(entry.get("published") or entry.get("updated")),
                             "body": entry.get("content", [{}])[0].get("value") if entry.get("content") else entry.get("summary"),
                             "added_at": added_at_jst
                         }

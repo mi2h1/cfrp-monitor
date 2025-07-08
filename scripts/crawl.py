@@ -130,7 +130,7 @@ for src in sources:
                 "source_id": src["id"],  # 外部キー追加
                 "title"   : e.get("title"),
                 "url"     : e.get("link") or e.get("id"),
-                "pub_date": safe_date(e.get("published") or e.get("updated")),
+                "published_at": safe_date(e.get("published") or e.get("updated")),
                 "body"    : body,
                 "added_at": added_at_jst,
             })
