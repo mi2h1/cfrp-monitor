@@ -292,7 +292,7 @@
                             <h6 class="mb-1">${escapeHtml(source.name || source.domain)}</h6>
                             <div class="small text-muted">${escapeHtml(primaryUrl)}</div>
                             ${source.acquisition_mode === 'auto' && source.last_collected_at ? `
-                                <div class="small text-success mt-1">🕒 最終収集: ${new Date(source.last_collected_at).toLocaleString('ja-JP')}</div>
+                                <div class="small text-success mt-1">🕒 最終収集: ${new Date(source.last_collected_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</div>
                             ` : ''}
                             ${source.description ? `<div class="small text-info mt-1">💬 ${escapeHtml(source.description)}</div>` : ''}
                         </div>
@@ -404,10 +404,10 @@
                             </div>
                         </div>
                         <div class="mt-2">
-                            ${source.updated_at ? `<small class="text-muted">最終更新: ${new Date(source.updated_at).toLocaleString('ja-JP')}</small>` : ''}
+                            ${source.updated_at ? `<small class="text-muted">最終更新: ${new Date(source.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</small>` : ''}
                             ${source.last_edited_by ? `<small class="text-info ms-3">編集者: ${source.last_edited_by}</small>` : ''}
                             ${source.acquisition_mode === 'auto' && source.last_collected_at ? `
-                                <small class="text-success ms-3">🕒 最終収集: ${new Date(source.last_collected_at).toLocaleString('ja-JP')}</small>
+                                <small class="text-success ms-3">🕒 最終収集: ${new Date(source.last_collected_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</small>
                             ` : ''}
                         </div>
                     </div>
@@ -783,7 +783,7 @@
                     <h6>最新記事のプレビュー:</h6>
                     <div class="rss-article-preview">
                         <h6 class="text-primary">${escapeHtml(title)}</h6>
-                        ${pubDate ? `<p class="small text-muted mb-2">📅 ${new Date(pubDate).toLocaleString('ja-JP')}</p>` : ''}
+                        ${pubDate ? `<p class="small text-muted mb-2">📅 ${new Date(pubDate).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</p>` : ''}
                         ${link ? `<p class="small mb-2">🔗 <a href="${escapeHtml(link)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 400px;">${escapeHtml(link)}</a></p>` : ''}
                         ${description ? `<div class="small">${escapeHtml(description.substring(0, 200))}${description.length > 200 ? '...' : ''}</div>` : ''}
                     </div>
@@ -890,7 +890,7 @@
                     <h6>最新記事のプレビュー:</h6>
                     <div class="rss-article-preview">
                         <h6 class="text-primary">${escapeHtml(title)}</h6>
-                        ${pubDate ? `<p class="small text-muted mb-2">📅 ${new Date(pubDate).toLocaleString('ja-JP')}</p>` : ''}
+                        ${pubDate ? `<p class="small text-muted mb-2">📅 ${new Date(pubDate).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</p>` : ''}
                         ${link ? `<p class="small mb-2">🔗 <a href="${escapeHtml(link)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 400px;">${escapeHtml(link)}</a></p>` : ''}
                         ${description ? `<div class="small">${escapeHtml(description.substring(0, 200))}${description.length > 200 ? '...' : ''}</div>` : ''}
                     </div>

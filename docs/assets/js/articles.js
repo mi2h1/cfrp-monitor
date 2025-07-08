@@ -223,7 +223,7 @@ function createDetailArticleCard(article) {
                 </div>
                 <div class="mt-2">
                     <button class="btn btn-success btn-sm save-btn" data-id="${article.id}">保存</button>
-                    ${article.reviewed_at ? `<small class="text-muted ms-2">最終更新: ${new Date(article.reviewed_at).toLocaleString('ja-JP')}</small>` : ''}
+                    ${article.reviewed_at ? `<small class="text-muted ms-2">最終更新: ${new Date(article.reviewed_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</small>` : ''}
                     ${article.last_edited_by ? `<small class="text-info ms-2">編集者: ${article.last_edited_by}</small>` : ''}
                 </div>
             </div>
