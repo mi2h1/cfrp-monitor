@@ -3,9 +3,18 @@
 複合材料（CFRP・GFRP・AFRP等）に関する最新情報を自動収集・分析するシステム
 
 ## 📊 Live Dashboard
-**🔗 https://mi2h1.github.io/cfrp-monitor/**
 
-収集データの可視化・分析
+### 📰 記事管理ダッシュボード
+**🔗 https://mi2h1.github.io/cfrp-monitor/**
+- 収集された記事の閲覧・分析・管理
+- ステータス管理（未読・確認済み・フラグ付き・アーカイブ）
+- 高度なフィルタリング・検索機能
+
+### 📡 情報源管理ダッシュボード  
+**🔗 https://mi2h1.github.io/cfrp-monitor/sources.html**
+- 情報源の状態監視・設定管理
+- URL編集・追加・削除機能
+- 取得モード制御（自動・手動・無効）
 
 ## 📋 システム概要
 
@@ -37,8 +46,8 @@
 cfrp-monitor/
 ├── README.md                    # このファイル
 ├── docs/                        # ダッシュボード
-│   ├── index.html              # メインダッシュボード
-│   └── config.js               # 設定ファイル
+│   ├── index.html              # 記事管理ダッシュボード
+│   └── sources.html            # 情報源管理ダッシュボード
 ├── scripts/                     # Python スクリプト
 │   ├── crawl.py                # 日次データ収集
 │   ├── discover_*.py           # 情報源自動発見 (4ファイル)
