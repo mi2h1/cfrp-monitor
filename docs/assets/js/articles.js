@@ -223,7 +223,7 @@ function createDetailArticleCard(article) {
                 </div>
                 <div class="mt-2">
                     <button class="btn btn-success btn-sm save-btn" data-id="${article.id}">保存</button>
-                    ${article.reviewed_at ? `<small class="text-muted ms-2">最終更新: ${new Date(article.reviewed_at).toLocaleString('ja-JP')}</small>` : ''}
+                    ${article.reviewed_at ? `<small class="text-muted ms-2">最終更新: ${new Date(article.reviewed_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</small>` : ''}
                     ${article.last_edited_by ? `<small class="text-info ms-2">編集者: ${article.last_edited_by}</small>` : ''}
                 </div>
             </div>
@@ -312,7 +312,7 @@ async function saveArticle(articleId) {
                 status: status,
                 flagged: flagged,
                 comments: comments || null,
-                reviewed_at: new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().replace('Z', '+09:00'),
+                reviewed_at: new Date().toISOString(),
                 last_edited_by: currentUser ? currentUser.userId : null
             })
             .eq('id', articleId);
@@ -336,7 +336,7 @@ async function saveArticle(articleId) {
             articles[articleIndex].status = status;
             articles[articleIndex].flagged = flagged;
             articles[articleIndex].comments = comments || null;
-            articles[articleIndex].reviewed_at = new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().replace('Z', '+09:00');
+            articles[articleIndex].reviewed_at = new Date().toISOString();
             articles[articleIndex].last_edited_by = currentUser ? currentUser.userId : null;
         }
         
