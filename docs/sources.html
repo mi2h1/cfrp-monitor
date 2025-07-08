@@ -523,9 +523,12 @@
 
             // コンパクトカードクリックのイベント委譲
             document.getElementById('sourcesContainer').addEventListener('click', (e) => {
+                console.log('Container clicked, target:', e.target);
                 const card = e.target.closest('.compact-card');
+                console.log('Found card:', card);
                 if (card) {
                     const sourceId = parseInt(card.dataset.id);
+                    console.log('Card sourceId:', sourceId);
                     openEditMode(sourceId);
                 }
             });
@@ -722,11 +725,22 @@
 
         // 編集モードを開く
         function openEditMode(sourceId) {
+            console.log('openEditMode called with sourceId:', sourceId);
+            console.log('sources array:', sources);
+            
             const source = sources.find(s => s.id === sourceId);
-            if (!source) return;
+            console.log('found source:', source);
+            
+            if (!source) {
+                console.error('Source not found for id:', sourceId);
+                return;
+            }
             
             const editContainer = document.getElementById('editModeContainer');
             const editContent = document.getElementById('editModeContent');
+            
+            console.log('editContainer:', editContainer);
+            console.log('editContent:', editContent);
             
             // 詳細編集カードを生成
             editContent.innerHTML = createDetailSourceCard(source);
@@ -736,6 +750,8 @@
             
             // スクロールして編集エリアを表示
             editContainer.scrollIntoView({ behavior: 'smooth' });
+            
+            console.log('Edit mode opened successfully');
         }
 
         // 編集モードを閉じる
