@@ -1,0 +1,181 @@
+/* CFRP Monitor - 情報源管理ページ専用スタイル */
+
+/* 情報源カード */
+.source-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.source-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.source-meta {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.disabled-source {
+    opacity: 0.6;
+    border-left: 4px solid #dc3545;
+}
+
+.manual-source {
+    border-left: 4px solid #ffc107;
+}
+
+.auto-source {
+    border-left: 4px solid #198754;
+}
+
+.new-source {
+    border-left: 4px solid #0dcaf0;
+}
+
+.deleted-source {
+    opacity: 0.5;
+    border-left: 4px solid #6c757d;
+    background: #f8f9fa;
+}
+
+/* URL管理 */
+.url-list {
+    max-height: 100px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.policy-url {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+.url-editor {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.url-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    gap: 0.5rem;
+}
+
+.url-input {
+    flex: 1;
+}
+
+.url-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.add-url-section {
+    border-top: 1px solid #dee2e6;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.compact-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.compact-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+.compact-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.compact-main {
+    flex: 1;
+    min-width: 200px;
+}
+
+.compact-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #6c757d;
+    flex-wrap: wrap;
+}
+
+.edit-mode-container {
+    display: none;
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #f8f9ff;
+}
+
+.edit-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.btn-close-edit {
+    margin-left: auto;
+}
+
+.rss-test-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 1050;
+    display: none;
+}
+
+.rss-test-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1040;
+    display: none;
+}
+
+.rss-article-preview {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
