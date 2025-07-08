@@ -62,7 +62,7 @@
     <!-- ナビゲーションバー -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.7</small></a>
+            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.8</small></a>
             <div class="navbar-nav">
                 <a class="nav-link active" href="index.html">📰 記事管理</a>
                 <a class="nav-link" href="sources.html">📡 情報源管理</a>
@@ -546,10 +546,16 @@
 
         // 記事を保存
         async function saveArticle(articleId) {
-            const card = document.querySelector(`[data-id="${articleId}"]`);
-            const status = card.querySelector('.status-select').value;
-            const flagged = card.querySelector('.flagged-check').checked;
-            const comments = card.querySelector('.comment-textarea').value;
+            // 編集モードのカードから値を取得
+            const editCard = document.querySelector(`#editModeContainer [data-id="${articleId}"]`);
+            if (!editCard) {
+                console.error('編集カードが見つかりません');
+                return;
+            }
+            
+            const status = editCard.querySelector('.status-select').value;
+            const flagged = editCard.querySelector('.flagged-check').checked;
+            const comments = editCard.querySelector('.comment-textarea').value;
             
             try {
                 const { error } = await supabase
@@ -565,7 +571,7 @@
                 if (error) throw error;
                 
                 // UIを更新
-                const saveBtn = card.querySelector('.save-btn');
+                const saveBtn = editCard.querySelector('.save-btn');
                 const originalText = saveBtn.textContent;
                 saveBtn.textContent = '保存済み';
                 saveBtn.classList.replace('btn-success', 'btn-outline-success');
@@ -575,8 +581,14 @@
                     saveBtn.classList.replace('btn-outline-success', 'btn-success');
                 }, 2000);
                 
-                // 最新データを再取得
-                await loadArticles();
+                // 記事データを更新
+                const articleIndex = articles.findIndex(a => a.id == articleId);
+                if (articleIndex !== -1) {
+                    articles[articleIndex].status = status;
+                    articles[articleIndex].flagged = flagged;
+                    articles[articleIndex].comments = comments || null;
+                    articles[articleIndex].reviewed_at = new Date().toISOString();
+                }
                 
             } catch (error) {
                 console.error('保存エラー:', error);
