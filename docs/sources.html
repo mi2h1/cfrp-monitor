@@ -196,37 +196,23 @@
         </div>
 
         <!-- 統計情報 -->
-        <div id="statsContainer" class="row mb-4" style="display: none;">
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title text-success" id="autoCount">0</h5>
-                        <p class="card-text">自動収集中</p>
-                    </div>
+        <div id="statsContainer" class="mb-3" style="display: none;">
+            <div class="d-flex gap-3 align-items-center flex-wrap">
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-success me-2 fs-6" id="autoCount">0</span>
+                    <span class="text-muted">自動収集中</span>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title text-warning" id="manualCount">0</h5>
-                        <p class="card-text">手動のみ</p>
-                    </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-warning me-2 fs-6" id="manualCount">0</span>
+                    <span class="text-muted">手動のみ</span>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title text-danger" id="disabledCount">0</h5>
-                        <p class="card-text">無効</p>
-                    </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-danger me-2 fs-6" id="disabledCount">0</span>
+                    <span class="text-muted">無効</span>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title text-info" id="totalCount">0</h5>
-                        <p class="card-text">総計</p>
-                    </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-info me-2 fs-6" id="totalCount">0</span>
+                    <span class="text-muted">総計</span>
                 </div>
             </div>
         </div>
