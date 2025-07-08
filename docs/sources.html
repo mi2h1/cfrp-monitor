@@ -464,10 +464,10 @@
                                        data-id="${source.id}" value="${source.relevance || 0}" min="0" max="10">
                             </div>
                             <div class="col-md-5">
-                                <label class="form-label small">メモ:</label>
-                                <textarea class="form-control form-control-sm notes-textarea" 
+                                <label class="form-label small">備考:</label>
+                                <textarea class="form-control form-control-sm description-textarea" 
                                          data-id="${source.id}" rows="2" 
-                                         placeholder="メモ機能は現在無効（notesカラム未実装）" disabled>${escapeHtml(source.notes || '')}</textarea>
+                                         placeholder="備考・メモを入力...">${escapeHtml(source.description || '')}</textarea>
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <button class="btn btn-success btn-sm save-btn w-100" data-id="${source.id}">保存</button>
@@ -554,7 +554,7 @@
             const card = document.querySelector(`[data-id="${sourceId}"]`);
             const mode = card.querySelector('.mode-select').value;
             const relevance = parseInt(card.querySelector('.relevance-input').value) || 0;
-            const notes = card.querySelector('.notes-textarea')?.value || '';
+            const description = card.querySelector('.description-textarea')?.value || '';
             
             // URLリストを収集
             const urlInputs = card.querySelectorAll('.url-input');
@@ -566,14 +566,10 @@
                 const updateData = {
                     acquisition_mode: mode,
                     relevance: relevance,
+                    description: description || null,
                     urls: urls,
                     updated_at: new Date().toISOString()
                 };
-                
-                // notesカラムが存在する場合のみ追加
-                // if (notes.trim()) {
-                //     updateData.notes = notes;
-                // }
                 
                 const { error } = await supabase
                     .from('sources')
@@ -602,7 +598,7 @@
                 if (sourceIndex !== -1) {
                     sources[sourceIndex].acquisition_mode = mode;
                     sources[sourceIndex].relevance = relevance;
-                    // sources[sourceIndex].notes = notes || null; // notesカラムが存在しないためコメントアウト
+                    sources[sourceIndex].description = description || null;
                     sources[sourceIndex].urls = urls;
                     sources[sourceIndex].updated_at = new Date().toISOString();
                 }
