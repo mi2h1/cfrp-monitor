@@ -62,7 +62,7 @@
     <!-- ナビゲーションバー -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.8</small></a>
+            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.9</small></a>
             <div class="navbar-nav">
                 <a class="nav-link active" href="index.html">📰 記事管理</a>
                 <a class="nav-link" href="sources.html">📡 情報源管理</a>
@@ -368,20 +368,22 @@
                 <div class="compact-article-card ${flaggedClass}" data-id="${article.id}">
                     <div class="d-flex justify-content-between align-items-start">
                         <div class="flex-grow-1 me-3">
-                            <h6 class="mb-1">
-                                <a href="${article.url}" target="_blank" class="text-decoration-none" onclick="event.stopPropagation();">
-                                    ${escapeHtml(article.title || 'タイトルなし')}
-                                </a>
-                            </h6>
-                            <div class="d-flex align-items-center gap-3">
-                                <small class="text-muted">📅 ${pubDate}</small>
-                                <small class="text-muted">📰 ${sourceName}</small>
+                            <div class="d-flex align-items-center gap-2 mb-1">
                                 <span class="badge bg-${getStatusColor(article.status)} status-badge">
                                     ${getStatusLabel(article.status)}
                                 </span>
                                 ${article.flagged ? '<span class="badge bg-danger">重要</span>' : ''}
                             </div>
-                            ${article.comments ? `<small class="text-muted d-block mt-1">💬 ${escapeHtml(article.comments.substring(0, 100))}${article.comments.length > 100 ? '...' : ''}</small>` : ''}
+                            <h6 class="mb-1">
+                                <a href="${article.url}" target="_blank" class="text-decoration-none" onclick="event.stopPropagation();">
+                                    ${escapeHtml(article.title || 'タイトルなし')}
+                                </a>
+                            </h6>
+                            <div class="d-flex align-items-center gap-3 mb-1">
+                                <small class="text-muted">📅 ${pubDate}</small>
+                                <small class="text-muted">📰 ${sourceName}</small>
+                            </div>
+                            ${article.comments ? `<small class="text-muted d-block">💬 ${escapeHtml(article.comments.substring(0, 150))}${article.comments.length > 150 ? '...' : ''}</small>` : ''}
                         </div>
                         <div class="text-end">
                             <button class="btn btn-outline-primary btn-sm edit-article-btn" data-id="${article.id}" onclick="event.stopPropagation();">編集</button>
