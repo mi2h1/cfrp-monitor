@@ -467,7 +467,7 @@
                                 <label class="form-label small">メモ:</label>
                                 <textarea class="form-control form-control-sm notes-textarea" 
                                          data-id="${source.id}" rows="2" 
-                                         placeholder="メモを入力...">${escapeHtml(source.notes || '')}</textarea>
+                                         placeholder="メモ機能は現在無効（notesカラム未実装）" disabled>${escapeHtml(source.notes || '')}</textarea>
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <button class="btn btn-success btn-sm save-btn w-100" data-id="${source.id}">保存</button>
@@ -554,7 +554,7 @@
             const card = document.querySelector(`[data-id="${sourceId}"]`);
             const mode = card.querySelector('.mode-select').value;
             const relevance = parseInt(card.querySelector('.relevance-input').value) || 0;
-            const notes = card.querySelector('.notes-textarea').value;
+            const notes = card.querySelector('.notes-textarea')?.value || '';
             
             // URLリストを収集
             const urlInputs = card.querySelectorAll('.url-input');
@@ -563,15 +563,21 @@
                 .filter(url => url.length > 0);
             
             try {
+                const updateData = {
+                    acquisition_mode: mode,
+                    relevance: relevance,
+                    urls: urls,
+                    updated_at: new Date().toISOString()
+                };
+                
+                // notesカラムが存在する場合のみ追加
+                // if (notes.trim()) {
+                //     updateData.notes = notes;
+                // }
+                
                 const { error } = await supabase
                     .from('sources')
-                    .update({
-                        acquisition_mode: mode,
-                        relevance: relevance,
-                        notes: notes || null,
-                        urls: urls,
-                        updated_at: new Date().toISOString()
-                    })
+                    .update(updateData)
                     .eq('id', sourceId);
                 
                 if (error) throw error;
@@ -596,7 +602,7 @@
                 if (sourceIndex !== -1) {
                     sources[sourceIndex].acquisition_mode = mode;
                     sources[sourceIndex].relevance = relevance;
-                    sources[sourceIndex].notes = notes || null;
+                    // sources[sourceIndex].notes = notes || null; // notesカラムが存在しないためコメントアウト
                     sources[sourceIndex].urls = urls;
                     sources[sourceIndex].updated_at = new Date().toISOString();
                 }
