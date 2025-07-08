@@ -34,6 +34,11 @@
         .auto-source {
             border-left: 4px solid #198754;
         }
+        .deleted-source {
+            opacity: 0.5;
+            border-left: 4px solid #6c757d;
+            background: #f8f9fa;
+        }
         .controls {
             background-color: #f8f9fa;
             padding: 0.75rem;
@@ -162,6 +167,14 @@
                     </select>
                 </div>
                 <div class="col-auto">
+                    <label for="deletedFilter" class="form-label">表示:</label>
+                    <select id="deletedFilter" class="form-select form-select-sm">
+                        <option value="active">有効のみ</option>
+                        <option value="all">削除済み含む</option>
+                        <option value="deleted">削除済みのみ</option>
+                    </select>
+                </div>
+                <div class="col-auto">
                     <label for="categoryFilter" class="form-label">カテゴリ:</label>
                     <select id="categoryFilter" class="form-select form-select-sm">
                         <option value="">全て</option>
@@ -251,10 +264,18 @@
         // 情報源一覧を読み込み
         async function loadSources() {
             try {
-                const { data, error } = await supabase
-                    .from('sources')
-                    .select('*')
-                    .order('name');
+                const deletedFilter = document.getElementById('deletedFilter')?.value || 'active';
+                let query = supabase.from('sources').select('*');
+                
+                // 削除フィルターに応じてクエリを調整
+                if (deletedFilter === 'active') {
+                    query = query.or('deleted.eq.false,deleted.is.null');
+                } else if (deletedFilter === 'deleted') {
+                    query = query.eq('deleted', true);
+                }
+                // 'all'の場合はフィルタなし
+                
+                const { data, error } = await query.order('name');
                 
                 if (error) throw error;
                 
@@ -362,7 +383,8 @@
 
         // コンパクトな情報源カードを作成
         function createCompactSourceCard(source) {
-            const modeClass = source.acquisition_mode === 'disabled' ? 'disabled-source' :
+            const modeClass = source.deleted ? 'deleted-source' :
+                             source.acquisition_mode === 'disabled' ? 'disabled-source' :
                              source.acquisition_mode === 'manual' ? 'manual-source' : 'auto-source';
             
             const urls = Array.isArray(source.urls) ? source.urls : [];
@@ -380,9 +402,12 @@
                             <span>📂 ${source.category || 'その他'}</span>
                             <span>🌍 ${source.country_code || '?'}</span>
                             <span>⭐ ${source.relevance || 0}</span>
-                            <span class="badge bg-${getModeColor(source.acquisition_mode)} ms-2">
-                                ${getModeLabel(source.acquisition_mode)}
-                            </span>
+                            ${source.deleted ? 
+                                '<span class="badge bg-secondary ms-2">削除済み</span>' :
+                                `<span class="badge bg-${getModeColor(source.acquisition_mode)} ms-2">
+                                    ${getModeLabel(source.acquisition_mode)}
+                                </span>`
+                            }
                         </div>
                     </div>
                 </div>
@@ -517,6 +542,11 @@
             // フィルター・ソート変更時
             ['modeFilter', 'categoryFilter', 'countryFilter', 'sortOrder'].forEach(id => {
                 document.getElementById(id).addEventListener('change', renderSources);
+            });
+            
+            // 削除フィルター変更時は再読み込み
+            document.getElementById('deletedFilter').addEventListener('change', async () => {
+                await loadSources();
             });
 
             // 更新ボタン
@@ -783,16 +813,19 @@
             }
             
             // 削除確認
-            const confirmMessage = `「${source.name || source.domain}」を削除してもよろしいですか？\n\nこの操作は取り消せません。`;
+            const confirmMessage = `「${source.name || source.domain}」を削除してもよろしいですか？\n\nこの情報源は一覧から除外され、自動収集も停止します。`;
             if (!confirm(confirmMessage)) {
                 return;
             }
             
             try {
-                // データベースから削除
+                // 論理削除（deletedフラグをtrueに設定）
                 const { error } = await supabase
                     .from('sources')
-                    .delete()
+                    .update({ 
+                        deleted: true,
+                        updated_at: new Date().toISOString()
+                    })
                     .eq('id', currentEditingSourceId);
                 
                 if (error) throw error;
