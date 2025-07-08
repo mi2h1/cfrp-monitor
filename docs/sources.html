@@ -370,6 +370,7 @@
                         <div class="compact-main">
                             <h6 class="mb-1">${escapeHtml(source.name || source.domain)}</h6>
                             <div class="small text-muted">${escapeHtml(primaryUrl)}</div>
+                            ${source.description ? `<div class="small text-info mt-1">💬 ${escapeHtml(source.description)}</div>` : ''}
                         </div>
                         <div class="compact-meta">
                             <span>📂 ${source.category || 'その他'}</span>
