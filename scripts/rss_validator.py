@@ -29,7 +29,7 @@ class RSSValidator:
                 'item_count': int,
                 'latest_item': Dict or None,
                 'error': str or None,
-                'recommended_mode': 'auto' | 'manual' | 'disabled'
+                'recommended_mode': 'auto' | 'new'
             }
         """
         result = {
@@ -39,7 +39,7 @@ class RSSValidator:
             'item_count': 0,
             'latest_item': None,
             'error': None,
-            'recommended_mode': 'disabled'
+            'recommended_mode': 'new'
         }
         
         try:
@@ -48,17 +48,17 @@ class RSSValidator:
             
             if response.status_code == 403:
                 result['error'] = 'Access Forbidden (403)'
-                result['recommended_mode'] = 'manual'  # 手動チェック推奨
+                result['recommended_mode'] = 'new'  # 新規追加として要確認
                 return result
                 
             if response.status_code == 404:
                 result['error'] = 'Not Found (404)'
-                result['recommended_mode'] = 'disabled'
+                result['recommended_mode'] = 'new'  # 要確認
                 return result
                 
             if response.status_code != 200:
                 result['error'] = f'HTTP Error {response.status_code}'
-                result['recommended_mode'] = 'manual'
+                result['recommended_mode'] = 'new'
                 return result
             
             result['accessible'] = True
@@ -70,7 +70,7 @@ class RSSValidator:
             if hasattr(feed, 'bozo') and feed.bozo:
                 if hasattr(feed, 'bozo_exception'):
                     result['error'] = f'Parse error: {str(feed.bozo_exception)[:100]}'
-                result['recommended_mode'] = 'manual'
+                result['recommended_mode'] = 'new'
                 return result
             
             # フィードタイプ判定
@@ -97,20 +97,20 @@ class RSSValidator:
                     result['recommended_mode'] = 'auto'  # 自動収集可能
                 else:
                     result['error'] = 'No entries found'
-                    result['recommended_mode'] = 'manual'
+                    result['recommended_mode'] = 'new'
             else:
                 result['error'] = 'No feed entries'
-                result['recommended_mode'] = 'disabled'
+                result['recommended_mode'] = 'new'
                 
         except requests.exceptions.Timeout:
             result['error'] = 'Timeout'
-            result['recommended_mode'] = 'manual'
+            result['recommended_mode'] = 'new'
         except requests.exceptions.SSLError:
             result['error'] = 'SSL Error'
-            result['recommended_mode'] = 'manual'
+            result['recommended_mode'] = 'new'
         except Exception as e:
             result['error'] = f'Error: {str(e)[:100]}'
-            result['recommended_mode'] = 'disabled'
+            result['recommended_mode'] = 'new'
         
         return result
     
@@ -186,7 +186,7 @@ def validate_new_source(domain: str, urls: List[str] = None) -> Dict:
             return {
                 'domain': domain,
                 'rss_found': False,
-                'recommended_mode': 'manual',
+                'recommended_mode': 'new',
                 'reason': 'No RSS URLs found'
             }
     
@@ -205,8 +205,8 @@ def validate_new_source(domain: str, urls: List[str] = None) -> Dict:
                 'reason': 'Valid RSS feed found'
             }
         
-        # 有効でなくても、手動チェック推奨の場合は保持
-        if not best_result or result['recommended_mode'] == 'manual':
+        # 有効でなくても、新規追加推奨の場合は保持
+        if not best_result or result['recommended_mode'] == 'new':
             best_result = result
             best_result['url'] = url
     
@@ -223,7 +223,7 @@ def validate_new_source(domain: str, urls: List[str] = None) -> Dict:
     return {
         'domain': domain,
         'rss_found': False,
-        'recommended_mode': 'disabled',
+        'recommended_mode': 'new',
         'reason': 'No accessible URLs found'
     }
 

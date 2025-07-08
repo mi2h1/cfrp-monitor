@@ -34,6 +34,9 @@
         .auto-source {
             border-left: 4px solid #198754;
         }
+        .new-source {
+            border-left: 4px solid #0dcaf0;
+        }
         .deleted-source {
             opacity: 0.5;
             border-left: 4px solid #6c757d;
@@ -178,7 +181,7 @@
     <!-- ナビゲーションバー -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.3</small></a>
+            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.4</small></a>
             <div class="navbar-nav">
                 <a class="nav-link" href="index.html">📰 記事管理</a>
                 <a class="nav-link active" href="sources.html">📡 情報源管理</a>
@@ -197,6 +200,7 @@
                         <option value="auto">自動収集</option>
                         <option value="manual">手動のみ</option>
                         <option value="disabled">無効</option>
+                        <option value="new">新規追加</option>
                     </select>
                 </div>
                 <div class="col-auto">
@@ -255,6 +259,10 @@
                 <div class="d-flex align-items-center">
                     <span class="badge bg-danger me-2 fs-6" id="disabledCount">0</span>
                     <span class="text-muted">無効</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-info me-2 fs-6" id="newCount">0</span>
+                    <span class="text-muted">新規追加</span>
                 </div>
                 <div class="d-flex align-items-center">
                     <span class="badge bg-info me-2 fs-6" id="totalCount">0</span>
@@ -374,12 +382,14 @@
                 auto: filtered.filter(s => s.acquisition_mode === 'auto').length,
                 manual: filtered.filter(s => s.acquisition_mode === 'manual').length,
                 disabled: filtered.filter(s => s.acquisition_mode === 'disabled').length,
+                new: filtered.filter(s => s.acquisition_mode === 'new').length,
                 total: filtered.length
             };
 
             document.getElementById('autoCount').textContent = stats.auto;
             document.getElementById('manualCount').textContent = stats.manual;
             document.getElementById('disabledCount').textContent = stats.disabled;
+            document.getElementById('newCount').textContent = stats.new;
             document.getElementById('totalCount').textContent = stats.total;
         }
 
@@ -435,7 +445,8 @@
         function createCompactSourceCard(source) {
             const modeClass = source.deleted ? 'deleted-source' :
                              source.acquisition_mode === 'disabled' ? 'disabled-source' :
-                             source.acquisition_mode === 'manual' ? 'manual-source' : 'auto-source';
+                             source.acquisition_mode === 'manual' ? 'manual-source' :
+                             source.acquisition_mode === 'new' ? 'new-source' : 'auto-source';
             
             const urls = Array.isArray(source.urls) ? source.urls : [];
             const primaryUrl = urls.length > 0 ? urls[0] : source.domain;
@@ -467,7 +478,8 @@
         // 詳細編集用の情報源カードを作成
         function createDetailSourceCard(source) {
             const modeClass = source.acquisition_mode === 'disabled' ? 'disabled-source' :
-                             source.acquisition_mode === 'manual' ? 'manual-source' : 'auto-source';
+                             source.acquisition_mode === 'manual' ? 'manual-source' :
+                             source.acquisition_mode === 'new' ? 'new-source' : 'auto-source';
             
             const urls = Array.isArray(source.urls) ? source.urls : [];
             const policyUrl = source.policy_url;
@@ -536,6 +548,7 @@
                                     <option value="auto" ${source.acquisition_mode === 'auto' ? 'selected' : ''}>自動収集</option>
                                     <option value="manual" ${source.acquisition_mode === 'manual' ? 'selected' : ''}>手動のみ</option>
                                     <option value="disabled" ${source.acquisition_mode === 'disabled' ? 'selected' : ''}>無効</option>
+                                    <option value="new" ${source.acquisition_mode === 'new' ? 'selected' : ''}>新規追加</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -564,7 +577,8 @@
             const colors = {
                 'auto': 'success',
                 'manual': 'warning',
-                'disabled': 'danger'
+                'disabled': 'danger',
+                'new': 'info'
             };
             return colors[mode] || 'secondary';
         }
@@ -574,7 +588,8 @@
             const labels = {
                 'auto': '自動収集',
                 'manual': '手動のみ',
-                'disabled': '無効'
+                'disabled': '無効',
+                'new': '新規追加'
             };
             return labels[mode] || '不明';
         }
@@ -678,7 +693,8 @@
                 
                 // カードのスタイルを更新
                 card.className = `source-card ${mode === 'disabled' ? 'disabled-source' : 
-                                               mode === 'manual' ? 'manual-source' : 'auto-source'}`;
+                                               mode === 'manual' ? 'manual-source' :
+                                               mode === 'new' ? 'new-source' : 'auto-source'}`;
                 
                 // ソースデータを更新
                 const sourceIndex = sources.findIndex(s => s.id == sourceId);
