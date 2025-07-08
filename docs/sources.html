@@ -59,6 +59,31 @@
             font-size: 0.8rem;
             margin-top: 0.25rem;
         }
+        .url-editor {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .url-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.25rem;
+            gap: 0.5rem;
+        }
+        .url-input {
+            flex: 1;
+        }
+        .url-actions {
+            display: flex;
+            gap: 0.25rem;
+        }
+        .add-url-section {
+            border-top: 1px solid #dee2e6;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -312,12 +337,36 @@
                         <span class="me-3">⭐ ${source.relevance || 0}</span>
                     </div>
                     
-                    ${urls.length > 0 ? `
-                        <div class="url-list mb-2">
-                            <strong>RSS/URL:</strong>
-                            ${urls.map(url => `<div><a href="${url}" target="_blank" class="text-decoration-none small">${url}</a></div>`).join('')}
+                    <div class="url-editor mb-2">
+                        <strong>RSS/URL:</strong>
+                        <div class="url-container" data-id="${source.id}">
+                            ${urls.map((url, index) => `
+                                <div class="url-item" data-index="${index}">
+                                    <input type="url" class="form-control form-control-sm url-input" 
+                                           value="${escapeHtml(url)}" placeholder="https://example.com/feed.xml">
+                                    <div class="url-actions">
+                                        <button class="btn btn-outline-primary btn-sm test-url-btn" 
+                                                data-url="${escapeHtml(url)}" title="URLをテスト">
+                                            🔍
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm remove-url-btn" 
+                                                title="URLを削除">
+                                            ✕
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                            <div class="add-url-section">
+                                <div class="input-group input-group-sm">
+                                    <input type="url" class="form-control new-url-input" 
+                                           placeholder="新しいURLを追加...">
+                                    <button class="btn btn-outline-success add-url-btn" type="button">
+                                        ➕ 追加
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    ` : ''}
+                    </div>
                     
                     ${policyUrl ? `
                         <div class="policy-url">
@@ -399,10 +448,16 @@
                 document.getElementById('refreshBtn').disabled = false;
             });
 
-            // 保存ボタンのイベント委譲
+            // 保存ボタンとURL操作のイベント委譲
             document.getElementById('sourcesContainer').addEventListener('click', async (e) => {
                 if (e.target.classList.contains('save-btn')) {
                     await saveSource(e.target.dataset.id);
+                } else if (e.target.classList.contains('add-url-btn')) {
+                    addNewUrl(e.target);
+                } else if (e.target.classList.contains('remove-url-btn')) {
+                    removeUrl(e.target);
+                } else if (e.target.classList.contains('test-url-btn')) {
+                    await testUrl(e.target);
                 }
             });
         }
@@ -414,6 +469,12 @@
             const relevance = parseInt(card.querySelector('.relevance-input').value) || 0;
             const notes = card.querySelector('.notes-textarea').value;
             
+            // URLリストを収集
+            const urlInputs = card.querySelectorAll('.url-input');
+            const urls = Array.from(urlInputs)
+                .map(input => input.value.trim())
+                .filter(url => url.length > 0);
+            
             try {
                 const { error } = await supabase
                     .from('sources')
@@ -421,6 +482,7 @@
                         acquisition_mode: mode,
                         relevance: relevance,
                         notes: notes || null,
+                        urls: urls,
                         updated_at: new Date().toISOString()
                     })
                     .eq('id', sourceId);
@@ -448,6 +510,116 @@
             } catch (error) {
                 console.error('保存エラー:', error);
                 alert('保存に失敗しました: ' + error.message);
+            }
+        }
+
+        // 新しいURLを追加
+        function addNewUrl(button) {
+            const container = button.closest('.url-container');
+            const newUrlInput = container.querySelector('.new-url-input');
+            const newUrl = newUrlInput.value.trim();
+            
+            if (!newUrl) {
+                alert('URLを入力してください');
+                return;
+            }
+            
+            if (!isValidUrl(newUrl)) {
+                alert('有効なURLを入力してください');
+                return;
+            }
+            
+            // 重複チェック
+            const existingUrls = Array.from(container.querySelectorAll('.url-input'))
+                .map(input => input.value.trim());
+            if (existingUrls.includes(newUrl)) {
+                alert('このURLは既に存在します');
+                return;
+            }
+            
+            // 新しいURL項目を作成
+            const urlItemsContainer = container.querySelector('.add-url-section');
+            const newUrlItem = document.createElement('div');
+            newUrlItem.className = 'url-item';
+            newUrlItem.innerHTML = `
+                <input type="url" class="form-control form-control-sm url-input" 
+                       value="${escapeHtml(newUrl)}" placeholder="https://example.com/feed.xml">
+                <div class="url-actions">
+                    <button class="btn btn-outline-primary btn-sm test-url-btn" 
+                            data-url="${escapeHtml(newUrl)}" title="URLをテスト">
+                        🔍
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm remove-url-btn" 
+                            title="URLを削除">
+                        ✕
+                    </button>
+                </div>
+            `;
+            
+            // 追加セクションの前に挿入
+            urlItemsContainer.parentNode.insertBefore(newUrlItem, urlItemsContainer);
+            
+            // 入力欄をクリア
+            newUrlInput.value = '';
+        }
+
+        // URLを削除
+        function removeUrl(button) {
+            const urlItem = button.closest('.url-item');
+            const container = button.closest('.url-container');
+            
+            // 最後のURL項目は削除を確認
+            const urlItems = container.querySelectorAll('.url-item');
+            if (urlItems.length === 1) {
+                if (!confirm('最後のURLを削除してもよろしいですか？')) {
+                    return;
+                }
+            }
+            
+            urlItem.remove();
+        }
+
+        // URLをテスト
+        async function testUrl(button) {
+            const url = button.dataset.url || button.closest('.url-item').querySelector('.url-input').value;
+            if (!url) return;
+            
+            button.disabled = true;
+            button.innerHTML = '⏳';
+            
+            try {
+                // CORS制限があるため、簡易的なチェックのみ
+                const response = await fetch(url, {
+                    method: 'HEAD',
+                    mode: 'no-cors'
+                });
+                
+                button.innerHTML = '✅';
+                button.className = 'btn btn-outline-success btn-sm test-url-btn';
+                setTimeout(() => {
+                    button.innerHTML = '🔍';
+                    button.className = 'btn btn-outline-primary btn-sm test-url-btn';
+                }, 3000);
+                
+            } catch (error) {
+                button.innerHTML = '❌';
+                button.className = 'btn btn-outline-danger btn-sm test-url-btn';
+                setTimeout(() => {
+                    button.innerHTML = '🔍';
+                    button.className = 'btn btn-outline-primary btn-sm test-url-btn';
+                }, 3000);
+            }
+            
+            button.disabled = false;
+        }
+
+        // URL形式チェック
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
             }
         }
     </script>
