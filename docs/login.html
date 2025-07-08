@@ -245,10 +245,26 @@
             }
         });
 
-        // Enterキーでフォーム送信
+        // Enterキーでフォーム送信（ログインフォーム）
         document.getElementById('userId').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+                e.preventDefault();
+                document.getElementById('loginForm').requestSubmit();
+            }
+        });
+
+        // Enterキーでフォーム送信（新規登録フォーム）
+        document.getElementById('newUserId').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('registerForm').requestSubmit();
+            }
+        });
+
+        document.getElementById('displayName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('registerForm').requestSubmit();
             }
         });
     </script>

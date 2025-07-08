@@ -6,6 +6,60 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// 認証管理
+function getCurrentUser() {
+    const userId = localStorage.getItem('currentUser');
+    const userData = localStorage.getItem('currentUserData');
+    
+    if (userId && userData) {
+        return {
+            userId: userId,
+            data: JSON.parse(userData)
+        };
+    }
+    return null;
+}
+
+function isLoggedIn() {
+    return getCurrentUser() !== null;
+}
+
+function logout() {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUserData');
+    window.location.href = 'login.html';
+}
+
+// ログイン状態の表示とログアウト機能を設定
+function setupAuthUI() {
+    const userInfo = document.getElementById('userInfo');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    if (!userInfo || !logoutBtn) return;
+    
+    const user = getCurrentUser();
+    if (user) {
+        userInfo.textContent = `👤 ${user.data.display_name || user.userId}`;
+        logoutBtn.style.display = 'block';
+        
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('ログアウトしますか？')) {
+                logout();
+            }
+        });
+    } else {
+        // 未ログインの場合はログインページにリダイレクト
+        if (!window.location.pathname.includes('login.html')) {
+            window.location.href = 'login.html';
+        }
+    }
+}
+
+// ページ読み込み時に認証状態をチェック
+document.addEventListener('DOMContentLoaded', () => {
+    setupAuthUI();
+});
+
 // ユーティリティ関数
 function escapeHtml(text) {
     if (!text) return '';
