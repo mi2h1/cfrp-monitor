@@ -1,126 +1,181 @@
 # CFRP Monitor
 
-複合材料（CFRP・GFRP・AFRP等）に関する最新情報を自動収集・分析するシステム
+複合材料（CFRP・GFRP・AFRP等）に関する最新情報を自動収集・管理するWebアプリケーション
 
-## 📊 Live Dashboard
+## 🌐 Live Dashboard
 
 ### 📰 記事管理ダッシュボード
 **🔗 https://mi2h1.github.io/cfrp-monitor/**
-- 収集された記事の閲覧・分析・管理
+- 収集記事の閲覧・編集・管理
 - ステータス管理（未読・確認済み・フラグ付き・アーカイブ）
-- 高度なフィルタリング・検索機能
+- コメント機能・重要度フラグ
+- 高度なフィルタリング・ソート機能
 
 ### 📡 情報源管理ダッシュボード  
 **🔗 https://mi2h1.github.io/cfrp-monitor/sources.html**
-- 情報源の状態監視・設定管理
-- URL編集・追加・削除機能
-- 取得モード制御（自動・手動・無効）
+- 情報源の監視・設定管理
+- URL編集・RSS検証機能
+- 取得モード制御（自動・手動・停止中・新規追加）
+- 最終収集日時の表示
 
-## 📋 システム概要
+## 🔐 認証システム
+
+- **ID認証**: シンプルなユーザーID方式
+- **編集権限**: 認証ユーザーのみ記事・情報源の編集可能
+- **セキュリティ**: Supabase RLS（Row Level Security）で保護
+
+## 📊 システム概要
 
 ### 自動情報収集システム
-- **10個の情報源**から毎日自動データ収集
-- **学術論文** (arXiv、MDPI各誌) + **業界ニュース** (SAMPE、ACMA、AVK-TV等)
-- **多言語対応** (英語・日本語・ドイツ語・中国語)
-- **日本時間** でのタイムスタンプ管理
+- **複数の情報源**から定期的な自動データ収集
+- **学術論文** + **業界ニュース** + **メーカー情報**
+- **多言語対応** (英語・日本語・ドイツ語・中国語・韓国語)
+- **日本時間（JST）** でのタイムスタンプ管理
 
-### データベース (Supabase)
-- **itemsテーブル**: 収集された記事データ
-- **sourcesテーブル**: 情報源管理
-- **自動重複除去** & **本文スクレイピング**
+### データベース (Supabase PostgreSQL)
+- **itemsテーブル**: 収集記事データ（タイトル・本文・URL・ステータス等）
+- **sourcesテーブル**: 情報源管理（URL・カテゴリ・取得モード・最終収集日時等）
+- **usersテーブル**: ユーザー認証管理
+- **自動重複除去** & **本文抽出**
 
-### 自動化機能
-
-#### 📅 日次実行 (GitHub Actions)
-- 新着記事の自動収集
-- 古いrawデータの自動削除 (30日経過後)
-
-#### 🔍 週次実行 (毎日曜日)
-- **新情報源の自動発見**
-- 品質評価・自動承認
-- Pull Request自動作成
+### 取得モード
+- **auto**: 自動収集対象（定時処理で記事を取得）
+- **manual**: 手動確認のみ（自動収集しない）
+- **disabled**: 停止中（一時的に無効化）
+- **new**: 新規追加（RSS検証待ち）
 
 ## 🗂️ ファイル構成
 
 ```
 cfrp-monitor/
-├── README.md                    # このファイル
-├── docs/                        # ダッシュボード
-│   ├── index.html              # 記事管理ダッシュボード
-│   └── sources.html            # 情報源管理ダッシュボード
-├── scripts/                     # Python スクリプト
-│   ├── crawl.py                # 日次データ収集
-│   ├── discover_*.py           # 情報源自動発見 (4ファイル)
-│   ├── auto_approve_sources.py # 品質評価・自動承認
-│   ├── rebuild_database.py     # データベース再構築
-│   ├── cleanup_raw.py          # 古いデータ削除
-│   └── fetcher.py              # データ取得ライブラリ
-├── .github/workflows/           # GitHub Actions
-│   ├── crawl.yml               # 日次クロール
-│   └── discover_sources.yml    # 週次情報源発見
-├── raw/                        # 生データ保管
-│   └── YYYY-MM-DD/             # 日付別フォルダ
-└── requirements.txt            # Python依存関係
+├── README.md                          # このファイル
+├── docs/                              # GitHub Pages ダッシュボード
+│   ├── index.html                     # 記事管理（認証必須）
+│   ├── sources.html                   # 情報源管理（認証必須）
+│   ├── login.html                     # ログイン・新規登録
+│   ├── common.css                     # 共通スタイル
+│   ├── articles.css                   # 記事管理用スタイル
+│   ├── sources.css                    # 情報源管理用スタイル
+│   ├── common.js                      # 共通JavaScript（認証・Supabase）
+│   ├── articles.js                    # 記事管理JavaScript
+│   └── sources.js                     # 情報源管理JavaScript（開発中）
+├── scripts/                           # Python自動化スクリプト
+│   ├── add_*.py                       # 情報源追加スクリプト
+│   ├── find_policy_urls*.py          # プライバシーポリシー自動検索
+│   ├── verify_fix_urls.py            # URL検証・修正
+│   ├── use_acquisition_mode_control.py # 取得モード制御
+│   ├── add_html_scraping_support.py   # HTMLスクレイピング対応
+│   └── update_collection_timestamp.py # 収集タイムスタンプ更新
+├── *.sql                              # データベーススキーマ・設定ファイル
+│   ├── setup_auth_*.sql              # 認証システム設定
+│   ├── add_*.sql                     # カラム追加SQL
+│   └── check_rls.sql                 # RLS権限確認
+└── requirements.txt                   # Python依存関係
 ```
 
-## 🚀 情報源 (10個)
+## 🌍 情報源カテゴリ
 
-### 📰 業界ニュース (6個)
-- **CompositesWorld** (US) - 複合材料業界最大手
-- **SAMPE** (US) - 先進材料学会
-- **ACMA** (US) - 米国複合材料製造業協会  
-- **AVK-TV** (DE) - ドイツ複合材料協会
-- **Manufacturing.net** (US) - 製造業情報
-- **Chemical Processing** (US) - 化学工業情報
+### 📰 業界ニュース・協会
+- 複合材料業界の最新ニュース・技術情報
+- 学会・協会の発表・イベント情報
+- メーカーのプレスリリース
 
-### 🔬 学術論文 (4個)
-- **arXiv Enhanced** - 複合材料全般の学術論文
-- **MDPI Composites Science** - 複合材料専門誌
-- **MDPI Polymers** - ポリマー基複合材料
-- **MDPI Materials** - 材料科学誌
+### 🔬 学術論文・研究
+- arXiv複合材料論文
+- MDPI各誌（Composites Science、Polymers、Materials等）
+- 大学・研究機関の発表
+
+### 🏭 メーカー・企業情報
+- 主要複合材料メーカーのニュース
+- 新製品・技術発表
+- 業界動向・市場情報
+
+### 🌏 地域別
+- **日本**: 東レ、帝人、三菱ケミカル等
+- **アメリカ**: SAMPE、ACMA、CompositesWorld等
+- **ヨーロッパ**: AVK-TV、Hexcel等
+- **アジア**: 中国・韓国の複合材料情報
 
 ## 🔧 技術スタック
 
+### フロントエンド
+- **HTML5/CSS3/JavaScript ES6+**
+- **Bootstrap 5** - UIフレームワーク
+- **GitHub Pages** - 静的サイトホスティング
+
+### バックエンド・データベース
+- **Supabase** (PostgreSQL) - データベース・認証
+- **Row Level Security (RLS)** - データアクセス制御
+- **Real-time subscriptions** - リアルタイム更新
+
+### 自動化・スクリプト
 - **Python 3** - データ収集・処理
-- **Supabase** (PostgreSQL) - データベース
-- **GitHub Actions** - 自動実行
-- **HTML/JavaScript** - ダッシュボード
-- **RSS/API** - データソース
+- **RSS/Atom フィード** - 記事取得
+- **BeautifulSoup** - HTMLパース
+- **Requests** - HTTP通信
 
 ## 📊 データフロー
 
 ```
-情報源 (RSS/API) 
-    ↓ 
-日次クロール (crawl.py)
-    ↓
-データ処理 & 本文抽出
-    ↓
-Supabase データベース
-    ↓
+情報源（RSS/HTML）
+    ↓ Python スクリプト
+データ収集・処理
+    ↓ 重複除去・本文抽出
+Supabase PostgreSQL
+    ↓ Real-time API
 ダッシュボード表示
+    ↓ ユーザー編集
+データ更新（JST）
 ```
 
-## ⚙️ 自動発見システム
+## 🔍 情報源管理機能
 
-### 🔍 発見手法
-1. **Webスクレイピング** - 複合材料キーワード検索
-2. **記事内リンク分析** - 既存記事からの参照先抽出
-3. **多言語検索** - 中国語・ドイツ語・日本語対応
-4. **学術データベース連携** - 人気著者・機関・学会の特定
+### 自動検証
+- **RSS検証**: フィード形式・アクセス可能性チェック
+- **URL修正**: ドメイン・パス自動修正
+- **プライバシーポリシー**: 自動検索・設定
 
-### 📈 品質評価
-- **関連度スコア** (70%重視)
-- **ドメイン信頼性** (.edu, .org優遇)
-- **更新頻度** & **言語多様性**
-- **70点以上**: 自動承認
-- **40-69点**: 手動レビュー
+### 手動管理
+- **URL編集**: RSS URLの追加・編集・削除
+- **取得モード変更**: auto/manual/disabled/new
+- **備考・説明**: 情報源の詳細メモ
+- **論理削除**: データ保持しつつ非表示化
 
-## 🕐 実行スケジュール
+### 統計・監視
+- **収集統計**: モード別カウント表示
+- **最終収集日時**: 自動収集の実行記録（新記事発見時のみ更新）
+- **フィルタリング**: カテゴリ・国・モード・削除状態
 
-- **毎日 6:00 JST**: データ収集 + 古いrawデータ削除
-- **毎週日曜**: 新情源発見 + 品質評価 + PR作成
+## 🛡️ セキュリティ
+
+### 認証・認可
+- **ユーザー認証**: localStorage基盤の簡易認証
+- **アクセス制御**: 未認証時は自動ログインページリダイレクト
+- **データ保護**: Supabase RLS によるテーブルレベル保護
+
+### データ管理
+- **論理削除**: 物理削除せず削除フラグで管理
+- **重複防止**: 情報源自動発見時の重複チェック
+- **データ整合性**: 外部キー制約・バリデーション
+
+## ⚙️ 運用・メンテナンス
+
+### 定期メンテナンス
+- 新情報源の追加・検証
+- 無効URLの修正・削除
+- 収集頻度の調整
+
+### 監視項目
+- 各情報源の収集成功率
+- 新記事の取得状況
+- システムエラー・例外
+
+### バックアップ・復旧
+- Supabaseの自動バックアップ
+- 設定データのGit管理
+- スクリプトによるデータ復旧
 
 ---
 
-**🤖 Powered by Claude Code - 自動化された複合材料情報モニタリングシステム**
+**🚀 Next Generation CFRP Information Monitoring System**  
+**🤖 Powered by Claude Code - Intelligent Automation for Composite Materials Research**
