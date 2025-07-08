@@ -32,10 +32,15 @@ function logout() {
 
 // ログイン状態の表示とログアウト機能を設定
 function setupAuthUI() {
+    console.log('setupAuthUI called');
     const userInfo = document.getElementById('userInfo');
     const logoutBtn = document.getElementById('logoutBtn');
     
-    if (!userInfo || !logoutBtn) return;
+    console.log('userInfo:', userInfo, 'logoutBtn:', logoutBtn);
+    if (!userInfo || !logoutBtn) {
+        console.log('userInfo or logoutBtn not found, returning');
+        return;
+    }
     
     const user = getCurrentUser();
     if (user) {
