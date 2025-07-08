@@ -161,9 +161,11 @@
                 return;
             }
             
+            // 認証UIを先に設定
+            setupAuthUI();
+            
             await loadSources();
             setupEventListeners();
-            setupAuthUI();
         });
 
         // 情報源一覧を読み込み
