@@ -2,9 +2,10 @@
 
 複合材料（CFRP・GFRP・AFRP等）に関する最新情報を自動収集・分析するシステム
 
-## 🔗 ダッシュボード
+## 📊 Live Dashboard
+**🔗 https://mi2h1.github.io/cfrp-monitor/**
 
-**<a href="https://mi2h1.github.io/cfrp-monitor/" target="_blank">📊 Live Dashboard</a>** - 収集データの可視化・分析
+収集データの可視化・分析 (右クリック → 新しいタブで開く)
 
 ## 📋 システム概要
 
