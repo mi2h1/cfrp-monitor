@@ -246,25 +246,25 @@
         });
 
         // Enterキーでフォーム送信（ログインフォーム）
-        document.getElementById('userId').addEventListener('keypress', (e) => {
+        document.getElementById('userId').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                document.getElementById('loginForm').requestSubmit();
+                document.getElementById('loginForm').querySelector('button[type="submit"]').click();
             }
         });
 
         // Enterキーでフォーム送信（新規登録フォーム）
-        document.getElementById('newUserId').addEventListener('keypress', (e) => {
+        document.getElementById('newUserId').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                document.getElementById('registerForm').requestSubmit();
+                document.getElementById('registerForm').querySelector('button[type="submit"]').click();
             }
         });
 
-        document.getElementById('displayName').addEventListener('keypress', (e) => {
+        document.getElementById('displayName').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                document.getElementById('registerForm').requestSubmit();
+                document.getElementById('registerForm').querySelector('button[type="submit"]').click();
             }
         });
     </script>
