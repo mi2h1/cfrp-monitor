@@ -221,7 +221,10 @@
         <div id="editModeContainer" class="edit-mode-container">
             <div class="edit-header">
                 <h5 class="mb-0">情報源編集</h5>
-                <button type="button" class="btn btn-outline-secondary btn-sm btn-close-edit">✕ 閉じる</button>
+                <div>
+                    <button type="button" class="btn btn-outline-danger btn-sm btn-delete-source me-2">🗑️ 削除</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm btn-close-edit">✕ 閉じる</button>
+                </div>
             </div>
             <div id="editModeContent"></div>
         </div>
@@ -237,6 +240,7 @@
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let sources = [];
+        let currentEditingSourceId = null;
 
         // 初期化
         document.addEventListener('DOMContentLoaded', async () => {
@@ -546,6 +550,8 @@
                     await testUrl(e.target);
                 } else if (e.target.classList.contains('btn-close-edit')) {
                     closeEditMode();
+                } else if (e.target.classList.contains('btn-delete-source')) {
+                    await deleteSource();
                 }
             });
         }
@@ -738,6 +744,9 @@
                 return;
             }
             
+            // 現在編集中のソースIDを保存
+            currentEditingSourceId = sourceId;
+            
             const editContainer = document.getElementById('editModeContainer');
             const editContent = document.getElementById('editModeContent');
             
@@ -757,6 +766,53 @@
         function closeEditMode() {
             const editContainer = document.getElementById('editModeContainer');
             editContainer.style.display = 'none';
+            currentEditingSourceId = null;
+        }
+
+        // 情報源を削除
+        async function deleteSource() {
+            if (!currentEditingSourceId) {
+                console.error('No source is currently being edited');
+                return;
+            }
+            
+            const source = sources.find(s => s.id === currentEditingSourceId);
+            if (!source) {
+                console.error('Source not found');
+                return;
+            }
+            
+            // 削除確認
+            const confirmMessage = `「${source.name || source.domain}」を削除してもよろしいですか？\n\nこの操作は取り消せません。`;
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            try {
+                // データベースから削除
+                const { error } = await supabase
+                    .from('sources')
+                    .delete()
+                    .eq('id', currentEditingSourceId);
+                
+                if (error) throw error;
+                
+                // ローカルの配列からも削除
+                sources = sources.filter(s => s.id !== currentEditingSourceId);
+                
+                // 編集モードを閉じる
+                closeEditMode();
+                
+                // 一覧を再表示
+                renderSources();
+                updateStats();
+                
+                alert('情報源を削除しました');
+                
+            } catch (error) {
+                console.error('削除エラー:', error);
+                alert('削除に失敗しました: ' + error.message);
+            }
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
