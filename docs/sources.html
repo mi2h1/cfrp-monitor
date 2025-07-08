@@ -405,6 +405,7 @@
                         </div>
                         <div class="mt-2">
                             ${source.updated_at ? `<small class="text-muted">最終更新: ${new Date(source.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</small>` : ''}
+                            ${source.last_edited_by ? `<small class="text-info ms-3">編集者: ${source.last_edited_by}</small>` : ''}
                             ${source.acquisition_mode === 'auto' && source.last_collected_at ? `
                                 <small class="text-success ms-3">🕒 最終収集: ${new Date(source.last_collected_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</small>
                             ` : ''}
@@ -507,12 +508,14 @@
                 .filter(url => url.length > 0);
             
             try {
+                const currentUser = getCurrentUser();
                 const updateData = {
                     acquisition_mode: mode,
                     relevance: relevance,
                     description: description || null,
                     urls: urls,
-                    updated_at: new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString()
+                    updated_at: new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString(),
+                    last_edited_by: currentUser ? currentUser.userId : null
                 };
                 
                 const { error } = await supabase
@@ -546,6 +549,7 @@
                     sources[sourceIndex].description = description || null;
                     sources[sourceIndex].urls = urls;
                     sources[sourceIndex].updated_at = new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString();
+                    sources[sourceIndex].last_edited_by = currentUser ? currentUser.userId : null;
                 }
                 
                 // 一覧表示を更新
@@ -970,11 +974,13 @@
             
             try {
                 // 論理削除（deletedフラグをtrueに設定）
+                const currentUser = getCurrentUser();
                 const { error } = await supabase
                     .from('sources')
                     .update({ 
                         deleted: true,
-                        updated_at: new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString()
+                        updated_at: new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString(),
+                        last_edited_by: currentUser ? currentUser.userId : null
                     })
                     .eq('id', currentEditingSourceId);
                 

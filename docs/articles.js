@@ -224,6 +224,7 @@ function createDetailArticleCard(article) {
                 <div class="mt-2">
                     <button class="btn btn-success btn-sm save-btn" data-id="${article.id}">保存</button>
                     ${article.reviewed_at ? `<small class="text-muted ms-2">最終更新: ${new Date(article.reviewed_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</small>` : ''}
+                    ${article.last_edited_by ? `<small class="text-info ms-2">編集者: ${article.last_edited_by}</small>` : ''}
                 </div>
             </div>
         </div>
@@ -304,13 +305,15 @@ async function saveArticle(articleId) {
     const comments = editCard.querySelector('.comment-textarea').value;
     
     try {
+        const currentUser = getCurrentUser();
         const { error } = await supabase
             .from('items')
             .update({
                 status: status,
                 flagged: flagged,
                 comments: comments || null,
-                reviewed_at: new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString()
+                reviewed_at: new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString(),
+                last_edited_by: currentUser ? currentUser.userId : null
             })
             .eq('id', articleId);
         
@@ -334,6 +337,7 @@ async function saveArticle(articleId) {
             articles[articleIndex].flagged = flagged;
             articles[articleIndex].comments = comments || null;
             articles[articleIndex].reviewed_at = new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString();
+            articles[articleIndex].last_edited_by = currentUser ? currentUser.userId : null;
         }
         
     } catch (error) {
