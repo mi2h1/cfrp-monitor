@@ -178,7 +178,7 @@
     <!-- ナビゲーションバー -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.1</small></a>
+            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.2</small></a>
             <div class="navbar-nav">
                 <a class="nav-link" href="index.html">📰 記事管理</a>
                 <a class="nav-link active" href="sources.html">📡 情報源管理</a>
@@ -871,13 +871,26 @@
                 }
                 
                 // XMLをパース
+                console.log('Raw data (first 500 chars):', data.substring(0, 500));
+                
+                // XMLの先頭の空白や改行を削除
+                const cleanData = data.trim();
+                
                 const parser = new DOMParser();
-                const xml = parser.parseFromString(data, 'text/xml');
+                const xml = parser.parseFromString(cleanData, 'text/xml');
                 
                 // エラーチェック
                 const parseError = xml.querySelector('parsererror');
                 if (parseError) {
-                    throw new Error('無効なXMLフォーマット');
+                    console.error('Parse error details:', parseError.textContent);
+                    console.error('XML start:', cleanData.substring(0, 200));
+                    
+                    // HTMLとして返されている可能性をチェック
+                    if (cleanData.toLowerCase().includes('<!doctype html') || cleanData.toLowerCase().includes('<html')) {
+                        throw new Error('HTMLページが返されました（RSSフィードではありません）');
+                    }
+                    
+                    throw new Error(`無効なXMLフォーマット: ${parseError.textContent.substring(0, 100)}`);
                 }
                 
                 // RSS/Atomフィードの解析
