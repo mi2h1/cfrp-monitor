@@ -312,7 +312,7 @@ async function saveArticle(articleId) {
                 status: status,
                 flagged: flagged,
                 comments: comments || null,
-                reviewed_at: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Tokyo' }).replace(' ', 'T') + '+09:00',
+                reviewed_at: new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().replace('Z', '+09:00'),
                 last_edited_by: currentUser ? currentUser.userId : null
             })
             .eq('id', articleId);
@@ -336,7 +336,7 @@ async function saveArticle(articleId) {
             articles[articleIndex].status = status;
             articles[articleIndex].flagged = flagged;
             articles[articleIndex].comments = comments || null;
-            articles[articleIndex].reviewed_at = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Tokyo' }).replace(' ', 'T') + '+09:00';
+            articles[articleIndex].reviewed_at = new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().replace('Z', '+09:00');
             articles[articleIndex].last_edited_by = currentUser ? currentUser.userId : null;
         }
         

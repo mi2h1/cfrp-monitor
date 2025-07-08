@@ -514,7 +514,7 @@
                     relevance: relevance,
                     description: description || null,
                     urls: urls,
-                    updated_at: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Tokyo' }).replace(' ', 'T') + '+09:00',
+                    updated_at: new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().replace('Z', '+09:00'),
                     last_edited_by: currentUser ? currentUser.userId : null
                 };
                 
@@ -548,7 +548,7 @@
                     sources[sourceIndex].relevance = relevance;
                     sources[sourceIndex].description = description || null;
                     sources[sourceIndex].urls = urls;
-                    sources[sourceIndex].updated_at = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Tokyo' }).replace(' ', 'T') + '+09:00';
+                    sources[sourceIndex].updated_at = new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().replace('Z', '+09:00');
                     sources[sourceIndex].last_edited_by = currentUser ? currentUser.userId : null;
                 }
                 
@@ -979,7 +979,7 @@
                     .from('sources')
                     .update({ 
                         deleted: true,
-                        updated_at: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Tokyo' }).replace(' ', 'T') + '+09:00',
+                        updated_at: new Date(Date.now() + (9 * 60 * 60 * 1000)).toISOString().replace('Z', '+09:00'),
                         last_edited_by: currentUser ? currentUser.userId : null
                     })
                     .eq('id', currentEditingSourceId);
