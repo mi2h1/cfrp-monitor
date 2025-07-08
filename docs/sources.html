@@ -292,7 +292,7 @@
                             <h6 class="mb-1">${escapeHtml(source.name || source.domain)}</h6>
                             <div class="small text-muted">${escapeHtml(primaryUrl)}</div>
                             ${source.acquisition_mode === 'auto' && source.last_collected_at ? `
-                                <div class="small text-success mt-1">🕒 最終収集: ${new Date(source.last_collected_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</div>
+                                <div class="small text-success mt-1">🕒 最終収集: ${new Date(source.last_collected_at).toLocaleString('ja-JP')}</div>
                             ` : ''}
                             ${source.description ? `<div class="small text-info mt-1">💬 ${escapeHtml(source.description)}</div>` : ''}
                         </div>
@@ -404,10 +404,10 @@
                             </div>
                         </div>
                         <div class="mt-2">
-                            ${source.updated_at ? `<small class="text-muted">最終更新: ${new Date(source.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</small>` : ''}
+                            ${source.updated_at ? `<small class="text-muted">最終更新: ${new Date(source.updated_at).toLocaleString('ja-JP')}</small>` : ''}
                             ${source.last_edited_by ? `<small class="text-info ms-3">編集者: ${source.last_edited_by}</small>` : ''}
                             ${source.acquisition_mode === 'auto' && source.last_collected_at ? `
-                                <small class="text-success ms-3">🕒 最終収集: ${new Date(source.last_collected_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}</small>
+                                <small class="text-success ms-3">🕒 最終収集: ${new Date(source.last_collected_at).toLocaleString('ja-JP')}</small>
                             ` : ''}
                         </div>
                     </div>
