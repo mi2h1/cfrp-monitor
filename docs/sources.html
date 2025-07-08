@@ -813,18 +813,66 @@
             
             try {
                 // CORSプロキシを使用（無料の公開プロキシ）
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                // 複数のプロキシを試す
+                const proxies = [
+                    { 
+                        name: 'allorigins',
+                        url: (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+                        isJson: true
+                    },
+                    { 
+                        name: 'corsproxy.io',
+                        url: (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                        isJson: false
+                    }
+                ];
                 
-                const response = await fetch(proxyUrl);
-                const data = await response.json();
+                let data = null;
+                let lastError = null;
                 
-                if (!data.contents) {
+                // 各プロキシを順番に試す
+                for (let i = 0; i < proxies.length; i++) {
+                    const proxy = proxies[i];
+                    try {
+                        const proxyUrl = proxy.url(url);
+                        console.log(`Trying ${proxy.name}: ${proxyUrl}`);
+                        
+                        const response = await fetch(proxyUrl);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTPエラー: ${response.status} ${response.statusText}`);
+                        }
+                        
+                        // プロキシによって異なるレスポンス形式を処理
+                        if (proxy.isJson) {
+                            const jsonData = await response.json();
+                            if (!jsonData.contents) {
+                                throw new Error(`フィード取得失敗: ${jsonData.status?.http_code || 'No content'}`);
+                            }
+                            data = jsonData.contents;
+                        } else {
+                            data = await response.text();
+                        }
+                        
+                        console.log(`Successfully fetched with ${proxy.name}`);
+                        break; // 成功したらループを抜ける
+                        
+                    } catch (error) {
+                        console.error(`${proxy.name} failed:`, error);
+                        lastError = error;
+                        if (i === proxies.length - 1) {
+                            throw new Error(`全てのプロキシで失敗: ${lastError.message}`);
+                        }
+                    }
+                }
+                
+                if (!data) {
                     throw new Error('フィードの取得に失敗しました');
                 }
                 
                 // XMLをパース
                 const parser = new DOMParser();
-                const xml = parser.parseFromString(data.contents, 'text/xml');
+                const xml = parser.parseFromString(data, 'text/xml');
                 
                 // エラーチェック
                 const parseError = xml.querySelector('parsererror');
