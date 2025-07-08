@@ -84,6 +84,56 @@
             padding-top: 0.5rem;
             margin-top: 0.5rem;
         }
+        .compact-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        .compact-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+        .compact-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .compact-main {
+            flex: 1;
+            min-width: 200px;
+        }
+        .compact-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #6c757d;
+            flex-wrap: wrap;
+        }
+        .edit-mode-container {
+            display: none;
+            border: 2px solid #0d6efd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8f9ff;
+        }
+        .edit-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .btn-close-edit {
+            margin-left: auto;
+        }
     </style>
 </head>
 <body>
@@ -181,6 +231,15 @@
             </div>
         </div>
 
+        <!-- 編集モード -->
+        <div id="editModeContainer" class="edit-mode-container">
+            <div class="edit-header">
+                <h5 class="mb-0">情報源編集</h5>
+                <button type="button" class="btn btn-outline-secondary btn-sm btn-close-edit">✕ 閉じる</button>
+            </div>
+            <div id="editModeContent"></div>
+        </div>
+
         <div id="sourcesContainer" style="display: none;"></div>
     </div>
 
@@ -273,7 +332,7 @@
                 return;
             }
 
-            container.innerHTML = filteredSources.map(source => createSourceCard(source)).join('');
+            container.innerHTML = filteredSources.map(source => createCompactSourceCard(source)).join('');
             updateStats();
         }
 
@@ -311,8 +370,36 @@
             return filtered;
         }
 
-        // 情報源カードを作成
-        function createSourceCard(source) {
+        // コンパクトな情報源カードを作成
+        function createCompactSourceCard(source) {
+            const modeClass = source.acquisition_mode === 'disabled' ? 'disabled-source' :
+                             source.acquisition_mode === 'manual' ? 'manual-source' : 'auto-source';
+            
+            const urls = Array.isArray(source.urls) ? source.urls : [];
+            const primaryUrl = urls.length > 0 ? urls[0] : source.domain;
+            
+            return `
+                <div class="compact-card ${modeClass}" data-id="${source.id}" onclick="openEditMode(${source.id})">
+                    <div class="compact-info">
+                        <div class="compact-main">
+                            <h6 class="mb-1">${escapeHtml(source.name || source.domain)}</h6>
+                            <div class="small text-muted">${escapeHtml(primaryUrl)}</div>
+                        </div>
+                        <div class="compact-meta">
+                            <span>📂 ${source.category || 'その他'}</span>
+                            <span>🌍 ${source.country_code || '?'}</span>
+                            <span>⭐ ${source.relevance || 0}</span>
+                            <span class="badge bg-${getModeColor(source.acquisition_mode)} ms-2">
+                                ${getModeLabel(source.acquisition_mode)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 詳細編集用の情報源カードを作成
+        function createDetailSourceCard(source) {
             const modeClass = source.acquisition_mode === 'disabled' ? 'disabled-source' :
                              source.acquisition_mode === 'manual' ? 'manual-source' : 'auto-source';
             
@@ -448,8 +535,8 @@
                 document.getElementById('refreshBtn').disabled = false;
             });
 
-            // 保存ボタンとURL操作のイベント委譲
-            document.getElementById('sourcesContainer').addEventListener('click', async (e) => {
+            // 編集モードのイベント委譲
+            document.getElementById('editModeContainer').addEventListener('click', async (e) => {
                 if (e.target.classList.contains('save-btn')) {
                     await saveSource(e.target.dataset.id);
                 } else if (e.target.classList.contains('add-url-btn')) {
@@ -458,6 +545,8 @@
                     removeUrl(e.target);
                 } else if (e.target.classList.contains('test-url-btn')) {
                     await testUrl(e.target);
+                } else if (e.target.classList.contains('btn-close-edit')) {
+                    closeEditMode();
                 }
             });
         }
@@ -503,6 +592,19 @@
                 // カードのスタイルを更新
                 card.className = `source-card ${mode === 'disabled' ? 'disabled-source' : 
                                                mode === 'manual' ? 'manual-source' : 'auto-source'}`;
+                
+                // ソースデータを更新
+                const sourceIndex = sources.findIndex(s => s.id == sourceId);
+                if (sourceIndex !== -1) {
+                    sources[sourceIndex].acquisition_mode = mode;
+                    sources[sourceIndex].relevance = relevance;
+                    sources[sourceIndex].notes = notes || null;
+                    sources[sourceIndex].urls = urls;
+                    sources[sourceIndex].updated_at = new Date().toISOString();
+                }
+                
+                // 一覧表示を更新
+                renderSources();
                 
                 // 統計情報を更新
                 updateStats();
@@ -621,6 +723,30 @@
             } catch (_) {
                 return false;
             }
+        }
+
+        // 編集モードを開く
+        function openEditMode(sourceId) {
+            const source = sources.find(s => s.id === sourceId);
+            if (!source) return;
+            
+            const editContainer = document.getElementById('editModeContainer');
+            const editContent = document.getElementById('editModeContent');
+            
+            // 詳細編集カードを生成
+            editContent.innerHTML = createDetailSourceCard(source);
+            
+            // 編集モードを表示
+            editContainer.style.display = 'block';
+            
+            // スクロールして編集エリアを表示
+            editContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 編集モードを閉じる
+        function closeEditMode() {
+            const editContainer = document.getElementById('editModeContainer');
+            editContainer.style.display = 'none';
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
