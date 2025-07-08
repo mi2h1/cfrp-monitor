@@ -181,7 +181,7 @@
     <!-- ナビゲーションバー -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.5</small></a>
+            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.6</small></a>
             <div class="navbar-nav">
                 <a class="nav-link" href="index.html">📰 記事管理</a>
                 <a class="nav-link active" href="sources.html">📡 情報源管理</a>
@@ -191,48 +191,48 @@
 
     <div class="container-fluid py-4">
         <header class="mb-4">
-            <h1 class="h2">情報源管理ダッシュボード</h1>
-            <div class="row g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="modeFilter" class="form-label">取得モード:</label>
-                    <select id="modeFilter" class="form-select form-select-sm">
-                        <option value="">全て</option>
-                        <option value="auto">自動収集</option>
-                        <option value="manual">手動のみ</option>
-                        <option value="disabled">停止中</option>
-                        <option value="new">新規追加</option>
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <label for="deletedFilter" class="form-label">表示:</label>
-                    <select id="deletedFilter" class="form-select form-select-sm">
-                        <option value="active">有効のみ</option>
-                        <option value="all">削除済み含む</option>
-                        <option value="deleted">削除済みのみ</option>
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <label for="categoryFilter" class="form-label">カテゴリ:</label>
-                    <select id="categoryFilter" class="form-select form-select-sm">
-                        <option value="">全て</option>
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <label for="countryFilter" class="form-label">国:</label>
-                    <select id="countryFilter" class="form-select form-select-sm">
-                        <option value="">全て</option>
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <label for="sortOrder" class="form-label">並び順:</label>
-                    <select id="sortOrder" class="form-select form-select-sm">
-                        <option value="name">名前順</option>
-                        <option value="mode">モード順</option>
-                        <option value="relevance">関連度順</option>
-                        <option value="created">作成日順</option>
-                    </select>
-                </div>
-                <div class="col-auto">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h1 class="h2 me-4">情報源管理ダッシュボード</h1>
+                <div class="d-flex g-3 align-items-center flex-wrap" style="gap: 1rem;">
+                    <div class="d-flex align-items-center">
+                        <label for="modeFilter" class="form-label me-2 mb-0" style="white-space: nowrap;">取得モード:</label>
+                        <select id="modeFilter" class="form-select form-select-sm">
+                            <option value="">全て</option>
+                            <option value="auto">自動収集</option>
+                            <option value="manual">手動のみ</option>
+                            <option value="disabled">停止中</option>
+                            <option value="new">新規追加</option>
+                        </select>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label for="deletedFilter" class="form-label me-2 mb-0" style="white-space: nowrap;">表示:</label>
+                        <select id="deletedFilter" class="form-select form-select-sm">
+                            <option value="active">有効のみ</option>
+                            <option value="all">削除済み含む</option>
+                            <option value="deleted">削除済みのみ</option>
+                        </select>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label for="categoryFilter" class="form-label me-2 mb-0" style="white-space: nowrap;">カテゴリ:</label>
+                        <select id="categoryFilter" class="form-select form-select-sm">
+                            <option value="">全て</option>
+                        </select>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label for="countryFilter" class="form-label me-2 mb-0" style="white-space: nowrap;">国:</label>
+                        <select id="countryFilter" class="form-select form-select-sm">
+                            <option value="">全て</option>
+                        </select>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label for="sortOrder" class="form-label me-2 mb-0" style="white-space: nowrap;">並び順:</label>
+                        <select id="sortOrder" class="form-select form-select-sm">
+                            <option value="name">名前順</option>
+                            <option value="mode">モード順</option>
+                            <option value="relevance">関連度順</option>
+                            <option value="created">作成日順</option>
+                        </select>
+                    </div>
                     <button id="refreshBtn" class="btn btn-primary btn-sm">更新</button>
                 </div>
             </div>
