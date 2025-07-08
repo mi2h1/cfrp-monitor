@@ -155,6 +155,12 @@
 
         // 初期化
         document.addEventListener('DOMContentLoaded', async () => {
+            // 認証チェック
+            if (!localStorage.getItem('currentUser')) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
             await loadSources();
             setupEventListeners();
         });
