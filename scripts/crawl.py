@@ -6,6 +6,7 @@ from readability import Document
 from supabase import create_client, Client
 from dateutil import parser as dtparser
 from fetcher import fetch_and_parse, slug, DEFAULT_CFG
+import pytz
 
 # ── Supabase ─────────────────────────────────────────────
 supabase: Client = create_client(os.getenv("SUPABASE_URL"),
@@ -23,8 +24,23 @@ def save_raw(name: str, data):
     )
 
 def safe_date(txt):
+    """安全な日付パース（日本時間）"""
     try:
-        return dtparser.parse(txt).date().isoformat() if txt else None
+        if not txt:
+            return None
+        
+        # 日付をパース
+        parsed_date = dtparser.parse(txt)
+        
+        # タイムゾーンが設定されていない場合はUTCと仮定
+        if parsed_date.tzinfo is None:
+            parsed_date = pytz.utc.localize(parsed_date)
+        
+        # 日本時間に変換
+        jst = pytz.timezone('Asia/Tokyo')
+        japan_time = parsed_date.astimezone(jst)
+        
+        return japan_time.date().isoformat()
     except Exception:
         return None
 
@@ -105,6 +121,10 @@ for src in sources:
                 link = e.get("link") or e.get("id")
                 body = fetch_article_body(link)
 
+            # 日本時間での追加時刻を設定（タイムゾーン情報なしで保存）
+            jst = pytz.timezone('Asia/Tokyo')
+            added_at_jst = datetime.datetime.now(jst).replace(tzinfo=None).isoformat()
+            
             upsert({
                 "src_type": src["category"],
                 "source_id": src["id"],  # 外部キー追加
@@ -112,6 +132,7 @@ for src in sources:
                 "url"     : e.get("link") or e.get("id"),
                 "pub_date": safe_date(e.get("published") or e.get("updated")),
                 "body"    : body,
+                "added_at": added_at_jst,
             })
 
 print("crawl finished")

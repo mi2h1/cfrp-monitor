@@ -1,0 +1,221 @@
+name: Weekly Source Discovery
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  schedule:
+    # 毎週日曜日の 02:00 UTC (11:00 JST) に実行
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      discovery_type:
+        description: 'Discovery type to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - 'all'
+          - 'articles'
+          - 'multilingual'
+          - 'academic'
+      auto_approve:
+        description: 'Auto-approve high quality sources'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  discover-sources:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install beautifulsoup4
+      
+      - name: Run article-based discovery
+        if: github.event.inputs.discovery_type == 'all' || github.event.inputs.discovery_type == 'articles'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          echo "🔍 Running article-based source discovery..."
+          python scripts/discover_from_articles.py
+      
+      - name: Run multilingual discovery
+        if: github.event.inputs.discovery_type == 'all' || github.event.inputs.discovery_type == 'multilingual'
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_CUSTOM_SEARCH_ENGINE_ID: ${{ secrets.GOOGLE_CUSTOM_SEARCH_ENGINE_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          echo "🌍 Running multilingual source discovery..."
+          python scripts/discover_multilingual_sources.py
+      
+      - name: Run academic source discovery
+        if: github.event.inputs.discovery_type == 'all' || github.event.inputs.discovery_type == 'academic'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          echo "🎓 Testing academic feed expansion..."
+          python scripts/test_academic_feeds.py > academic_discovery_results.txt
+      
+      - name: Analyze discovery results
+        run: |
+          echo "📊 Analyzing discovery results..."
+          
+          # 発見されたソース数をカウント
+          CANDIDATE_FILES=$(find . -name "*_candidates_*.json" -o -name "*_sources_*.json" | wc -l)
+          echo "Found $CANDIDATE_FILES candidate files"
+          
+          # 結果サマリーを作成
+          cat > discovery_summary.md << 'EOF'
+          # 🔍 Weekly Source Discovery Results
+          
+          **Discovery Date:** $(date -u +"%Y-%m-%d %H:%M UTC")
+          **Trigger:** ${{ github.event_name }}
+          
+          ## 📊 Discovery Summary
+          
+          EOF
+          
+          # 各候補ファイルの情報を追加
+          for file in *_candidates_*.json *_sources_*.json; do
+            if [ -f "$file" ]; then
+              count=$(jq length "$file" 2>/dev/null || echo "0")
+              echo "- **$file**: $count candidates found" >> discovery_summary.md
+            fi
+          done
+          
+          # 品質評価
+          cat >> discovery_summary.md << 'EOF'
+          
+          ## 🎯 Quality Assessment
+          
+          ### ⭐ High Quality Candidates (Auto-approve eligible)
+          - Relevance score > 0.7
+          - RSS feed confirmed working
+          - Domain authority > 30
+          
+          ### 🔍 Medium Quality Candidates (Manual review)
+          - Relevance score 0.4-0.7
+          - Feed validation required
+          
+          ### ❌ Low Quality Candidates (Filtered out)
+          - Relevance score < 0.4
+          - No RSS feed found
+          
+          ## 🚀 Next Steps
+          
+          1. Review high-quality candidates for auto-approval
+          2. Manual evaluation of medium-quality sources
+          3. Update source database with approved entries
+          
+          **Note:** This discovery was run automatically. Please review results before adding to production.
+          EOF
+      
+      - name: Auto-approve high quality sources
+        if: github.event.inputs.auto_approve == 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          echo "🤖 Auto-approving high quality sources..."
+          python scripts/auto_approve_sources.py
+      
+      - name: Create discovery branch
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Source Discovery Bot"
+          
+          # 新しいブランチを作成
+          BRANCH_NAME="source-discovery-$(date +%Y%m%d)"
+          git checkout -b "$BRANCH_NAME"
+          
+          # ファイルを追加
+          git add -A
+          
+          # 変更があるかチェック
+          if git diff --staged --quiet; then
+            echo "No new sources discovered"
+            echo "has_changes=false" >> $GITHUB_ENV
+          else
+            git commit -m "🔍 Weekly source discovery results
+
+          Discovery run: $(date -u +"%Y-%m-%d %H:%M UTC")
+          Trigger: ${{ github.event_name }}
+          
+          📊 Files added:
+          $(git diff --name-only --staged)
+          
+          🤖 Generated by automated source discovery workflow"
+            
+            git push origin "$BRANCH_NAME"
+            echo "has_changes=true" >> $GITHUB_ENV
+            echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
+          fi
+      
+      - name: Create Pull Request
+        if: env.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.branch_name }}
+          title: "🔍 Weekly Source Discovery Results - $(date +%Y-%m-%d)"
+          body: |
+            ## 🔍 Automated Source Discovery Results
+            
+            **Discovery Date:** $(date -u +"%Y-%m-%d %H:%M UTC")
+            **Workflow:** Weekly automated discovery
+            
+            ### 📋 What's Included
+            
+            - New composite materials information sources
+            - RSS feed validation results
+            - Quality assessment and recommendations
+            
+            ### 🎯 Review Checklist
+            
+            - [ ] Review candidate sources for relevance
+            - [ ] Verify RSS feed quality and update frequency
+            - [ ] Check for duplicate sources
+            - [ ] Approve high-quality sources for addition
+            
+            ### 🚀 Next Steps
+            
+            1. **Review Results**: Check discovery_summary.md for overview
+            2. **Evaluate Candidates**: Review JSON files for source details
+            3. **Add Approved Sources**: Use generated SQL or manual addition
+            4. **Test Integration**: Ensure new sources work with crawler
+            
+            ---
+            
+            🤖 This PR was created automatically by the Source Discovery workflow.
+            
+            **Files changed:**
+            - Discovery results and candidate information
+            - Quality assessment reports
+            - Recommended sources for addition
+            
+            Please review and approve suitable sources for integration.
+          draft: false
+          delete-branch: true
+      
+      - name: Notify completion
+        run: |
+          if [ "${{ env.has_changes }}" = "true" ]; then
+            echo "✅ Source discovery completed with new findings!"
+            echo "📋 Pull request created for review"
+          else
+            echo "ℹ️ Source discovery completed - no new sources found"
+          fi

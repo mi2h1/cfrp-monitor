@@ -1,8 +1,0 @@
-- name: CompositesWorld
-  home: https://www.compositesworld.com
-  category: news
-
-- name: arXiv materials
-  home: https://export.arxiv.org
-  category: paper
-  hint_feed: https://export.arxiv.org/api/query?search_query=all:CFRP&max_results=50
