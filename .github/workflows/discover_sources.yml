@@ -70,6 +70,12 @@ jobs:
           echo "🎓 Testing academic feed expansion..."
           python scripts/test_academic_feeds.py > academic_discovery_results.txt
       
+      - name: Run GPT category-based discovery
+        if: github.event.inputs.discovery_type == 'all'
+        run: |
+          echo "🤖 Running GPT category-based source discovery..."
+          python scripts/discover_gpt_categories.py
+      
       - name: Analyze discovery results
         run: |
           echo "📊 Analyzing discovery results..."
