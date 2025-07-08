@@ -4,7 +4,7 @@
 
 ## 🔗 ダッシュボード
 
-**[📊 Live Dashboard](docs/index.html)** - 収集データの可視化・分析
+**[📊 Live Dashboard](https://mi2h1.github.io/cfrp-monitor/)** - 収集データの可視化・分析
 
 ## 📋 システム概要
 
