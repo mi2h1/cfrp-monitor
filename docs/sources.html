@@ -365,7 +365,7 @@
             const primaryUrl = urls.length > 0 ? urls[0] : source.domain;
             
             return `
-                <div class="compact-card ${modeClass}" data-id="${source.id}" onclick="openEditMode(${source.id})">
+                <div class="compact-card ${modeClass}" data-id="${source.id}">
                     <div class="compact-info">
                         <div class="compact-main">
                             <h6 class="mb-1">${escapeHtml(source.name || source.domain)}</h6>
@@ -519,6 +519,15 @@
                 document.getElementById('refreshBtn').disabled = true;
                 await loadSources();
                 document.getElementById('refreshBtn').disabled = false;
+            });
+
+            // コンパクトカードクリックのイベント委譲
+            document.getElementById('sourcesContainer').addEventListener('click', (e) => {
+                const card = e.target.closest('.compact-card');
+                if (card) {
+                    const sourceId = parseInt(card.dataset.id);
+                    openEditMode(sourceId);
+                }
             });
 
             // 編集モードのイベント委譲
