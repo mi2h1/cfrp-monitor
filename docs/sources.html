@@ -510,7 +510,7 @@
                     relevance: relevance,
                     description: description || null,
                     urls: urls,
-                    updated_at: new Date().toISOString()
+                    updated_at: new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString()
                 };
                 
                 const { error } = await supabase
@@ -543,7 +543,7 @@
                     sources[sourceIndex].relevance = relevance;
                     sources[sourceIndex].description = description || null;
                     sources[sourceIndex].urls = urls;
-                    sources[sourceIndex].updated_at = new Date().toISOString();
+                    sources[sourceIndex].updated_at = new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString();
                 }
                 
                 // 一覧表示を更新
@@ -972,7 +972,7 @@
                     .from('sources')
                     .update({ 
                         deleted: true,
-                        updated_at: new Date().toISOString()
+                        updated_at: new Date(new Date().getTime() + (9 * 60 * 60 * 1000)).toISOString()
                     })
                     .eq('id', currentEditingSourceId);
                 
