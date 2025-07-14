@@ -84,3 +84,20 @@
     text-align: center;
     padding: 2rem;
 }
+
+/* ユーティリティクラス */
+.version-text {
+    font-size: 0.7rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.gap-1 {
+    gap: 1rem;
+}
+
+.nowrap {
+    white-space: nowrap;
+}

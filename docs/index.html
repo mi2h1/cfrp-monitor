@@ -13,7 +13,7 @@
     <!-- ナビゲーションバー -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50" style="font-size: 0.7rem;">v2025.01.08.12</small></a>
+            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50 version-text">v2025.01.08.12</small></a>
             <div class="navbar-nav">
                 <a class="nav-link active" href="index.html">📰 記事管理</a>
                 <a class="nav-link" href="sources.html">📡 情報源管理</a>
@@ -22,7 +22,7 @@
                 <span class="navbar-text me-3" id="userInfo">
                     <!-- ユーザー情報がここに表示される -->
                 </span>
-                <button class="btn btn-outline-light btn-sm" id="logoutBtn" style="display: none;">
+                <button class="btn btn-outline-light btn-sm hidden" id="logoutBtn">
                     ログアウト
                 </button>
             </div>
@@ -33,9 +33,9 @@
         <header class="mb-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <h1 class="h2 me-4">CFRP記事管理ダッシュボード</h1>
-                <div class="d-flex g-3 align-items-center flex-wrap" style="gap: 1rem;">
+                <div class="d-flex g-3 align-items-center flex-wrap gap-1">
                     <div class="d-flex align-items-center">
-                        <label for="statusFilter" class="form-label me-2 mb-0" style="white-space: nowrap;">ステータス:</label>
+                        <label for="statusFilter" class="form-label me-2 mb-0 nowrap">ステータス:</label>
                         <select id="statusFilter" class="form-select form-select-sm">
                             <option value="">全て</option>
                             <option value="unread">未読</option>
@@ -45,7 +45,7 @@
                         </select>
                     </div>
                     <div class="d-flex align-items-center">
-                        <label for="flaggedFilter" class="form-label me-2 mb-0" style="white-space: nowrap;">重要:</label>
+                        <label for="flaggedFilter" class="form-label me-2 mb-0 nowrap">重要:</label>
                         <select id="flaggedFilter" class="form-select form-select-sm">
                             <option value="">全て</option>
                             <option value="true">重要のみ</option>
@@ -53,20 +53,20 @@
                         </select>
                     </div>
                     <div class="d-flex align-items-center">
-                        <label for="sourceFilter" class="form-label me-2 mb-0" style="white-space: nowrap;">ソース:</label>
+                        <label for="sourceFilter" class="form-label me-2 mb-0 nowrap">ソース:</label>
                         <select id="sourceFilter" class="form-select form-select-sm">
                             <option value="">全て</option>
                         </select>
                     </div>
                     <div class="d-flex align-items-center">
-                        <label for="sortOrder" class="form-label me-2 mb-0" style="white-space: nowrap;">並び順:</label>
+                        <label for="sortOrder" class="form-label me-2 mb-0 nowrap">並び順:</label>
                         <select id="sortOrder" class="form-select form-select-sm">
                             <option value="desc">新しい順</option>
                             <option value="asc">古い順</option>
                         </select>
                     </div>
                     <div class="d-flex align-items-center">
-                        <label for="itemsPerPage" class="form-label me-2 mb-0" style="white-space: nowrap;">表示件数:</label>
+                        <label for="itemsPerPage" class="form-label me-2 mb-0 nowrap">表示件数:</label>
                         <select id="itemsPerPage" class="form-select form-select-sm">
                             <option value="10" selected>10件</option>
                             <option value="30">30件</option>
@@ -86,10 +86,10 @@
             <p>記事を読み込んでいます...</p>
         </div>
 
-        <div id="articlesContainer" style="display: none;"></div>
+        <div id="articlesContainer" class="hidden"></div>
         
         <!-- 編集モード表示エリア -->
-        <div id="editModeContainer" style="display: none;">
+        <div id="editModeContainer" class="hidden">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3>記事編集</h3>
                 <button class="btn btn-outline-secondary btn-sm btn-close-edit">一覧に戻る</button>
@@ -98,7 +98,7 @@
         </div>
         
         <!-- ページネーション -->
-        <nav id="pagination" aria-label="記事ページネーション" style="display: none;">
+        <nav id="pagination" aria-label="記事ページネーション" class="hidden">
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <div id="pageInfo" class="text-muted"></div>
                 <ul class="pagination pagination-sm mb-0" id="paginationList">
