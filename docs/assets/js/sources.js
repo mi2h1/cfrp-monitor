@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadCandidates();
     await loadLastTaskLog();
     setupEventListeners();
+    
+    // 初期状態を確実に設定
+    switchViewMode('sources');
 });
 
 // 情報源一覧を読み込み
@@ -940,13 +943,18 @@ function switchViewMode(mode) {
     document.getElementById(`nav-${mode}`).classList.add('active');
     
     // フィルターの表示切り替え
+    const sourceFilters = document.getElementById('sourceFilters');
+    const candidateFilters = document.getElementById('candidateFilters');
+    
     if (mode === 'sources') {
-        document.getElementById('sourceFilters').style.display = 'flex';
-        document.getElementById('candidateFilters').style.display = 'none';
+        sourceFilters.style.display = 'flex';
+        candidateFilters.style.display = 'none';
+        console.log('情報源リストモード: sourceFilters表示, candidateFilters非表示');
         renderSources();
     } else if (mode === 'candidates') {
-        document.getElementById('sourceFilters').style.display = 'none';
-        document.getElementById('candidateFilters').style.display = 'flex';
+        sourceFilters.style.display = 'none';
+        candidateFilters.style.display = 'flex';
+        console.log('探索候補モード: sourceFilters非表示, candidateFilters表示');
         renderCandidates();
     }
 }
