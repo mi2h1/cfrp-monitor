@@ -49,7 +49,8 @@
                         </li>
                     </ul>
                 </div>
-                <div class="d-flex g-3 align-items-center flex-wrap gap-1">
+                <!-- 情報源リスト用フィルター -->
+                <div id="sourceFilters" class="d-flex g-3 align-items-center flex-wrap gap-1">
                     <div class="d-flex align-items-center">
                         <label for="modeFilter" class="form-label me-2 mb-0 nowrap">取得モード:</label>
                         <select id="modeFilter" class="form-select form-select-sm">
@@ -91,11 +92,9 @@
                     </div>
                     <button id="refreshBtn" class="btn btn-primary btn-sm">更新</button>
                 </div>
-            </div>
-            
-            <!-- 候補管理用フィルター -->
-            <div id="candidateActions" style="display: none;">
-                <div class="d-flex align-items-center gap-3 mb-3">
+                
+                <!-- 探索候補用フィルター -->
+                <div id="candidateFilters" class="d-flex g-3 align-items-center flex-wrap gap-1" style="display: none;">
                     <div class="d-flex align-items-center">
                         <label for="candidateStatusFilter" class="form-label me-2 mb-0 nowrap">ステータス:</label>
                         <select id="candidateStatusFilter" class="form-select form-select-sm" onchange="renderCandidates()">
@@ -107,12 +106,28 @@
                         </select>
                     </div>
                     <div class="d-flex align-items-center">
-                        <small class="text-muted">
-                            探索候補の承認・却下・保留を管理できます
-                        </small>
+                        <label for="candidateLanguageFilter" class="form-label me-2 mb-0 nowrap">言語:</label>
+                        <select id="candidateLanguageFilter" class="form-select form-select-sm" onchange="renderCandidates()">
+                            <option value="">全て</option>
+                            <option value="japanese">日本語</option>
+                            <option value="german">ドイツ語</option>
+                            <option value="chinese">中国語</option>
+                            <option value="korean">韓国語</option>
+                        </select>
                     </div>
+                    <div class="d-flex align-items-center">
+                        <label for="candidateSortOrder" class="form-label me-2 mb-0 nowrap">並び順:</label>
+                        <select id="candidateSortOrder" class="form-select form-select-sm" onchange="renderCandidates()">
+                            <option value="discovered">発見日順</option>
+                            <option value="relevance">関連度順</option>
+                            <option value="name">名前順</option>
+                            <option value="status">ステータス順</option>
+                        </select>
+                    </div>
+                    <button id="refreshCandidatesBtn" class="btn btn-primary btn-sm" onclick="loadCandidates(); renderCandidates();">更新</button>
                 </div>
             </div>
+            
         </header>
 
         <div id="loading" class="loading">

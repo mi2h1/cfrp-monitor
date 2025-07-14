@@ -939,13 +939,15 @@ function switchViewMode(mode) {
     });
     document.getElementById(`nav-${mode}`).classList.add('active');
     
-    // コンテンツの更新
+    // フィルターの表示切り替え
     if (mode === 'sources') {
+        document.getElementById('sourceFilters').style.display = 'flex';
+        document.getElementById('candidateFilters').style.display = 'none';
         renderSources();
-        document.getElementById('candidateActions').style.display = 'none';
     } else if (mode === 'candidates') {
+        document.getElementById('sourceFilters').style.display = 'none';
+        document.getElementById('candidateFilters').style.display = 'flex';
         renderCandidates();
-        document.getElementById('candidateActions').style.display = 'block';
     }
 }
 
@@ -953,12 +955,32 @@ function switchViewMode(mode) {
 function renderCandidates() {
     const container = document.getElementById('sourcesContainer');
     const statusFilter = document.getElementById('candidateStatusFilter')?.value || '';
+    const languageFilter = document.getElementById('candidateLanguageFilter')?.value || '';
+    const sortOrder = document.getElementById('candidateSortOrder')?.value || 'discovered';
     
     // フィルタリング
     let filteredCandidates = candidates;
     if (statusFilter) {
-        filteredCandidates = candidates.filter(c => c.status === statusFilter);
+        filteredCandidates = filteredCandidates.filter(c => c.status === statusFilter);
     }
+    if (languageFilter) {
+        filteredCandidates = filteredCandidates.filter(c => c.language === languageFilter);
+    }
+    
+    // ソート
+    filteredCandidates.sort((a, b) => {
+        switch (sortOrder) {
+            case 'relevance':
+                return b.relevance_score - a.relevance_score;
+            case 'name':
+                return a.name.localeCompare(b.name);
+            case 'status':
+                return a.status.localeCompare(b.status);
+            case 'discovered':
+            default:
+                return new Date(b.discovered_at) - new Date(a.discovered_at);
+        }
+    });
     
     if (filteredCandidates.length === 0) {
         container.innerHTML = '<div class="alert alert-info">表示する候補がありません</div>';
