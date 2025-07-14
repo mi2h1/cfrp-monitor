@@ -1,0 +1,42 @@
+[
+  {
+    "name": "日本複合材料学会",
+    "urls": ["https://www.jscm.gr.jp/rss.xml"],
+    "site_url": "https://www.jscm.gr.jp",
+    "language": "japanese",
+    "relevance_score": 0.9,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  },
+  {
+    "name": "帝人株式会社",
+    "urls": ["https://www.teijin.co.jp/news/rss.xml"],
+    "site_url": "https://www.teijin.co.jp/news/",
+    "language": "japanese",
+    "relevance_score": 0.8,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  },
+  {
+    "name": "経済産業省",
+    "urls": ["https://journal.meti.go.jp/rss.xml"],
+    "site_url": "https://journal.meti.go.jp",
+    "language": "japanese",
+    "relevance_score": 0.7,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  },
+  {
+    "name": "電気学会",
+    "urls": ["https://www.iee.jp/rss", "https://www.iee.jp/feed"],
+    "site_url": "https://www.iee.jp",
+    "language": "japanese",
+    "relevance_score": 0.75,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  },
+  {
+    "name": "土木学会 複合構造委員会",
+    "urls": ["https://committees.jsce.or.jp/rss.xml"],
+    "site_url": "https://committees.jsce.or.jp/fukugou04/",
+    "language": "japanese",
+    "relevance_score": 0.8,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  }
+]

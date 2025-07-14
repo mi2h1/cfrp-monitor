@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Braunschweiger Zeitung",
+    "urls": ["https://www.braunschweiger-zeitung.de/rss"],
+    "site_url": "https://www.braunschweiger-zeitung.de",
+    "language": "german",
+    "relevance_score": 0.6,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  },
+  {
+    "name": "Versicherungsjournal",
+    "urls": ["https://www.versicherungsjournal.de/rss/VersicherungsJournal.xml"],
+    "site_url": "https://www.versicherungsjournal.de",
+    "language": "german",
+    "relevance_score": 0.65,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  },
+  {
+    "name": "Niedersachsen MWK",
+    "urls": ["https://www.mwk.niedersachsen.de/rss"],
+    "site_url": "https://www.mwk.niedersachsen.de",
+    "language": "german",
+    "relevance_score": 0.7,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  },
+  {
+    "name": "Algona 3D Technology",
+    "urls": ["https://algona.de/feed/"],
+    "site_url": "https://algona.de",
+    "language": "german",
+    "relevance_score": 0.75,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  }
+]

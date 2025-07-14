@@ -1,0 +1,26 @@
+[
+  {
+    "name": "IT之家",
+    "urls": ["https://www.ithome.com/rss/"],
+    "site_url": "https://www.ithome.com",
+    "language": "chinese",
+    "relevance_score": 0.6,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  },
+  {
+    "name": "中国科学院化学研究所",
+    "urls": ["https://sioc-journal.cn/rss.xml"],
+    "site_url": "https://sioc-journal.cn",
+    "language": "chinese",
+    "relevance_score": 0.85,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  },
+  {
+    "name": "人社部专技司",
+    "urls": ["https://zsgx.mohrss.gov.cn/rss.xml"],
+    "site_url": "https://zsgx.mohrss.gov.cn",
+    "language": "chinese",
+    "relevance_score": 0.7,
+    "discovered_at": "2025-07-14T09:07:13.000Z"
+  }
+]

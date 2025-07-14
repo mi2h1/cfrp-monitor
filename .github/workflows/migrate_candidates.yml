@@ -31,12 +31,15 @@ jobs:
         run: |
           pip install -r requirements.txt
       
-      - name: Download previous discovery artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: discovery-results
-          path: .
-        continue-on-error: true
+      - name: Copy sample candidates to working directory
+        run: |
+          echo "📁 Copying sample candidate files..."
+          if [ -d "sample_candidates" ]; then
+            cp sample_candidates/*.json . 2>/dev/null || true
+            echo "✅ Sample files copied"
+          else
+            echo "ℹ️ No sample_candidates directory found"
+          fi
       
       - name: List available JSON files
         run: |
