@@ -1036,7 +1036,55 @@ async function approveCandidate(candidateId) {
         const candidate = candidates.find(c => c.id === candidateId);
         if (!candidate) return;
         
-        // sources テーブルに追加
+        // 既存の情報源との重複チェック
+        const { data: existingSources, error: checkError } = await supabase
+            .from('sources')
+            .select('id, name, domain')
+            .eq('domain', candidate.domain);
+        
+        if (checkError) throw checkError;
+        
+        // 重複チェック
+        if (existingSources && existingSources.length > 0) {
+            const existingSource = existingSources[0];
+            const confirmed = confirm(`⚠️ 重複警告\n\n既に同じドメインの情報源が存在します：\n- 既存: ${existingSource.name}\n- 候補: ${candidate.name}\n- ドメイン: ${candidate.domain}\n\nこの候補を却下しますか？`);
+            
+            if (confirmed) {
+                // 自動的に却下処理
+                await rejectCandidate(candidateId);
+                alert('重複のため候補を却下しました');
+                return;
+            } else {
+                // ユーザーがキャンセルした場合は処理を中断
+                return;
+            }
+        }
+        
+        // URLの重複チェック
+        const candidateUrls = candidate.urls;
+        const { data: existingUrls, error: urlCheckError } = await supabase
+            .from('sources')
+            .select('id, name, urls')
+            .overlaps('urls', candidateUrls);
+        
+        if (urlCheckError) throw urlCheckError;
+        
+        if (existingUrls && existingUrls.length > 0) {
+            const existingSource = existingUrls[0];
+            const duplicateUrls = existingSource.urls.filter(url => candidateUrls.includes(url));
+            
+            const confirmed = confirm(`⚠️ URL重複警告\n\n既存の情報源と同じURLが含まれています：\n- 既存: ${existingSource.name}\n- 候補: ${candidate.name}\n- 重複URL: ${duplicateUrls.join(', ')}\n\nこの候補を却下しますか？`);
+            
+            if (confirmed) {
+                await rejectCandidate(candidateId);
+                alert('URL重複のため候補を却下しました');
+                return;
+            } else {
+                return;
+            }
+        }
+        
+        // 重複なし - sources テーブルに追加
         const sourceData = {
             name: candidate.name,
             urls: candidate.urls,

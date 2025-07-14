@@ -42,16 +42,21 @@ CREATE TABLE IF NOT EXISTS source_candidates (
 );
 
 -- 2. インデックスの作成
-CREATE INDEX idx_source_candidates_status ON source_candidates(status);
-CREATE INDEX idx_source_candidates_discovered_at ON source_candidates(discovered_at DESC);
-CREATE INDEX idx_source_candidates_relevance ON source_candidates(relevance_score DESC);
-CREATE INDEX idx_source_candidates_language ON source_candidates(language);
-CREATE INDEX idx_source_candidates_discovery_method ON source_candidates(discovery_method);
+CREATE INDEX IF NOT EXISTS idx_source_candidates_status ON source_candidates(status);
+CREATE INDEX IF NOT EXISTS idx_source_candidates_discovered_at ON source_candidates(discovered_at DESC);
+CREATE INDEX IF NOT EXISTS idx_source_candidates_relevance ON source_candidates(relevance_score DESC);
+CREATE INDEX IF NOT EXISTS idx_source_candidates_language ON source_candidates(language);
+CREATE INDEX IF NOT EXISTS idx_source_candidates_discovery_method ON source_candidates(discovery_method);
 
 -- 3. RLSを有効化
 ALTER TABLE source_candidates ENABLE ROW LEVEL SECURITY;
 
 -- 4. RLSポリシーの作成
+-- 既存のポリシーがある場合は削除してから作成
+DROP POLICY IF EXISTS "source_candidates_read_all" ON source_candidates;
+DROP POLICY IF EXISTS "source_candidates_insert_anon" ON source_candidates;
+DROP POLICY IF EXISTS "source_candidates_update_auth" ON source_candidates;
+
 -- 読み取りは全員可能
 CREATE POLICY "source_candidates_read_all" ON source_candidates 
     FOR SELECT USING (true);
@@ -91,7 +96,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 7. テスト用のサンプルデータ
+-- 7. テスト用のサンプルデータ（既存データがある場合はスキップ）
 INSERT INTO source_candidates (
     name,
     domain,
@@ -103,8 +108,8 @@ INSERT INTO source_candidates (
     relevance_score,
     discovery_method,
     metadata
-) VALUES 
-(
+) 
+SELECT 
     'CompositesWorld Japan',
     'compositesworld.jp',
     ARRAY['https://compositesworld.jp/rss.xml'],
@@ -115,8 +120,23 @@ INSERT INTO source_candidates (
     0.85,
     'weekly_multilingual_discovery',
     '{"rss_validated": true, "feed_entries": 25, "last_updated": "2025-07-14"}'::jsonb
-),
-(
+WHERE NOT EXISTS (
+    SELECT 1 FROM source_candidates WHERE domain = 'compositesworld.jp'
+);
+
+INSERT INTO source_candidates (
+    name,
+    domain,
+    urls,
+    site_url,
+    category,
+    language,
+    country_code,
+    relevance_score,
+    discovery_method,
+    metadata
+) 
+SELECT 
     'Toray Carbon Fiber News',
     'toray.com',
     ARRAY['https://toray.com/news/rss.xml'],
@@ -127,6 +147,8 @@ INSERT INTO source_candidates (
     0.92,
     'weekly_source_discovery',
     '{"rss_validated": true, "feed_entries": 12, "industry_relevance": "high"}'::jsonb
+WHERE NOT EXISTS (
+    SELECT 1 FROM source_candidates WHERE domain = 'toray.com'
 );
 
 -- 8. 確認
