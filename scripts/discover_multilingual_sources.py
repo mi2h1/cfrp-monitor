@@ -286,29 +286,100 @@ class MultilingualSourceDiscoverer:
         return all_discovered
     
     def save_multilingual_candidates(self, sources_by_language: Dict[str, List[Dict]]):
-        """多言語候補の保存"""
+        """多言語候補をDBに保存"""
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        total_db_saved = 0
         
         for language, sources in sources_by_language.items():
             if not sources:
                 continue
                 
+            # JSONファイルへの保存（バックアップ用）
             filename = f"multilingual_sources_{language}_{timestamp}.json"
             filepath = os.path.join(os.path.dirname(__file__), '..', filename)
             
             with open(filepath, 'w', encoding='utf-8') as f:
                 json.dump(sources, f, ensure_ascii=False, indent=2)
                 
-            print(f"\n{language}: {len(sources)} 件の候補を保存 → {filename}")
+            # データベースへの保存
+            db_saved = 0
+            for source in sources:
+                try:
+                    # 候補データを変換
+                    candidate_data = {
+                        'name': source.get('name', 'Unknown'),
+                        'domain': self.extract_domain(source.get('site_url', '')),
+                        'urls': source.get('urls', []),
+                        'site_url': source.get('site_url', ''),
+                        'category': 'unknown',
+                        'language': language,
+                        'country_code': self.detect_country_from_language(language),
+                        'relevance_score': source.get('relevance_score', 0.5),
+                        'discovery_method': 'weekly_multilingual_discovery',
+                        'metadata': {
+                            'discovered_at': source.get('discovered_at', ''),
+                            'source_type': 'multilingual_search',
+                            'search_language': language,
+                            'feeds_found': len(source.get('urls', []))
+                        }
+                    }
+                    
+                    # 重複チェック（ドメインでUPSERT）
+                    existing = supabase.table('source_candidates').select('id').eq('domain', candidate_data['domain']).execute()
+                    
+                    if existing.data:
+                        # 既存候補を更新
+                        result = supabase.table('source_candidates').update({
+                            'relevance_score': candidate_data['relevance_score'],
+                            'metadata': candidate_data['metadata']
+                        }).eq('domain', candidate_data['domain']).execute()
+                        print(f"  更新: {candidate_data['name']} ({candidate_data['domain']})")
+                    else:
+                        # 新規候補を挿入
+                        result = supabase.table('source_candidates').insert(candidate_data).execute()
+                        print(f"  追加: {candidate_data['name']} ({candidate_data['domain']})")
+                        db_saved += 1
+                        
+                except Exception as e:
+                    print(f"  エラー: {source.get('name', 'Unknown')} - {str(e)}")
+                    
+            print(f"\n{language}: {len(sources)} 件の候補を発見 → {filename}")
+            print(f"  - データベース保存: {db_saved} 件")
+            total_db_saved += db_saved
         
         # 統計情報
         total_sources = sum(len(sources) for sources in sources_by_language.values())
         print(f"\n総計: {total_sources} 件の多言語情報源候補を発見")
+        print(f"  - データベース保存: {total_db_saved} 件")
+        print(f"  - 管理画面で確認・承認してください")
         
         print("\n言語別内訳:")
         for language, sources in sources_by_language.items():
             if sources:
                 print(f"  {language}: {len(sources)} 件")
+                
+    def extract_domain(self, url: str) -> str:
+        """URLからドメインを抽出"""
+        from urllib.parse import urlparse
+        try:
+            parsed = urlparse(url)
+            return parsed.netloc or url
+        except:
+            return url
+            
+    def detect_country_from_language(self, language: str) -> str:
+        """言語から国コードを推定"""
+        mapping = {
+            'japanese': 'JP',
+            'german': 'DE',
+            'french': 'FR',
+            'chinese': 'CN',
+            'korean': 'KR',
+            'italian': 'IT',
+            'spanish': 'ES',
+            'russian': 'RU'
+        }
+        return mapping.get(language, 'unknown')
 
 def main():
     # ログ記録用の変数初期化

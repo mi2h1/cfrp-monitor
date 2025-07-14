@@ -217,28 +217,61 @@ class ArticleSourceDiscoverer:
         return candidates
     
     def save_candidates(self, candidates: List[Dict]):
-        """候補を保存"""
+        """候補をDBに保存"""
         if not candidates:
             print("\n新しい情報源候補は見つかりませんでした。")
             return
             
+        # JSONファイルへの保存（バックアップ用）
         filename = f"article_source_candidates_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-        
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(candidates, f, ensure_ascii=False, indent=2)
             
-        print(f"\n{len(candidates)} 件の候補を保存しました: {filename}")
-        print("\n次のステップ:")
-        print("1. 候補を確認")
-        print("2. 適切なものをsourcesテーブルに追加")
-        
-        # 推奨SQLも出力
-        print("\n追加用SQL例:")
-        for c in candidates[:3]:
-            print(f"""
-INSERT INTO sources (name, urls, parser, acquisition_mode)
-VALUES ('{c['name']}', ARRAY['{c['feed_url']}'], 'rss', 'auto');
-""")
+        # データベースへの保存
+        db_saved = 0
+        for candidate in candidates:
+            try:
+                # 候補データを変換
+                candidate_data = {
+                    'name': candidate.get('name', 'Unknown'),
+                    'domain': candidate.get('domain', ''),
+                    'urls': [candidate.get('feed_url', '')],
+                    'site_url': candidate.get('domain', ''),
+                    'category': 'unknown',  # 記事ベース探索では詳細分類なし
+                    'language': 'unknown',   # 記事ベース探索では言語不明
+                    'country_code': 'unknown',
+                    'relevance_score': 0.7,  # 記事ベース探索では中程度の関連度
+                    'discovery_method': 'weekly_source_discovery',
+                    'metadata': {
+                        'occurrence_count': candidate.get('occurrence_count', 0),
+                        'discovered_at': candidate.get('discovered_at', ''),
+                        'source_type': 'article_analysis'
+                    }
+                }
+                
+                # 重複チェック（ドメインでUPSERT）
+                existing = supabase.table('source_candidates').select('id').eq('domain', candidate_data['domain']).execute()
+                
+                if existing.data:
+                    # 既存候補を更新
+                    result = supabase.table('source_candidates').update({
+                        'relevance_score': candidate_data['relevance_score'],
+                        'metadata': candidate_data['metadata']
+                    }).eq('domain', candidate_data['domain']).execute()
+                    print(f"  更新: {candidate_data['name']} ({candidate_data['domain']})")
+                else:
+                    # 新規候補を挿入
+                    result = supabase.table('source_candidates').insert(candidate_data).execute()
+                    print(f"  追加: {candidate_data['name']} ({candidate_data['domain']})")
+                    db_saved += 1
+                    
+            except Exception as e:
+                print(f"  エラー: {candidate.get('name', 'Unknown')} - {str(e)}")
+                
+        print(f"\n{len(candidates)} 件の候補を発見:")
+        print(f"  - JSONファイル保存: {filename}")
+        print(f"  - データベース保存: {db_saved} 件")
+        print(f"  - 管理画面で確認・承認してください")
 
 def main():
     # ログ記録用の変数初期化

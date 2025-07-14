@@ -1,11 +1,14 @@
 // CFRP Monitor - 情報源管理ページJavaScript
 
 let sources = [];
+let candidates = [];
 let currentEditingSourceId = null;
+let currentViewMode = 'sources'; // 'sources' または 'candidates'
 
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
     await loadSources();
+    await loadCandidates();
     await loadLastTaskLog();
     setupEventListeners();
 });
@@ -902,4 +905,254 @@ async function deleteSource() {
         console.error('削除エラー:', error);
         alert('削除に失敗しました: ' + error.message);
     }
+}
+
+// ====================================================
+// 候補管理機能
+// ====================================================
+
+// 候補一覧を読み込み
+async function loadCandidates() {
+    try {
+        const { data, error } = await supabase
+            .from('source_candidates')
+            .select('*')
+            .order('discovered_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        candidates = data || [];
+        console.log('候補読み込み完了:', candidates.length, '件');
+        
+    } catch (error) {
+        console.error('候補読み込みエラー:', error);
+    }
+}
+
+// 表示モードの切り替え
+function switchViewMode(mode) {
+    currentViewMode = mode;
+    
+    // ナビゲーションの更新
+    document.querySelectorAll('.view-mode-nav').forEach(nav => {
+        nav.classList.remove('active');
+    });
+    document.getElementById(`nav-${mode}`).classList.add('active');
+    
+    // コンテンツの更新
+    if (mode === 'sources') {
+        renderSources();
+        document.getElementById('candidateActions').style.display = 'none';
+    } else if (mode === 'candidates') {
+        renderCandidates();
+        document.getElementById('candidateActions').style.display = 'block';
+    }
+}
+
+// 候補一覧の表示
+function renderCandidates() {
+    const container = document.getElementById('sourcesContainer');
+    const statusFilter = document.getElementById('candidateStatusFilter')?.value || '';
+    
+    // フィルタリング
+    let filteredCandidates = candidates;
+    if (statusFilter) {
+        filteredCandidates = candidates.filter(c => c.status === statusFilter);
+    }
+    
+    if (filteredCandidates.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">表示する候補がありません</div>';
+        return;
+    }
+    
+    const candidateRows = filteredCandidates.map(candidate => `
+        <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-${getStatusColor(candidate.status)} me-2">${getStatusText(candidate.status)}</span>
+                    <strong>${escapeHtml(candidate.name)}</strong>
+                </div>
+                <div class="small text-muted">
+                    <span class="me-3">🌐 ${escapeHtml(candidate.domain)}</span>
+                    <span class="me-3">🏷️ ${escapeHtml(candidate.language)}</span>
+                    <span class="me-3">📊 ${(candidate.relevance_score * 100).toFixed(0)}%</span>
+                </div>
+            </td>
+            <td>
+                <div class="small">
+                    ${candidate.urls.map(url => `<div>📡 <a href="${escapeHtml(url)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;">${escapeHtml(url)}</a></div>`).join('')}
+                </div>
+            </td>
+            <td>
+                <div class="small text-muted">
+                    <div>📅 ${new Date(candidate.discovered_at).toLocaleDateString('ja-JP')}</div>
+                    <div>🔍 ${getDiscoveryMethodText(candidate.discovery_method)}</div>
+                </div>
+            </td>
+            <td>
+                <div class="btn-group-sm">
+                    ${candidate.status === 'pending' ? `
+                        <button class="btn btn-success btn-sm me-1" onclick="approveCandidate('${candidate.id}')">
+                            ✅ 承認
+                        </button>
+                        <button class="btn btn-warning btn-sm me-1" onclick="holdCandidate('${candidate.id}')">
+                            ⏸️ 保留
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="rejectCandidate('${candidate.id}')">
+                            ❌ 却下
+                        </button>
+                    ` : `
+                        <button class="btn btn-outline-secondary btn-sm" onclick="viewCandidateDetails('${candidate.id}')">
+                            📋 詳細
+                        </button>
+                    `}
+                </div>
+            </td>
+        </tr>
+    `).join('');
+    
+    container.innerHTML = `
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>候補情報</th>
+                        <th>フィード</th>
+                        <th>発見情報</th>
+                        <th>アクション</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${candidateRows}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// 候補の承認（sources テーブルに追加）
+async function approveCandidate(candidateId) {
+    try {
+        const candidate = candidates.find(c => c.id === candidateId);
+        if (!candidate) return;
+        
+        // sources テーブルに追加
+        const sourceData = {
+            name: candidate.name,
+            urls: candidate.urls,
+            domain: candidate.domain,
+            parser: 'rss',
+            acquisition_mode: 'auto',
+            category: candidate.category === 'unknown' ? 'discovered' : candidate.category,
+            country_code: candidate.country_code,
+            relevance: Math.min(10, Math.max(1, Math.round(candidate.relevance_score * 10)))
+        };
+        
+        const { error: insertError } = await supabase
+            .from('sources')
+            .insert(sourceData);
+        
+        if (insertError) throw insertError;
+        
+        // 候補のステータスを更新
+        const { error: updateError } = await supabase
+            .from('source_candidates')
+            .update({
+                status: 'approved',
+                reviewed_at: new Date().toISOString(),
+                reviewer_notes: '管理画面から承認'
+            })
+            .eq('id', candidateId);
+        
+        if (updateError) throw updateError;
+        
+        // 画面を更新
+        await loadSources();
+        await loadCandidates();
+        renderCandidates();
+        
+        alert('候補を承認し、情報源リストに追加しました');
+        
+    } catch (error) {
+        console.error('候補承認エラー:', error);
+        alert('候補の承認に失敗しました: ' + error.message);
+    }
+}
+
+// 候補の保留
+async function holdCandidate(candidateId) {
+    try {
+        const { error } = await supabase
+            .from('source_candidates')
+            .update({
+                status: 'on_hold',
+                reviewed_at: new Date().toISOString(),
+                reviewer_notes: '管理画面から保留'
+            })
+            .eq('id', candidateId);
+        
+        if (error) throw error;
+        
+        await loadCandidates();
+        renderCandidates();
+        
+    } catch (error) {
+        console.error('候補保留エラー:', error);
+        alert('候補の保留に失敗しました: ' + error.message);
+    }
+}
+
+// 候補の却下
+async function rejectCandidate(candidateId) {
+    if (!confirm('この候補を却下しますか？')) return;
+    
+    try {
+        const { error } = await supabase
+            .from('source_candidates')
+            .update({
+                status: 'rejected',
+                reviewed_at: new Date().toISOString(),
+                reviewer_notes: '管理画面から却下'
+            })
+            .eq('id', candidateId);
+        
+        if (error) throw error;
+        
+        await loadCandidates();
+        renderCandidates();
+        
+    } catch (error) {
+        console.error('候補却下エラー:', error);
+        alert('候補の却下に失敗しました: ' + error.message);
+    }
+}
+
+// ユーティリティ関数
+function getStatusColor(status) {
+    const colors = {
+        pending: 'primary',
+        approved: 'success',
+        rejected: 'danger',
+        on_hold: 'warning'
+    };
+    return colors[status] || 'secondary';
+}
+
+function getStatusText(status) {
+    const texts = {
+        pending: '未審査',
+        approved: '承認済み',
+        rejected: '却下済み',
+        on_hold: '保留中'
+    };
+    return texts[status] || status;
+}
+
+function getDiscoveryMethodText(method) {
+    const texts = {
+        weekly_source_discovery: '記事ベース探索',
+        weekly_multilingual_discovery: '多言語探索',
+        manual: '手動追加'
+    };
+    return texts[method] || method;
 }
