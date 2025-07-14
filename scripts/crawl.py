@@ -46,16 +46,31 @@ def safe_date(txt):
         return None
 
 def upsert(row: dict):
-    res = supabase.table("items").upsert(row, on_conflict="url").execute()
-    err = getattr(res, "error", None) or (res.get("error") if isinstance(res, dict) else None)
-    print("UPSERT", "ERROR:" if err else "OK:", err or row["url"])
-    
-    # ログ記録用のカウント
-    if not err:
-        log_data["articles_added"] += 1
-    else:
+    try:
+        # まず既存記事をチェック
+        existing = supabase.table("items").select("id").eq("url", row["url"]).execute()
+        
+        if existing.data:
+            # 既存記事があれば何もしない
+            print("SKIP (existing):", row["url"])
+            return
+        else:
+            # 新規記事として挿入
+            res = supabase.table("items").insert(row).execute()
+            err = getattr(res, "error", None) or (res.get("error") if isinstance(res, dict) else None)
+            print("INSERT", "ERROR:" if err else "OK:", err or row["url"])
+            
+            # ログ記録用のカウント
+            if not err:
+                log_data["articles_added"] += 1
+            else:
+                log_data["errors_count"] += 1
+                log_data["details"]["errors"].append({"url": row["url"], "error": str(err)})
+                
+    except Exception as e:
         log_data["errors_count"] += 1
-        log_data["details"]["errors"].append({"url": row["url"], "error": str(err)})
+        log_data["details"]["errors"].append({"url": row["url"], "error": str(e)})
+        print("UPSERT ERROR:", str(e))
 
 
 # ── HTML 本文抽出ユーティリティ ────────────────────────
