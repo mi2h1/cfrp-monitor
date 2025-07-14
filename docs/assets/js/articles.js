@@ -79,7 +79,7 @@ async function loadLastTaskLog() {
             const userInfo = document.getElementById('userInfo');
             if (userInfo) {
                 const logInfo = document.createElement('span');
-                logInfo.className = 'text-white-50 me-3';
+                logInfo.className = 'navbar-text text-white-50 me-3';
                 logInfo.innerHTML = `📅 最終実行: ${executedAt} ${statusBadge}`;
                 userInfo.parentNode.insertBefore(logInfo, userInfo);
             }
