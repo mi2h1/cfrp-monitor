@@ -9,7 +9,7 @@ import json
 from collections import Counter
 from urllib.parse import urlparse, urljoin
 from datetime import datetime, timedelta
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Optional
 from supabase import create_client, Client
 import requests
 from bs4 import BeautifulSoup
