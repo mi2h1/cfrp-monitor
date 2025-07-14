@@ -8,6 +8,7 @@ let currentPage = 1;
 document.addEventListener('DOMContentLoaded', async () => {
     await loadSources();
     await loadArticles();
+    await loadLastTaskLog();
     setupEventListeners();
 });
 
@@ -52,6 +53,39 @@ async function loadArticles() {
         console.error('記事読み込みエラー:', error);
         document.getElementById('loading').innerHTML = 
             '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
+    }
+}
+
+// 最終タスク実行ログを読み込み
+async function loadLastTaskLog() {
+    try {
+        const { data, error } = await supabase
+            .from('task_logs')
+            .select('*')
+            .eq('task_type', 'daily_crawl')
+            .order('executed_at', { ascending: false })
+            .limit(1);
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            const lastLog = data[0];
+            const executedAt = new Date(lastLog.executed_at).toLocaleString('ja-JP');
+            const statusBadge = lastLog.status === 'success' 
+                ? '<span class="badge bg-success">成功</span>'
+                : '<span class="badge bg-danger">失敗</span>';
+            
+            // ナビバーに表示
+            const userInfo = document.getElementById('userInfo');
+            if (userInfo) {
+                const logInfo = document.createElement('span');
+                logInfo.className = 'text-white-50 me-3';
+                logInfo.innerHTML = `📅 最終実行: ${executedAt} ${statusBadge}`;
+                userInfo.parentNode.insertBefore(logInfo, userInfo);
+            }
+        }
+    } catch (error) {
+        console.error('タスクログ読み込みエラー:', error);
     }
 }
 

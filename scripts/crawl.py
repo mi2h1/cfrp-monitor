@@ -7,6 +7,7 @@ from supabase import create_client, Client
 from dateutil import parser as dtparser
 from fetcher import fetch_and_parse, slug, DEFAULT_CFG
 import pytz
+import time
 
 # ── Supabase ─────────────────────────────────────────────
 supabase: Client = create_client(os.getenv("SUPABASE_URL"),
@@ -48,6 +49,13 @@ def upsert(row: dict):
     res = supabase.table("items").upsert(row, on_conflict="url").execute()
     err = getattr(res, "error", None) or (res.get("error") if isinstance(res, dict) else None)
     print("UPSERT", "ERROR:" if err else "OK:", err or row["url"])
+    
+    # ログ記録用のカウント
+    if not err:
+        log_data["articles_added"] += 1
+    else:
+        log_data["errors_count"] += 1
+        log_data["details"]["errors"].append({"url": row["url"], "error": str(err)})
 
 
 # ── HTML 本文抽出ユーティリティ ────────────────────────
@@ -81,6 +89,18 @@ def fetch_article_body(url: str) -> str | None:
         return None
 
 
+# ── ログ記録用の変数初期化 ────────────────────────────
+start_time = time.time()
+log_data = {
+    "task_name": "Daily Article Crawl",
+    "task_type": "daily_crawl",
+    "sources_processed": 0,
+    "articles_found": 0,
+    "articles_added": 0,
+    "errors_count": 0,
+    "details": {"sources": [], "errors": []}
+}
+
 # ── ソース読み込み（Supabaseから） ────────────────────────
 sources_result = supabase.table("sources").select("*").eq("acquisition_mode", "auto").execute()
 sources = sources_result.data
@@ -89,6 +109,7 @@ print(f"自動収集対象: {len(sources)} 件")
 
 # ── メインループ ────────────────────────────────────
 for src in sources:
+    log_data["sources_processed"] += 1
     # sourcesテーブルのカラムからseed_sources.yml互換の設定を構築
     cfg = {
         **DEFAULT_CFG,
@@ -104,9 +125,13 @@ for src in sources:
         print(f"URL未設定: {src.get('name', src.get('domain'))}")
         continue
 
+    log_data["details"]["sources"].append(src.get('name', src.get('domain')))
+    
     for feed_url in urls:
         entries = fetch_and_parse(feed_url, cfg)
         save_raw(f'{src["name"]}-{slug(feed_url)}', entries)
+        
+        log_data["articles_found"] += len(entries)
 
         for e in entries:
             # --- 1) フィードに本文があるか確認 --------------------------
@@ -134,5 +159,25 @@ for src in sources:
                 "body"    : body,
                 "added_at": added_at_jst,
             })
+
+# ── ログをDBに記録 ────────────────────────────────
+end_time = time.time()
+log_data["duration_seconds"] = int(end_time - start_time)
+log_data["status"] = "failed" if log_data["errors_count"] > 0 else "success"
+
+# detailsをJSON文字列に変換
+log_data["details"] = json.dumps(log_data["details"], ensure_ascii=False)
+
+# task_logsテーブルに記録
+log_result = supabase.table("task_logs").insert(log_data).execute()
+if hasattr(log_result, "error") and log_result.error:
+    print(f"ログ記録エラー: {log_result.error}")
+else:
+    print(f"\n実行ログ記録完了:")
+    print(f"  - 処理ソース数: {log_data['sources_processed']}")
+    print(f"  - 発見記事数: {log_data['articles_found']}")
+    print(f"  - 追加記事数: {log_data['articles_added']}")
+    print(f"  - エラー数: {log_data['errors_count']}")
+    print(f"  - 実行時間: {log_data['duration_seconds']}秒")
 
 print("crawl finished")
