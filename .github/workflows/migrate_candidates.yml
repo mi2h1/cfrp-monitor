@@ -1,0 +1,141 @@
+name: Migrate JSON Candidates to Database
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "migrate" to confirm migration'
+        required: true
+        default: ''
+
+jobs:
+  migrate-candidates:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Validate input
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "migrate" ]; then
+            echo "❌ Migration cancelled: Input must be 'migrate' to confirm"
+            exit 1
+          fi
+          echo "✅ Migration confirmed"
+      
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Download previous discovery artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: discovery-results
+          path: .
+        continue-on-error: true
+      
+      - name: List available JSON files
+        run: |
+          echo "📁 Available JSON files:"
+          find . -name "*.json" -type f | head -20
+          echo ""
+          echo "📊 File counts:"
+          echo "  - Multilingual files: $(find . -name 'multilingual_sources_*.json' | wc -l)"
+          echo "  - Article files: $(find . -name 'article_source_candidates_*.json' | wc -l)"
+      
+      - name: Migrate JSON candidates to database
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          echo "🚀 Starting JSON to DB migration..."
+          python scripts/migrate_json_candidates.py
+      
+      - name: Verify migration results
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          echo "🔍 Verifying migration results..."
+          python -c "
+          import os
+          from supabase import create_client
+          
+          supabase = create_client(os.getenv('SUPABASE_URL'), os.getenv('SUPABASE_KEY'))
+          
+          # 候補数をカウント
+          result = supabase.table('source_candidates').select('id, status, discovery_method').execute()
+          candidates = result.data
+          
+          print(f'📊 Migration verification:')
+          print(f'  - Total candidates: {len(candidates)}')
+          
+          # ステータス別カウント
+          status_counts = {}
+          method_counts = {}
+          
+          for candidate in candidates:
+              status = candidate.get('status', 'unknown')
+              method = candidate.get('discovery_method', 'unknown')
+              
+              status_counts[status] = status_counts.get(status, 0) + 1
+              method_counts[method] = method_counts.get(method, 0) + 1
+          
+          print(f'  - By status:')
+          for status, count in status_counts.items():
+              print(f'    - {status}: {count}')
+          
+          print(f'  - By discovery method:')
+          for method, count in method_counts.items():
+              print(f'    - {method}: {count}')
+          "
+      
+      - name: Create migration summary
+        run: |
+          cat > migration_summary.md << 'EOF'
+          # 📋 JSON Candidates Migration Summary
+          
+          **Migration Date:** $(date -u +"%Y-%m-%d %H:%M UTC")
+          **Triggered by:** ${{ github.actor }}
+          
+          ## 🎯 Migration Results
+          
+          The migration process has completed successfully. JSON candidate files have been 
+          processed and inserted into the `source_candidates` table.
+          
+          ## 📊 Next Steps
+          
+          1. **Review Candidates**: Go to the Sources Management page
+          2. **Switch to Candidates Tab**: Click "🔍 探索候補" 
+          3. **Approve/Reject**: Review and manage the migrated candidates
+          4. **Monitor Results**: Check that approved candidates appear in the sources list
+          
+          ## 🔧 Technical Details
+          
+          - Migration script: `scripts/migrate_json_candidates.py`
+          - Source files: `multilingual_sources_*.json` and `article_source_candidates_*.json`
+          - Target table: `source_candidates`
+          - Duplicate handling: Skip existing domains
+          
+          ---
+          
+          🤖 This migration was run automatically via GitHub Actions.
+          EOF
+          
+          echo "📄 Migration summary created"
+      
+      - name: Upload migration summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-summary
+          path: migration_summary.md
+      
+      - name: Migration completed
+        run: |
+          echo "✅ JSON candidates migration completed successfully!"
+          echo "📋 Check the Sources Management page to review migrated candidates"
+          echo "🔍 Use the '探索候補' tab to approve/reject candidates"
