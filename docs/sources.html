@@ -193,7 +193,7 @@
                 const { data, error } = await supabase
                     .from('task_logs')
                     .select('*')
-                    .eq('task_type', 'daily_crawl')
+                    .in('task_type', ['weekly_source_discovery', 'weekly_multilingual_discovery'])
                     .order('executed_at', { ascending: false })
                     .limit(1);
                 
@@ -206,12 +206,22 @@
                         ? '<span class="badge bg-success">成功</span>'
                         : '<span class="badge bg-danger">失敗</span>';
                     
+                    // タスクタイプに応じた表示文字列
+                    let taskLabel = '週次情報源探索';
+                    if (lastLog.task_type === 'weekly_multilingual_discovery') {
+                        taskLabel = '多言語情報源探索';
+                    }
+                    
+                    // 発見候補数も表示
+                    const candidatesCount = lastLog.articles_added || 0;
+                    const candidatesText = candidatesCount > 0 ? ` (${candidatesCount}件発見)` : '';
+                    
                     // ナビバーに表示
                     const userInfo = document.getElementById('userInfo');
                     if (userInfo) {
                         const logInfo = document.createElement('span');
                         logInfo.className = 'navbar-text text-white-50 me-3';
-                        logInfo.innerHTML = `📅 最終実行: ${executedAt} ${statusBadge}`;
+                        logInfo.innerHTML = `🔍 ${taskLabel} 最終実行: ${executedAt} ${statusBadge}${candidatesText}`;
                         userInfo.parentNode.insertBefore(logInfo, userInfo);
                     }
                 }

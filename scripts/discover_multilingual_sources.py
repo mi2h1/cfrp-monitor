@@ -311,18 +311,75 @@ class MultilingualSourceDiscoverer:
                 print(f"  {language}: {len(sources)} 件")
 
 def main():
-    discoverer = MultilingualSourceDiscoverer()
+    # ログ記録用の変数初期化
+    start_time = time.time()
+    log_data = {
+        "task_name": "Weekly Multilingual Source Discovery",
+        "task_type": "weekly_multilingual_discovery",
+        "sources_processed": 0,
+        "articles_found": 0,
+        "articles_added": 0,
+        "errors_count": 0,
+        "details": {
+            "languages_searched": [],
+            "search_queries": 0,
+            "api_calls": 0,
+            "relevant_sites": 0,
+            "sites_with_rss": 0,
+            "candidates_by_language": {},
+            "errors": []
+        }
+    }
     
-    if not discoverer.google_api_key:
-        print("警告: Google API認証情報が設定されていません")
-        print("多言語検索にはGoogle Custom Search APIが必要です")
-        return
-    
-    print("多言語複合材料情報源の検索を開始します...")
-    print("対象言語: 日本語、ドイツ語、中国語、韓国語")
-    
-    sources = discoverer.discover_multilingual_sources()
-    discoverer.save_multilingual_candidates(sources)
+    try:
+        discoverer = MultilingualSourceDiscoverer()
+        
+        if not discoverer.google_api_key:
+            error_msg = "Google API認証情報が設定されていません"
+            log_data["errors_count"] += 1
+            log_data["details"]["errors"].append(error_msg)
+            print(f"警告: {error_msg}")
+            print("多言語検索にはGoogle Custom Search APIが必要です")
+            return
+        
+        print("多言語複合材料情報源の検索を開始します...")
+        print("対象言語: 日本語、ドイツ語、中国語、韓国語")
+        
+        sources = discoverer.discover_multilingual_sources()
+        discoverer.save_multilingual_candidates(sources)
+        
+        # ログデータを更新
+        total_candidates = sum(len(lang_sources) for lang_sources in sources.values())
+        log_data["articles_added"] = total_candidates
+        log_data["details"]["languages_searched"] = list(sources.keys())
+        log_data["details"]["candidates_by_language"] = {lang: len(sources_list) for lang, sources_list in sources.items()}
+        
+    except Exception as e:
+        log_data["errors_count"] += 1
+        log_data["details"]["errors"].append(str(e))
+        print(f"エラー: {e}")
+        
+    finally:
+        # 実行時間を計算
+        end_time = time.time()
+        log_data["duration_seconds"] = int(end_time - start_time)
+        log_data["status"] = "failed" if log_data["errors_count"] > 0 else "success"
+        
+        # detailsをJSON文字列に変換
+        log_data["details"] = json.dumps(log_data["details"], ensure_ascii=False)
+        
+        # task_logsテーブルに記録
+        try:
+            log_result = supabase.table("task_logs").insert(log_data).execute()
+            if hasattr(log_result, "error") and log_result.error:
+                print(f"ログ記録エラー: {log_result.error}")
+            else:
+                print(f"実行ログ記録完了: {log_data['task_name']}")
+                print(f"  - 発見候補数: {log_data['articles_added']}")
+                print(f"  - 実行時間: {log_data['duration_seconds']}秒")
+                print(f"  - ステータス: {log_data['status']}")
+        except Exception as e:
+            print(f"ログ記録エラー: {e}")
 
 if __name__ == "__main__":
     main()

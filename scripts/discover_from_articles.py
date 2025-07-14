@@ -6,6 +6,7 @@
 import os
 import re
 import json
+import time
 from collections import Counter
 from urllib.parse import urlparse, urljoin
 from datetime import datetime, timedelta
@@ -240,9 +241,60 @@ VALUES ('{c['name']}', ARRAY['{c['feed_url']}'], 'rss', 'auto');
 """)
 
 def main():
-    discoverer = ArticleSourceDiscoverer()
-    candidates = discoverer.discover_new_sources()
-    discoverer.save_candidates(candidates)
+    # ログ記録用の変数初期化
+    start_time = time.time()
+    log_data = {
+        "task_name": "Weekly Article-Based Source Discovery",
+        "task_type": "weekly_source_discovery",
+        "sources_processed": 0,
+        "articles_found": 0,
+        "articles_added": 0,
+        "errors_count": 0,
+        "details": {
+            "analyzed_articles": 0,
+            "unique_domains": 0,
+            "relevant_domains": 0,
+            "domains_with_rss": 0,
+            "candidates_file": "",
+            "errors": []
+        }
+    }
+    
+    try:
+        discoverer = ArticleSourceDiscoverer()
+        candidates = discoverer.discover_new_sources()
+        discoverer.save_candidates(candidates)
+        
+        # ログデータを更新
+        log_data["articles_added"] = len(candidates)
+        log_data["details"]["candidates_file"] = f"article_source_candidates_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        
+    except Exception as e:
+        log_data["errors_count"] += 1
+        log_data["details"]["errors"].append(str(e))
+        print(f"エラー: {e}")
+        
+    finally:
+        # 実行時間を計算
+        end_time = time.time()
+        log_data["duration_seconds"] = int(end_time - start_time)
+        log_data["status"] = "failed" if log_data["errors_count"] > 0 else "success"
+        
+        # detailsをJSON文字列に変換
+        log_data["details"] = json.dumps(log_data["details"], ensure_ascii=False)
+        
+        # task_logsテーブルに記録
+        try:
+            log_result = supabase.table("task_logs").insert(log_data).execute()
+            if hasattr(log_result, "error") and log_result.error:
+                print(f"ログ記録エラー: {log_result.error}")
+            else:
+                print(f"実行ログ記録完了: {log_data['task_name']}")
+                print(f"  - 発見候補数: {log_data['articles_added']}")
+                print(f"  - 実行時間: {log_data['duration_seconds']}秒")
+                print(f"  - ステータス: {log_data['status']}")
+        except Exception as e:
+            print(f"ログ記録エラー: {e}")
 
 if __name__ == "__main__":
     main()
