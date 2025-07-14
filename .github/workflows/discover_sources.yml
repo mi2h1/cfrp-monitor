@@ -144,8 +144,16 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "Source Discovery Bot"
           
-          # 新しいブランチを作成
+          # 新しいブランチを作成（既存があれば削除）
           BRANCH_NAME="source-discovery-$(date +%Y%m%d)"
+          
+          # 既存のローカルブランチを削除
+          git branch -D "$BRANCH_NAME" 2>/dev/null || true
+          
+          # 既存のリモートブランチを削除
+          git push origin --delete "$BRANCH_NAME" 2>/dev/null || true
+          
+          # 新しいブランチを作成
           git checkout -b "$BRANCH_NAME"
           
           # ファイルを追加
