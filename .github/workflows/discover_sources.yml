@@ -144,7 +144,7 @@ jobs:
           git config --local user.name "Source Discovery Bot"
           
           # 新しいブランチを作成（既存があれば削除）
-          BRANCH_NAME="source-discovery-$(date +%Y%m%d)"
+          BRANCH_NAME="source-discovery-$(date +%Y%m%d-%H%M%S)"
           
           # 既存のローカルブランチを削除
           git branch -D "$BRANCH_NAME" 2>/dev/null || true
@@ -184,6 +184,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ env.branch_name }}
+          base: main
           title: "🔍 Weekly Source Discovery Results - $(date +%Y-%m-%d)"
           body: |
             ## 🔍 Automated Source Discovery Results
