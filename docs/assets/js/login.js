@@ -6,8 +6,8 @@ if (localStorage.getItem('currentUser')) {
 }
 
 // アラート表示関数
-function showAlert(message, type = 'danger') {
-    const alertContainer = document.getElementById('alertContainer');
+function showAlert(message, type = 'danger', containerId = 'alertContainer') {
+    const alertContainer = document.getElementById(containerId);
     alertContainer.innerHTML = `
         <div class="alert alert-${type}" role="alert">
             ${message}
@@ -17,6 +17,19 @@ function showAlert(message, type = 'danger') {
         alertContainer.innerHTML = '';
     }, 5000);
 }
+
+// モーダル表示
+document.getElementById('showRegisterModal').addEventListener('click', (e) => {
+    e.preventDefault();
+    const modal = new bootstrap.Modal(document.getElementById('registerModal'));
+    modal.show();
+});
+
+// モーダルが閉じられたときにフォームをリセット
+document.getElementById('registerModal').addEventListener('hidden.bs.modal', () => {
+    document.getElementById('registerForm').reset();
+    document.getElementById('registerAlertContainer').innerHTML = '';
+});
 
 // ログインフォーム処理
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -77,22 +90,22 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const displayName = document.getElementById('displayName').value.trim();
     
     if (!newUserId) {
-        showAlert('ユーザーIDを入力してください');
+        showAlert('ユーザーIDを入力してください', 'danger', 'registerAlertContainer');
         return;
     }
 
     if (newUserId.length < 3) {
-        showAlert('ユーザーIDは3文字以上で入力してください');
+        showAlert('ユーザーIDは3文字以上で入力してください', 'danger', 'registerAlertContainer');
         return;
     }
     
     if (!newPassword) {
-        showAlert('パスワードを入力してください');
+        showAlert('パスワードを入力してください', 'danger', 'registerAlertContainer');
         return;
     }
     
     if (newPassword.length < 4) {
-        showAlert('パスワードは4文字以上で入力してください');
+        showAlert('パスワードは4文字以上で入力してください', 'danger', 'registerAlertContainer');
         return;
     }
 
@@ -110,9 +123,9 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
 
         if (error) {
             if (error.code === '23505') { // unique constraint violation
-                showAlert('そのユーザーIDは既に使用されています');
+                showAlert('そのユーザーIDは既に使用されています', 'danger', 'registerAlertContainer');
             } else {
-                showAlert('登録に失敗しました: ' + error.message);
+                showAlert('登録に失敗しました: ' + error.message, 'danger', 'registerAlertContainer');
             }
             return;
         }
@@ -121,14 +134,18 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         localStorage.setItem('currentUser', newUserId);
         localStorage.setItem('currentUserData', JSON.stringify(data));
         
-        showAlert('登録完了！ログインしました。リダイレクト中...', 'success');
+        showAlert('登録完了！ログインしました。リダイレクト中...', 'success', 'registerAlertContainer');
+        
+        // モーダルを閉じる
+        const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
         setTimeout(() => {
+            modal.hide();
             window.location.href = 'index.html';
         }, 1000);
 
     } catch (error) {
         console.error('登録エラー:', error);
-        showAlert('登録に失敗しました');
+        showAlert('登録に失敗しました', 'danger', 'registerAlertContainer');
     }
 });
 

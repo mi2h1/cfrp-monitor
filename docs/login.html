@@ -14,7 +14,7 @@
         <div class="login-card">
             <div class="login-header">
                 <h2>CFRP Monitor</h2>
-                <p>ログイン・新規登録</p>
+                <p>ログイン</p>
             </div>
 
             <div id="alertContainer"></div>
@@ -36,35 +36,49 @@
                 </button>
             </form>
 
-            <div class="divider">
-                <span>または</span>
+            <div class="text-center mt-3">
+                <p class="mb-0">
+                    アカウントをお持ちでない方は 
+                    <a href="#" id="showRegisterModal" class="text-primary">新規登録はこちら</a>
+                </p>
             </div>
 
-            <!-- 新規登録セクション -->
-            <div class="register-section">
-                <h6 class="mb-3">新規登録</h6>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label for="newUserId" class="form-label">新しいユーザーID</label>
-                        <input type="text" class="form-control" id="newUserId" required 
-                               placeholder="新しいIDを入力">
-                    </div>
-                    <div class="form-group">
-                        <label for="newPassword" class="form-label">パスワード</label>
-                        <input type="password" class="form-control" id="newPassword" required 
-                               placeholder="パスワードを入力">
-                    </div>
-                    <div class="form-group">
-                        <label for="displayName" class="form-label">表示名（任意）</label>
-                        <input type="text" class="form-control" id="displayName" 
-                               placeholder="表示名を入力">
-                    </div>
-                    <button type="submit" class="btn btn-success btn-login">
-                        新規登録
-                    </button>
-                </form>
-            </div>
+        </div>
+    </div>
 
+    <!-- 新規登録モーダル -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerModalLabel">新規登録</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="registerAlertContainer"></div>
+                    
+                    <form id="registerForm">
+                        <div class="form-group mb-3">
+                            <label for="newUserId" class="form-label">新しいユーザーID</label>
+                            <input type="text" class="form-control" id="newUserId" required 
+                                   placeholder="新しいIDを入力">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="newPassword" class="form-label">パスワード</label>
+                            <input type="password" class="form-control" id="newPassword" required 
+                                   placeholder="パスワードを入力（4文字以上）">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="displayName" class="form-label">表示名（任意）</label>
+                            <input type="text" class="form-control" id="displayName" 
+                                   placeholder="表示名を入力">
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            新規登録
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
