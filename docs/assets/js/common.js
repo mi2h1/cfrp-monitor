@@ -126,6 +126,7 @@ function setupPagination(containerSelector, renderFunction) {
 function renderPagination(totalItems, itemsPerPage, currentPage) {
     const pageInfo = document.getElementById('pageInfo');
     const paginationList = document.getElementById('paginationList');
+    const paginationListTop = document.getElementById('paginationListTop');
     
     if (!pageInfo || !paginationList) return;
     
@@ -136,66 +137,76 @@ function renderPagination(totalItems, itemsPerPage, currentPage) {
     const endItem = Math.min(currentPage * itemsPerPage, totalItems);
     pageInfo.textContent = `${startItem}-${endItem} / ${totalItems}件 (${currentPage}/${totalPages}ページ)`;
     
-    // ページネーションボタン生成
-    paginationList.innerHTML = '';
+    // ページネーションボタンを生成する関数
+    const createPaginationButtons = (container) => {
+        container.innerHTML = '';
     
-    // 前へボタン
-    const prevLi = document.createElement('li');
-    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-    prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1}">前へ</a>`;
-    paginationList.appendChild(prevLi);
-    
-    // ページ番号ボタン
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-    
-    // 調整
-    if (endPage - startPage + 1 < maxVisiblePages) {
-        startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-    
-    // 最初のページが見えない場合
-    if (startPage > 1) {
-        const firstLi = document.createElement('li');
-        firstLi.className = 'page-item';
-        firstLi.innerHTML = '<a class="page-link" href="#" data-page="1">1</a>';
-        paginationList.appendChild(firstLi);
+        // 前へボタン
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1}">前へ</a>`;
+        container.appendChild(prevLi);
         
-        if (startPage > 2) {
-            const ellipsisLi = document.createElement('li');
-            ellipsisLi.className = 'page-item disabled';
-            ellipsisLi.innerHTML = '<span class="page-link">...</span>';
-            paginationList.appendChild(ellipsisLi);
-        }
-    }
-    
-    // ページ番号
-    for (let i = startPage; i <= endPage; i++) {
-        const li = document.createElement('li');
-        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-        li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
-        paginationList.appendChild(li);
-    }
-    
-    // 最後のページが見えない場合
-    if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-            const ellipsisLi = document.createElement('li');
-            ellipsisLi.className = 'page-item disabled';
-            ellipsisLi.innerHTML = '<span class="page-link">...</span>';
-            paginationList.appendChild(ellipsisLi);
+        // ページ番号ボタン
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        
+        // 調整
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
         }
         
-        const lastLi = document.createElement('li');
-        lastLi.className = 'page-item';
-        lastLi.innerHTML = `<a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a>`;
-        paginationList.appendChild(lastLi);
-    }
+        // 最初のページが見えない場合
+        if (startPage > 1) {
+            const firstLi = document.createElement('li');
+            firstLi.className = 'page-item';
+            firstLi.innerHTML = '<a class="page-link" href="#" data-page="1">1</a>';
+            container.appendChild(firstLi);
+            
+            if (startPage > 2) {
+                const ellipsisLi = document.createElement('li');
+                ellipsisLi.className = 'page-item disabled';
+                ellipsisLi.innerHTML = '<span class="page-link">...</span>';
+                container.appendChild(ellipsisLi);
+            }
+        }
+        
+        // ページ番号
+        for (let i = startPage; i <= endPage; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+            container.appendChild(li);
+        }
+        
+        // 最後のページが見えない場合
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                const ellipsisLi = document.createElement('li');
+                ellipsisLi.className = 'page-item disabled';
+                ellipsisLi.innerHTML = '<span class="page-link">...</span>';
+                container.appendChild(ellipsisLi);
+            }
+            
+            const lastLi = document.createElement('li');
+            lastLi.className = 'page-item';
+            lastLi.innerHTML = `<a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a>`;
+            container.appendChild(lastLi);
+        }
+        
+        // 次へボタン
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1}">次へ</a>`;
+        container.appendChild(nextLi);
+    };
     
-    // 次へボタン
-    const nextLi = document.createElement('li');
-    nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-    nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1}">次へ</a>`;
-    paginationList.appendChild(nextLi);
+    // 下部ページネーション
+    createPaginationButtons(paginationList);
+    
+    // 上部ページネーション（存在する場合）
+    if (paginationListTop) {
+        createPaginationButtons(paginationListTop);
+    }
 }

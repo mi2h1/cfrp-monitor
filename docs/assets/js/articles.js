@@ -109,6 +109,7 @@ function renderArticles() {
     if (filteredArticles.length === 0) {
         container.innerHTML = '<div class="alert alert-info">該当する記事がありません</div>';
         document.getElementById('pagination').style.display = 'none';
+        document.getElementById('paginationTop').style.display = 'none';
         return;
     }
 
@@ -130,6 +131,7 @@ function renderArticles() {
     // ページネーション表示
     renderPagination(filteredArticles.length, itemsPerPage, currentPage);
     document.getElementById('pagination').style.display = 'block';
+    document.getElementById('paginationTop').style.display = 'block';
 }
 
 // フィルタリングとソート
@@ -297,8 +299,21 @@ function setupEventListeners() {
     // 更新ボタン
     setupRefreshButton(loadArticles);
     
-    // ページネーションクリック
+    // ページネーションクリック（下部）
     document.getElementById('paginationList').addEventListener('click', (e) => {
+        e.preventDefault();
+        const pageLink = e.target.closest('.page-link');
+        if (pageLink && !pageLink.parentElement.classList.contains('disabled')) {
+            const page = parseInt(pageLink.dataset.page);
+            if (!isNaN(page)) {
+                currentPage = page;
+                renderArticles();
+            }
+        }
+    });
+    
+    // ページネーションクリック（上部）
+    document.getElementById('paginationListTop').addEventListener('click', (e) => {
         e.preventDefault();
         const pageLink = e.target.closest('.page-link');
         if (pageLink && !pageLink.parentElement.classList.contains('disabled')) {
