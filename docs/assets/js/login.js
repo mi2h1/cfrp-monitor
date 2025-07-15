@@ -18,17 +18,20 @@ function showAlert(message, type = 'danger', containerId = 'alertContainer') {
     }, 5000);
 }
 
-// モーダル表示
-document.getElementById('showRegisterModal').addEventListener('click', (e) => {
-    e.preventDefault();
-    const modal = new bootstrap.Modal(document.getElementById('registerModal'));
-    modal.show();
-});
+// DOMが読み込まれてからイベントリスナーを設定
+document.addEventListener('DOMContentLoaded', () => {
+    // モーダル表示
+    document.getElementById('showRegisterModal').addEventListener('click', (e) => {
+        e.preventDefault();
+        const modal = new bootstrap.Modal(document.getElementById('registerModal'));
+        modal.show();
+    });
 
-// モーダルが閉じられたときにフォームをリセット
-document.getElementById('registerModal').addEventListener('hidden.bs.modal', () => {
-    document.getElementById('registerForm').reset();
-    document.getElementById('registerAlertContainer').innerHTML = '';
+    // モーダルが閉じられたときにフォームをリセット
+    document.getElementById('registerModal').addEventListener('hidden.bs.modal', () => {
+        document.getElementById('registerForm').reset();
+        document.getElementById('registerAlertContainer').innerHTML = '';
+    });
 });
 
 // ログインフォーム処理
