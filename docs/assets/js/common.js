@@ -148,7 +148,7 @@ function renderPagination(totalItems, itemsPerPage, currentPage) {
         container.appendChild(prevLi);
         
         // ページ番号ボタン
-        const maxVisiblePages = 10;
+        const maxVisiblePages = 5;
         let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
         let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
         
