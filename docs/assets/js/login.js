@@ -22,22 +22,29 @@ function showAlert(message, type = 'danger') {
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const userId = document.getElementById('userId').value.trim();
+    const password = document.getElementById('password').value.trim();
     
     if (!userId) {
         showAlert('ユーザーIDを入力してください');
         return;
     }
+    
+    if (!password) {
+        showAlert('パスワードを入力してください');
+        return;
+    }
 
     try {
-        // ユーザーの存在確認
+        // ユーザーの存在確認とパスワード認証
         const { data, error } = await supabase
             .from('users')
             .select('*')
             .eq('user_id', userId)
+            .eq('password_hash', password)
             .single();
 
         if (error || !data) {
-            showAlert('ユーザーIDが見つかりません');
+            showAlert('ユーザーIDまたはパスワードが間違っています');
             return;
         }
 
@@ -66,6 +73,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const newUserId = document.getElementById('newUserId').value.trim();
+    const newPassword = document.getElementById('newPassword').value.trim();
     const displayName = document.getElementById('displayName').value.trim();
     
     if (!newUserId) {
@@ -77,6 +85,16 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         showAlert('ユーザーIDは3文字以上で入力してください');
         return;
     }
+    
+    if (!newPassword) {
+        showAlert('パスワードを入力してください');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        showAlert('パスワードは6文字以上で入力してください');
+        return;
+    }
 
     try {
         // 新規ユーザー作成
@@ -84,6 +102,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             .from('users')
             .insert([{
                 user_id: newUserId,
+                password_hash: newPassword,
                 display_name: displayName || newUserId
             }])
             .select()
@@ -121,8 +140,22 @@ document.getElementById('userId').addEventListener('keydown', (e) => {
     }
 });
 
+document.getElementById('password').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('loginForm').querySelector('button[type="submit"]').click();
+    }
+});
+
 // Enterキーでフォーム送信（新規登録フォーム）
 document.getElementById('newUserId').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('registerForm').querySelector('button[type="submit"]').click();
+    }
+});
+
+document.getElementById('newPassword').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
         document.getElementById('registerForm').querySelector('button[type="submit"]').click();
