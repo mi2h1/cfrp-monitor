@@ -60,7 +60,7 @@ raw/2025-07-06
 raw/2025-07-07
 
 # SQL migration files (executed)
-*.sql
+# *.sql
 
 # Sample/migration data
 sample_candidates/
