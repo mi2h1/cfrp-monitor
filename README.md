@@ -2,29 +2,32 @@
 
 複合材料（CFRP・GFRP・AFRP等）に関する最新情報を自動収集・管理するWebアプリケーション
 
-## 🌐 Live Dashboard
+## 🌐 システム概要
 
 ### 📰 記事管理ダッシュボード
 - 収集記事の閲覧・編集・管理
 - ステータス管理（未読・確認済み・フラグ付き・アーカイブ）
 - コメント機能・重要度フラグ
 - 高度なフィルタリング・ソート機能
+- ページネーション機能
 
 ### 📡 情報源管理ダッシュボード  
 - 情報源の監視・設定管理
 - URL編集・RSS検証機能
 - 取得モード制御（自動・手動・停止中・新規追加）
 - 最終収集日時の表示
+- 情報源候補の承認・却下管理
 
 ## 🔐 認証システム
 
-- **ID認証**: シンプルなユーザーID方式
+- **ユーザーID・パスワード認証**: セキュアなログインシステム
+- **新規登録**: モーダルウィンドウでの簡単登録
 - **編集権限**: 認証ユーザーのみ記事・情報源の編集可能
 - **セキュリティ**: Supabase RLS（Row Level Security）で保護
 
-## 📊 システム概要
+## 📊 自動情報収集システム
 
-### 自動情報収集システム
+### 多言語・多地域対応
 - **複数の情報源**から定期的な自動データ収集
 - **学術論文** + **業界ニュース** + **メーカー情報**
 - **多言語対応** (英語・日本語・ドイツ語・中国語・韓国語)
@@ -33,7 +36,9 @@
 ### データベース (Supabase PostgreSQL)
 - **itemsテーブル**: 収集記事データ（タイトル・本文・URL・ステータス等）
 - **sourcesテーブル**: 情報源管理（URL・カテゴリ・取得モード・最終収集日時等）
-- **usersテーブル**: ユーザー認証管理
+- **source_candidatesテーブル**: 情報源候補管理（承認・却下・保留）
+- **usersテーブル**: ユーザー認証管理（パスワード認証）
+- **task_logsテーブル**: 実行ログ管理
 - **自動重複除去** & **本文抽出**
 
 ### 取得モード
@@ -47,27 +52,32 @@
 ```
 cfrp-monitor/
 ├── README.md                          # このファイル
-├── docs/                              # GitHub Pages ダッシュボード
+├── docs/                              # Webアプリケーション
 │   ├── index.html                     # 記事管理（認証必須）
 │   ├── sources.html                   # 情報源管理（認証必須）
 │   ├── login.html                     # ログイン・新規登録
-│   ├── common.css                     # 共通スタイル
-│   ├── articles.css                   # 記事管理用スタイル
-│   ├── sources.css                    # 情報源管理用スタイル
-│   ├── common.js                      # 共通JavaScript（認証・Supabase）
-│   ├── articles.js                    # 記事管理JavaScript
-│   └── sources.js                     # 情報源管理JavaScript（開発中）
+│   └── assets/
+│       ├── css/                       # スタイルシート
+│       │   ├── common.css             # 共通スタイル
+│       │   ├── articles.css           # 記事管理用スタイル
+│       │   ├── sources.css            # 情報源管理用スタイル
+│       │   └── login.css              # ログイン用スタイル
+│       └── js/                        # JavaScript
+│           ├── common.js              # 共通JavaScript（認証・Supabase）
+│           ├── articles.js            # 記事管理JavaScript
+│           ├── sources.js             # 情報源管理JavaScript
+│           └── login.js               # ログイン・新規登録JavaScript
 ├── scripts/                           # Python自動化スクリプト
-│   ├── add_*.py                       # 情報源追加スクリプト
-│   ├── find_policy_urls*.py          # プライバシーポリシー自動検索
-│   ├── verify_fix_urls.py            # URL検証・修正
-│   ├── use_acquisition_mode_control.py # 取得モード制御
-│   ├── add_html_scraping_support.py   # HTMLスクレイピング対応
+│   ├── crawl.py                       # メイン収集スクリプト
+│   ├── discover_from_articles.py      # 記事からの情報源発見
+│   ├── discover_multilingual_sources.py # 多言語情報源発見
+│   ├── migrate_json_candidates.py     # 候補データ移行
+│   ├── fetcher.py                     # RSS取得ライブラリ
+│   ├── rss_validator.py              # RSS検証ツール
+│   ├── check_rss.py                  # RSS動作確認
+│   ├── cleanup_raw.py                # 古いデータ削除
 │   └── update_collection_timestamp.py # 収集タイムスタンプ更新
-├── *.sql                              # データベーススキーマ・設定ファイル
-│   ├── setup_auth_*.sql              # 認証システム設定
-│   ├── add_*.sql                     # カラム追加SQL
-│   └── check_rls.sql                 # RLS権限確認
+├── raw/                               # 収集データ保存
 └── requirements.txt                   # Python依存関係
 ```
 
@@ -89,7 +99,7 @@ cfrp-monitor/
 - 業界動向・市場情報
 
 ### 🌏 地域別
-- **日本**: 東レ、帝人、三菱ケミカル等
+- **日本**: 東レ、帝人、日刊工業新聞等
 - **アメリカ**: SAMPE、ACMA、CompositesWorld等
 - **ヨーロッパ**: AVK-TV、Hexcel等
 - **アジア**: 中国・韓国の複合材料情報
@@ -99,7 +109,8 @@ cfrp-monitor/
 ### フロントエンド
 - **HTML5/CSS3/JavaScript ES6+**
 - **Bootstrap 5** - UIフレームワーク
-- **GitHub Pages** - 静的サイトホスティング
+- **モーダルウィンドウ** - 新規登録・編集機能
+- **リアルタイム更新** - Supabase連携
 
 ### バックエンド・データベース
 - **Supabase** (PostgreSQL) - データベース・認証
@@ -111,6 +122,7 @@ cfrp-monitor/
 - **RSS/Atom フィード** - 記事取得
 - **BeautifulSoup** - HTMLパース
 - **Requests** - HTTP通信
+- **GitHub Actions** - 自動実行
 
 ## 📊 データフロー
 
@@ -128,26 +140,29 @@ Supabase PostgreSQL
 
 ## 🔍 情報源管理機能
 
-### 自動検証
+### 自動検証・発見
 - **RSS検証**: フィード形式・アクセス可能性チェック
-- **URL修正**: ドメイン・パス自動修正
-- **プライバシーポリシー**: 自動検索・設定
+- **情報源発見**: 既存記事からの新情報源自動発見
+- **多言語探索**: 各言語での情報源自動発見
+- **重複チェック**: 候補承認時の重複検証
 
 ### 手動管理
 - **URL編集**: RSS URLの追加・編集・削除
 - **取得モード変更**: auto/manual/disabled/new
-- **備考・説明**: 情報源の詳細メモ
+- **候補管理**: 発見された情報源の承認・却下・保留
 - **論理削除**: データ保持しつつ非表示化
 
 ### 統計・監視
 - **収集統計**: モード別カウント表示
-- **最終収集日時**: 自動収集の実行記録（新記事発見時のみ更新）
+- **最終収集日時**: 自動収集の実行記録
 - **フィルタリング**: カテゴリ・国・モード・削除状態
+- **タブ切り替え**: 情報源リストと候補リストの切り替え
 
 ## 🛡️ セキュリティ
 
 ### 認証・認可
-- **ユーザー認証**: localStorage基盤の簡易認証
+- **パスワード認証**: ユーザーID・パスワード方式
+- **新規登録**: 4文字以上のパスワード設定
 - **アクセス制御**: 未認証時は自動ログインページリダイレクト
 - **データ保護**: Supabase RLS によるテーブルレベル保護
 
@@ -162,11 +177,13 @@ Supabase PostgreSQL
 - 新情報源の追加・検証
 - 無効URLの修正・削除
 - 収集頻度の調整
+- 古いrawデータの削除
 
 ### 監視項目
 - 各情報源の収集成功率
 - 新記事の取得状況
 - システムエラー・例外
+- 候補情報源の承認状況
 
 ### バックアップ・復旧
 - Supabaseの自動バックアップ
@@ -175,5 +192,4 @@ Supabase PostgreSQL
 
 ---
 
-**🚀 Next Generation CFRP Information Monitoring System**  
-**🤖 Powered by Claude Code - Intelligent Automation for Composite Materials Research**
+**🚀 Next Generation CFRP Information Monitoring System**
