@@ -114,16 +114,15 @@ function renderArticles() {
 
     // ページネーション計算
     const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+    
+    // 現在のページが総ページ数を超えている場合は1ページ目に戻す
+    if (currentPage > totalPages && totalPages > 0) {
+        currentPage = 1;
+    }
+    
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const paginatedArticles = filteredArticles.slice(startIndex, endIndex);
-
-    // ページが範囲外の場合は1ページ目に戻す
-    if (currentPage > totalPages && totalPages > 0) {
-        currentPage = 1;
-        renderArticles();
-        return;
-    }
 
     // 記事表示
     container.innerHTML = paginatedArticles.map(article => createCompactArticleCard(article)).join('');
@@ -290,10 +289,26 @@ function getStatusLabel(status) {
 // イベントリスナーを設定
 function setupEventListeners() {
     // フィルター・ソート・表示件数変更時
-    setupFilterListeners(['statusFilter', 'flaggedFilter', 'sourceFilter', 'sortOrder', 'itemsPerPage'], renderArticles);
+    setupFilterListeners(['statusFilter', 'flaggedFilter', 'sourceFilter', 'sortOrder', 'itemsPerPage'], () => {
+        currentPage = 1; // フィルター変更時はページをリセット
+        renderArticles();
+    });
 
     // 更新ボタン
     setupRefreshButton(loadArticles);
+    
+    // ページネーションクリック
+    document.getElementById('paginationList').addEventListener('click', (e) => {
+        e.preventDefault();
+        const pageLink = e.target.closest('.page-link');
+        if (pageLink && !pageLink.parentElement.classList.contains('disabled')) {
+            const page = parseInt(pageLink.dataset.page);
+            if (!isNaN(page)) {
+                currentPage = page;
+                renderArticles();
+            }
+        }
+    });
 
     // コンパクトカードクリックのイベント委譲
     document.getElementById('articlesContainer').addEventListener('click', (e) => {
