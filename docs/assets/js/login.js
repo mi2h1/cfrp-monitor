@@ -91,8 +91,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         return;
     }
     
-    if (newPassword.length < 6) {
-        showAlert('パスワードは6文字以上で入力してください');
+    if (newPassword.length < 4) {
+        showAlert('パスワードは4文字以上で入力してください');
         return;
     }
 
