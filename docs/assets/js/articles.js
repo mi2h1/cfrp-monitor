@@ -29,29 +29,108 @@ async function loadSources() {
     }
 }
 
-// 記事一覧を読み込み
+// 記事の総件数を取得（フィルタリング条件付き）
+async function getTotalArticlesCount(statusFilter = '', flaggedFilter = '', sourceFilter = '') {
+    try {
+        let query = supabase
+            .from('items')
+            .select('*', { count: 'exact', head: true });
+        
+        // フィルタリング条件を適用
+        if (statusFilter) {
+            query = query.eq('status', statusFilter);
+        }
+        if (flaggedFilter) {
+            query = query.eq('flagged', flaggedFilter === 'true');
+        }
+        if (sourceFilter) {
+            query = query.eq('source_id', sourceFilter);
+        }
+        
+        const { count, error } = await query;
+        
+        if (error) throw error;
+        return count || 0;
+    } catch (error) {
+        console.error('総件数取得エラー:', error);
+        return 0;
+    }
+}
+
+// 記事一覧を読み込み（サーバーサイドページネーション）
 async function loadArticles() {
     try {
-        const { data, error } = await supabase
+        // 総件数を取得
+        const totalCount = await getTotalArticlesCount();
+        
+        // 初期表示用に最初のページを取得
+        await loadArticlesPage(1, totalCount);
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('articlesContainer').style.display = 'block';
+    } catch (error) {
+        console.error('記事読み込みエラー:', error);
+        document.getElementById('loading').innerHTML = '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
+    }
+}
+
+// 指定されたページの記事を取得
+async function loadArticlesPage(page, totalCount = null) {
+    try {
+        const itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
+        const offset = (page - 1) * itemsPerPage;
+        
+        // フィルタリング条件を取得
+        const statusFilter = document.getElementById('statusFilter').value;
+        const flaggedFilter = document.getElementById('flaggedFilter').value;
+        const sourceFilter = document.getElementById('sourceFilter').value;
+        const sortOrder = document.getElementById('sortOrder').value;
+        
+        // 総件数が未取得の場合は取得（フィルタリング条件付き）
+        if (totalCount === null) {
+            totalCount = await getTotalArticlesCount(statusFilter, flaggedFilter, sourceFilter);
+        }
+        
+        // クエリを構築
+        let query = supabase
             .from('items')
             .select(`
                 *,
                 sources(name, domain)
-            `)
-            .order('published_at', { ascending: false });
+            `);
+        
+        // フィルタリング条件を適用
+        if (statusFilter) {
+            query = query.eq('status', statusFilter);
+        }
+        if (flaggedFilter) {
+            query = query.eq('flagged', flaggedFilter === 'true');
+        }
+        if (sourceFilter) {
+            query = query.eq('source_id', sourceFilter);
+        }
+        
+        // ソート条件を適用
+        const ascending = sortOrder === 'asc';
+        query = query.order('published_at', { ascending });
+        
+        // ページネーション
+        query = query.range(offset, offset + itemsPerPage - 1);
+        
+        const { data, error } = await query;
         
         if (error) throw error;
         
+        // グローバル変数を更新
         articles = data || [];
-        currentPage = 1; // ページをリセット
-        renderArticles();
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('articlesContainer').style.display = 'block';
-        document.getElementById('pagination').style.display = 'block';
+        currentPage = page;
+        
+        // 表示を更新
+        renderArticlesWithServerPagination(totalCount, itemsPerPage);
+        
     } catch (error) {
-        console.error('記事読み込みエラー:', error);
-        document.getElementById('loading').innerHTML = 
-            '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
+        console.error('ページ読み込みエラー:', error);
+        throw error;
     }
 }
 
@@ -99,7 +178,7 @@ function populateSourceFilter() {
     });
 }
 
-// 記事を表示
+// 記事を表示（従来のクライアントサイドページネーション）
 function renderArticles() {
     const container = document.getElementById('articlesContainer');
     const filteredArticles = filterAndSortArticles();
@@ -129,6 +208,26 @@ function renderArticles() {
     
     // ページネーション表示
     renderPagination(filteredArticles.length, itemsPerPage, currentPage);
+    document.getElementById('pagination').style.display = 'block';
+    document.getElementById('paginationTop').style.display = 'block';
+}
+
+// 記事を表示（サーバーサイドページネーション）
+function renderArticlesWithServerPagination(totalCount, itemsPerPage) {
+    const container = document.getElementById('articlesContainer');
+    
+    if (articles.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">該当する記事がありません</div>';
+        document.getElementById('pagination').style.display = 'none';
+        document.getElementById('paginationTop').style.display = 'none';
+        return;
+    }
+
+    // 記事表示
+    container.innerHTML = articles.map(article => createCompactArticleCard(article)).join('');
+    
+    // ページネーション表示
+    renderPagination(totalCount, itemsPerPage, currentPage);
     document.getElementById('pagination').style.display = 'block';
     document.getElementById('paginationTop').style.display = 'block';
 }
@@ -292,7 +391,7 @@ function setupEventListeners() {
     // フィルター・ソート・表示件数変更時
     setupFilterListeners(['statusFilter', 'flaggedFilter', 'sourceFilter', 'sortOrder', 'itemsPerPage'], () => {
         currentPage = 1; // フィルター変更時はページをリセット
-        renderArticles();
+        loadArticlesPage(1);
     });
 
     // 更新ボタン
@@ -305,8 +404,7 @@ function setupEventListeners() {
         if (pageLink && !pageLink.parentElement.classList.contains('disabled')) {
             const page = parseInt(pageLink.dataset.page);
             if (!isNaN(page)) {
-                currentPage = page;
-                renderArticles();
+                loadArticlesPage(page);
             }
         }
     });
@@ -318,8 +416,7 @@ function setupEventListeners() {
         if (pageLink && !pageLink.parentElement.classList.contains('disabled')) {
             const page = parseInt(pageLink.dataset.page);
             if (!isNaN(page)) {
-                currentPage = page;
-                renderArticles();
+                loadArticlesPage(page);
             }
         }
     });
