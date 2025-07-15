@@ -38,8 +38,7 @@ async function loadArticles() {
                 *,
                 sources(name, domain)
             `)
-            .order('published_at', { ascending: false })
-            .limit(100);
+            .order('published_at', { ascending: false });
         
         if (error) throw error;
         

@@ -135,7 +135,7 @@ function renderPagination(totalItems, itemsPerPage, currentPage) {
     // ページ情報表示
     const startItem = (currentPage - 1) * itemsPerPage + 1;
     const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-    pageInfo.textContent = `${startItem}-${endItem} / ${totalItems}件 (${currentPage}/${totalPages}ページ)`;
+    pageInfo.textContent = `${startItem}-${endItem} / ${totalItems}件 (ページ ${currentPage}/${totalPages})`;
     
     // ページネーションボタンを生成する関数
     const createPaginationButtons = (container) => {
@@ -148,7 +148,7 @@ function renderPagination(totalItems, itemsPerPage, currentPage) {
         container.appendChild(prevLi);
         
         // ページ番号ボタン
-        const maxVisiblePages = 5;
+        const maxVisiblePages = 10;
         let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
         let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
         
