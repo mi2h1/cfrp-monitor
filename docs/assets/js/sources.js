@@ -7,12 +7,22 @@ let currentViewMode = 'sources'; // 'sources' または 'candidates'
 
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
+    // 初期状態を最初に設定
+    const sourceFilters = document.getElementById('sourceFilters');
+    const candidateFilters = document.getElementById('candidateFilters');
+    
+    if (sourceFilters && candidateFilters) {
+        sourceFilters.style.display = 'flex';
+        candidateFilters.style.display = 'none';
+        console.log('初期化: sourceFilters表示, candidateFilters非表示');
+    }
+    
     await loadSources();
     await loadCandidates();
     await loadLastTaskLog();
     setupEventListeners();
     
-    // 初期状態を確実に設定
+    // 明示的に情報源リストモードに設定
     switchViewMode('sources');
 });
 
@@ -940,21 +950,31 @@ function switchViewMode(mode) {
     document.querySelectorAll('.view-mode-nav').forEach(nav => {
         nav.classList.remove('active');
     });
-    document.getElementById(`nav-${mode}`).classList.add('active');
+    const navElement = document.getElementById(`nav-${mode}`);
+    if (navElement) {
+        navElement.classList.add('active');
+    }
     
     // フィルターの表示切り替え
     const sourceFilters = document.getElementById('sourceFilters');
     const candidateFilters = document.getElementById('candidateFilters');
     
+    if (!sourceFilters || !candidateFilters) {
+        console.error('フィルター要素が見つかりません');
+        return;
+    }
+    
     if (mode === 'sources') {
+        // 情報源リストモード
         sourceFilters.style.display = 'flex';
         candidateFilters.style.display = 'none';
-        console.log('情報源リストモード: sourceFilters表示, candidateFilters非表示');
+        console.log('情報源リストモード設定完了');
         renderSources();
     } else if (mode === 'candidates') {
+        // 探索候補モード
         sourceFilters.style.display = 'none';
         candidateFilters.style.display = 'flex';
-        console.log('探索候補モード: sourceFilters非表示, candidateFilters表示');
+        console.log('探索候補モード設定完了');
         renderCandidates();
     }
 }
