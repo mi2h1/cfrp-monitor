@@ -1,5 +1,14 @@
 /* CFRP Monitor - 情報源管理ページ専用スタイル */
 
+/* フィルターコンテナ */
+.filter-container {
+    display: none;
+}
+
+.filter-container.show {
+    display: flex !important;
+}
+
 /* 情報源カード */
 .source-card {
     border: 1px solid #dee2e6;

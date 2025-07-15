@@ -7,16 +7,6 @@ let currentViewMode = 'sources'; // 'sources' または 'candidates'
 
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
-    // 初期状態を最初に設定
-    const sourceFilters = document.getElementById('sourceFilters');
-    const candidateFilters = document.getElementById('candidateFilters');
-    
-    if (sourceFilters && candidateFilters) {
-        sourceFilters.style.display = 'flex';
-        candidateFilters.style.display = 'none';
-        console.log('初期化: sourceFilters表示, candidateFilters非表示');
-    }
-    
     await loadSources();
     await loadCandidates();
     await loadLastTaskLog();
@@ -966,14 +956,14 @@ function switchViewMode(mode) {
     
     if (mode === 'sources') {
         // 情報源リストモード
-        sourceFilters.style.display = 'flex';
-        candidateFilters.style.display = 'none';
+        sourceFilters.classList.add('show');
+        candidateFilters.classList.remove('show');
         console.log('情報源リストモード設定完了');
         renderSources();
     } else if (mode === 'candidates') {
         // 探索候補モード
-        sourceFilters.style.display = 'none';
-        candidateFilters.style.display = 'flex';
+        sourceFilters.classList.remove('show');
+        candidateFilters.classList.add('show');
         console.log('探索候補モード設定完了');
         renderCandidates();
     }
