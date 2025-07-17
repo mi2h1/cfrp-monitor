@@ -131,9 +131,81 @@ function setupAuthUI() {
     }
 }
 
+// データベース直接アクセスを制限
+function restrictDirectDatabaseAccess() {
+    // 開発者ツールでのSupabaseアクセスを制限
+    if (typeof supabase !== 'undefined') {
+        const originalFrom = supabase.from;
+        
+        supabase.from = function(table) {
+            // 権限チェック
+            const user = getCurrentUser();
+            if (!user) {
+                throw new Error('認証が必要です');
+            }
+            
+            // テーブルごとの権限チェック
+            switch(table) {
+                case 'users':
+                    if (!isAdmin()) {
+                        throw new Error('ユーザー情報へのアクセスは管理者のみ可能です');
+                    }
+                    break;
+                case 'sources':
+                case 'source_candidates':
+                    if (!canEditSources()) {
+                        throw new Error('情報源管理の権限がありません');
+                    }
+                    break;
+                case 'task_logs':
+                    if (!isAdmin()) {
+                        throw new Error('タスクログへのアクセスは管理者のみ可能です');
+                    }
+                    break;
+                case 'sources_backup':
+                case 'items_backup':
+                    if (!isAdmin()) {
+                        throw new Error('バックアップデータへのアクセスは管理者のみ可能です');
+                    }
+                    break;
+            }
+            
+            return originalFrom.call(this, table);
+        };
+    }
+}
+
+// セッションタイムアウト機能
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30分
+
+function checkSessionTimeout() {
+    const lastActivity = localStorage.getItem('lastActivity');
+    const now = Date.now();
+    
+    if (lastActivity && (now - parseInt(lastActivity)) > SESSION_TIMEOUT) {
+        logout();
+        alert('セッションがタイムアウトしました。再度ログインしてください。');
+        window.location.href = 'login.html';
+    }
+}
+
+// アクティビティ監視
+function trackActivity() {
+    localStorage.setItem('lastActivity', Date.now().toString());
+}
+
 // ページ読み込み時に認証状態をチェック
 document.addEventListener('DOMContentLoaded', () => {
     setupAuthUI();
+    restrictDirectDatabaseAccess();
+    
+    // アクティビティ監視開始
+    trackActivity();
+    document.addEventListener('click', trackActivity);
+    document.addEventListener('keydown', trackActivity);
+    
+    // セッションタイムアウトチェック開始
+    setInterval(checkSessionTimeout, 60000); // 1分ごと
 });
 
 // ユーティリティ関数
