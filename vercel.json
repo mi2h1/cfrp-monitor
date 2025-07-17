@@ -31,6 +31,10 @@
     {
       "source": "/candidates-test",
       "destination": "/docs/source-candidates-api-test.html"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/docs/assets/$1"
     }
   ]
 }
