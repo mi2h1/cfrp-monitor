@@ -115,23 +115,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 統一ナビゲーションシステムを使用（デバッグ用に一時的に無効化）
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('Index page loaded');
-            console.log('Auth token exists:', !!localStorage.getItem('auth_token'));
-            console.log('User info exists:', !!localStorage.getItem('user_info'));
-            
-            // 一時的にナビゲーション初期化をスキップしてデバッグ
             try {
-                const layout = await initializeNavigation('articles');
-                console.log('Navigation initialized successfully:', layout);
+                await initializeNavigation('articles');
             } catch (error) {
                 console.error('Navigation initialization failed:', error);
             }
         });
     </script>
     <script src="assets/js/common.js"></script>
-    <script src="assets/js/security.js"></script>
     <script src="assets/js/articles.js"></script>
 </body>
 </html>

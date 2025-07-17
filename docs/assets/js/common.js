@@ -39,18 +39,12 @@ async function verifyPassword(password, storedHash, salt) {
 async function initializeNavigation(activePageId) {
     const authToken = localStorage.getItem('auth_token');
     
-    console.log('initializeNavigation called with activePageId:', activePageId);
-    console.log('Auth token from localStorage:', authToken ? 'exists' : 'not found');
-    
-    // 認証チェック（デバッグ用に一時的に無効化）
     if (!authToken) {
-        console.log('No auth token found, but continuing for debug (normally would redirect to login)');
-        // window.location.href = '/login';
-        // return null;
+        window.location.href = '/login';
+        return null;
     }
     
     try {
-        // レイアウト設定を取得
         const response = await fetch('/api/layout', {
             method: 'GET',
             headers: {
@@ -61,38 +55,24 @@ async function initializeNavigation(activePageId) {
         
         const data = await response.json();
         
-        console.log('Layout API response:', data);
-        
         if (data.success) {
-            // ナビゲーションを動的生成
             generateNavigation(data.layout.navigation, activePageId);
-            
-            // ユーザー情報表示
             displayUserInfo(data.user, data.layout.user_menu);
-            
-            // ログアウトボタンを表示
             document.getElementById('logoutBtn').style.display = 'block';
-            
-            // グローバルに機能権限を保存
             window.userFeatures = data.layout.features;
-            
-            // ログアウト処理のセットアップ
             setupUnifiedLogout();
-            
             return data.layout;
         } else {
-            console.log('Layout API failed:', data.error);
             throw new Error(data.error || 'レイアウト取得に失敗');
         }
         
     } catch (error) {
         console.error('Layout loading error:', error);
-        console.log('Error occurred but not redirecting for debug purposes');
-        // localStorage.removeItem('auth_token');
-        // localStorage.removeItem('user_info');
-        // localStorage.removeItem('currentUser');
-        // localStorage.removeItem('currentUserData');
-        // window.location.href = '/login';
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user_info');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('currentUserData');
+        window.location.href = '/login';
         return null;
     }
 }

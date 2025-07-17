@@ -196,24 +196,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 統一ナビゲーションシステムを使用
         document.addEventListener('DOMContentLoaded', async function() {
-            // 'sources'をアクティブページとしてナビゲーション初期化
             const layout = await initializeNavigation('sources');
-            
-            // レイアウト初期化が失敗した場合は処理を中止
-            if (!layout) {
-                return;
-            }
-            
-            // 情報源管理権限チェック
-            if (!checkPagePermission('can_manage_sources')) {
-                return;
-            }
+            if (!layout) return;
+            if (!checkPagePermission('can_manage_sources')) return;
         });
     </script>
     <script src="assets/js/common.js"></script>
-    <script src="assets/js/security.js"></script>
     <script src="assets/js/sources.js"></script>
 </body>
 </html>
