@@ -75,6 +75,9 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         localStorage.setItem('currentUser', userId);
         localStorage.setItem('currentUserData', JSON.stringify(data));
         
+        // 認証コンテキストを設定
+        await setAuthContext(userId);
+        
         // 最終ログイン時刻を更新
         await supabase
             .from('users')
@@ -148,6 +151,9 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         // 登録成功後、自動ログイン
         localStorage.setItem('currentUser', newUserId);
         localStorage.setItem('currentUserData', JSON.stringify(data));
+        
+        // 認証コンテキストを設定
+        await setAuthContext(newUserId);
         
         showAlert('登録完了！ログインしました。リダイレクト中...', 'success', 'registerAlertContainer');
         

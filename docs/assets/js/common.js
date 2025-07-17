@@ -35,6 +35,30 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// 認証コンテキスト設定
+async function setAuthContext(userId) {
+    if (!userId) return false;
+    
+    try {
+        // Supabaseのセッションに認証情報を設定
+        const { error } = await supabase.rpc('set_config', {
+            config_name: 'app.current_user_id',
+            config_value: userId
+        });
+        
+        if (error) {
+            console.warn('認証コンテキスト設定に失敗:', error);
+            return false;
+        }
+        
+        console.log('認証コンテキスト設定成功:', userId);
+        return true;
+    } catch (error) {
+        console.warn('認証コンテキスト設定エラー:', error);
+        return false;
+    }
+}
+
 // 認証管理
 function getCurrentUser() {
     const userId = localStorage.getItem('currentUser');
@@ -199,9 +223,15 @@ function trackActivity() {
 }
 
 // ページ読み込み時に認証状態をチェック
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     setupAuthUI();
     restrictDirectDatabaseAccess();
+    
+    // 認証コンテキストを設定
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+        await setAuthContext(currentUser.userId);
+    }
     
     // アクティビティ監視開始
     trackActivity();
