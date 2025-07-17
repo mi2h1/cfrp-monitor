@@ -185,6 +185,8 @@
                 body: formData.get('body'),
                 source_id: formData.get('source_id') ? formData.get('source_id') : null
             };
+            
+            console.log('DEBUG: Sending article data:', articleData);
 
             try {
                 const response = await fetch('/api/articles', {

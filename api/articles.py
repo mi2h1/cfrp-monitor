@@ -68,7 +68,10 @@ class handler(BaseHTTPRequestHandler):
             # リクエストボディを取得
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
+            print(f"DEBUG: Raw POST data: {post_data}")
+            
             data = json.loads(post_data.decode('utf-8'))
+            print(f"DEBUG: Parsed JSON data: {data}")
             
             # 記事追加
             result = self.add_article(data, user_data)
