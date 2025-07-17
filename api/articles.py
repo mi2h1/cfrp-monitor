@@ -206,7 +206,8 @@ class handler(BaseHTTPRequestHandler):
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
             }
             
             print(f"DEBUG: Supabase URL: {url}")
@@ -214,13 +215,22 @@ class handler(BaseHTTPRequestHandler):
             req = urllib.request.Request(
                 url, 
                 data=json.dumps(item_data).encode('utf-8'),
-                headers=headers
+                headers=headers,
+                method='POST'
             )
             
             with urllib.request.urlopen(req) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                print(f"DEBUG: Insert result: {result}")
-                return result[0] if result else None
+                response_body = response.read().decode('utf-8')
+                print(f"DEBUG: Response body: {response_body}")
+                print(f"DEBUG: Response status: {response.getcode()}")
+                
+                if response_body.strip():
+                    result = json.loads(response_body)
+                    print(f"DEBUG: Insert result: {result}")
+                    return result[0] if isinstance(result, list) and result else result
+                else:
+                    print("DEBUG: Empty response from Supabase")
+                    return {"success": True, "message": "Item inserted successfully"}
                 
         except urllib.error.HTTPError as e:
             print(f"Add article HTTP error: {e.code} - {e.reason}")
