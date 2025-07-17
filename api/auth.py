@@ -108,14 +108,21 @@ class handler(BaseHTTPRequestHandler):
     def verify_password(self, password, user_data):
         """パスワード検証"""
         try:
+            print(f"DEBUG: User data keys: {list(user_data.keys())}")
+            print(f"DEBUG: Password salt exists: {bool(user_data.get('password_salt'))}")
+            print(f"DEBUG: Password hash: {user_data.get('password_hash', 'None')[:20]}...")
+            
             # ハッシュ化されたパスワードがある場合
             if user_data.get('password_salt'):
                 password_hash = hashlib.sha256(
                     (password + user_data['password_salt']).encode()
                 ).hexdigest()
+                print(f"DEBUG: Generated hash: {password_hash[:20]}...")
+                print(f"DEBUG: Stored hash: {user_data['password_hash'][:20]}...")
                 return password_hash == user_data['password_hash']
             else:
                 # 平文パスワードの場合（後方互換性）
+                print(f"DEBUG: Plain text comparison: {password} == {user_data['password_hash']}")
                 return password == user_data['password_hash']
         except Exception as e:
             print(f"Password verification error: {e}")
