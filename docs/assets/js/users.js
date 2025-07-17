@@ -228,9 +228,7 @@ async function updateUser(userId, displayName, newPassword, role) {
         if (newPassword && newPassword.length >= 4) {
             try {
                 // パスワードをハッシュ化
-                console.log('Hashing password for user:', userId);
                 const { hash, salt } = await hashPassword(newPassword);
-                console.log('Hash result:', { hash: hash.substring(0, 10) + '...', salt: salt.substring(0, 10) + '...' });
                 updateData.password_hash = hash;
                 updateData.password_salt = salt;
             } catch (error) {
@@ -247,10 +245,6 @@ async function updateUser(userId, displayName, newPassword, role) {
             updateData.role = role;
         }
         
-        // デバッグ用：送信するデータを確認
-        console.log('Updating user with data:', updateData);
-        console.log('Update data keys:', Object.keys(updateData));
-        
         const { error } = await supabase
             .from('users')
             .update(updateData)
@@ -259,19 +253,6 @@ async function updateUser(userId, displayName, newPassword, role) {
         if (error) throw error;
         
         showAlert('ユーザー情報を更新しました', 'success', 'editUserAlertContainer');
-        
-        // デバッグ用：更新後のデータを確認
-        const { data: updatedUser, error: fetchError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('user_id', userId)
-            .single();
-        
-        if (updatedUser) {
-            console.log('Updated user data from DB:', updatedUser);
-            console.log('Password field:', updatedUser.password_hash ? 'Hashed' : 'Plain text');
-        }
-        
         await loadUsers();
         return true;
         
