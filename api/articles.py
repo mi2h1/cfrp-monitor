@@ -24,8 +24,21 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps(response).encode('utf-8'))
                 return
             
+            # クエリパラメータを解析
+            query_params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            
+            # count_onlyモードのチェック
+            if query_params.get('count_only', ['false'])[0].lower() == 'true':
+                count = self.get_articles_count(query_params)
+                response = {
+                    "success": True,
+                    "count": count
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
             # 記事一覧を取得
-            articles = self.get_articles()
+            articles = self.get_articles(query_params)
             
             if articles is not None:
                 response = {
@@ -245,8 +258,8 @@ class handler(BaseHTTPRequestHandler):
             print(f"Token verification error: {e}")
             return None
 
-    def get_articles(self):
-        """記事一覧を取得"""
+    def get_articles(self, query_params=None):
+        """記事一覧を取得（フィルタリング、ページネーション対応）"""
         try:
             supabase_url = os.environ.get('SUPABASE_URL')
             supabase_key = os.environ.get('SUPABASE_KEY')
@@ -254,8 +267,37 @@ class handler(BaseHTTPRequestHandler):
             if not supabase_url or not supabase_key:
                 return None
             
-            # itemsテーブルから記事を取得
-            url = f"{supabase_url}/rest/v1/items?select=*&order=added_at.desc&limit=100"
+            if query_params is None:
+                query_params = {}
+            
+            # パラメータを取得
+            limit = int(query_params.get('limit', ['20'])[0])
+            offset = int(query_params.get('offset', ['0'])[0])
+            order = query_params.get('order', ['desc'])[0]
+            status = query_params.get('status', [None])[0]
+            flagged = query_params.get('flagged', [None])[0]
+            source_id = query_params.get('source_id', [None])[0]
+            
+            # ベースURLを構築
+            url = f"{supabase_url}/rest/v1/items?select=*,sources(name,domain)"
+            
+            # フィルタリングを追加
+            filters = []
+            if status:
+                filters.append(f"status=eq.{status}")
+            if flagged is not None:
+                flag_value = 'true' if flagged.lower() == 'true' else 'false'
+                filters.append(f"flagged=eq.{flag_value}")
+            if source_id:
+                filters.append(f"source_id=eq.{source_id}")
+            
+            if filters:
+                url += "&" + "&".join(filters)
+            
+            # ソートとページネーションを追加
+            order_field = "published_at" if order in ['asc', 'desc'] else "published_at"
+            url += f"&order={order_field}.{order}&limit={limit}&offset={offset}"
+            
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',
@@ -278,6 +320,62 @@ class handler(BaseHTTPRequestHandler):
         except Exception as e:
             print(f"Get articles error: {e}")
             return None
+    
+    def get_articles_count(self, query_params=None):
+        """記事の総数を取得（フィルタリング対応）"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return 0
+            
+            if query_params is None:
+                query_params = {}
+            
+            # パラメータを取得
+            status = query_params.get('status', [None])[0]
+            flagged = query_params.get('flagged', [None])[0]
+            source_id = query_params.get('source_id', [None])[0]
+            
+            # ベースURLを構築（カウントのみ）
+            url = f"{supabase_url}/rest/v1/items?select=id"
+            
+            # フィルタリングを追加
+            filters = []
+            if status:
+                filters.append(f"status=eq.{status}")
+            if flagged is not None:
+                flag_value = 'true' if flagged.lower() == 'true' else 'false'
+                filters.append(f"flagged=eq.{flag_value}")
+            if source_id:
+                filters.append(f"source_id=eq.{source_id}")
+            
+            if filters:
+                url += "&" + "&".join(filters)
+            
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json',
+                'Prefer': 'count=exact'
+            }
+            
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req) as response:
+                # Content-Rangeヘッダーからカウントを取得
+                content_range = response.headers.get('Content-Range', '')
+                if content_range and '/' in content_range:
+                    count = int(content_range.split('/')[-1])
+                    return count
+                else:
+                    # フォールバック: データを取得してカウント
+                    data = json.loads(response.read().decode('utf-8'))
+                    return len(data)
+                
+        except Exception as e:
+            print(f"Get articles count error: {e}")
+            return 0
 
     def add_article(self, data, user_data):
         """記事を追加"""
