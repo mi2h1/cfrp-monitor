@@ -338,7 +338,7 @@ class handler(BaseHTTPRequestHandler):
                 return None
             
             # パスワードバリデーション
-            if len(data['password']) < 6:
+            if len(data['password']) < 4:
                 return None
             
             # パスワードハッシュ化
@@ -414,7 +414,7 @@ class handler(BaseHTTPRequestHandler):
             # パスワード更新の場合
             if data.get('password'):
                 # パスワードバリデーション
-                if len(data['password']) < 6:
+                if len(data['password']) < 4:
                     return None
                 salt = secrets.token_hex(16)
                 salted_password = data['password'] + salt

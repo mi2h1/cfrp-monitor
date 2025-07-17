@@ -52,8 +52,8 @@
                             <input type="text" class="form-control" id="display_name" name="display_name">
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">パスワード（6文字以上）</label>
-                            <input type="password" class="form-control" id="password" name="password" minlength="6" required>
+                            <label for="password" class="form-label">パスワード（4文字以上）</label>
+                            <input type="password" class="form-control" id="password" name="password" minlength="4" required>
                         </div>
                         <div class="mb-3">
                             <label for="role" class="form-label">権限</label>
@@ -101,8 +101,8 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="edit-password" class="form-label">新しいパスワード（変更する場合のみ、6文字以上）</label>
-                                <input type="password" class="form-control" id="edit-password" minlength="6">
+                                <label for="edit-password" class="form-label">新しいパスワード（変更する場合のみ、4文字以上）</label>
+                                <input type="password" class="form-control" id="edit-password" minlength="4">
                             </div>
                         </form>
                         <div id="edit-result"></div>
@@ -225,9 +225,9 @@
             const password = formData.get('password');
             
             // パスワードバリデーション
-            if (password.length < 6) {
+            if (password.length < 4) {
                 document.getElementById('add-result').innerHTML = `
-                    <div class="alert alert-danger">❌ パスワードは6文字以上にしてください</div>
+                    <div class="alert alert-danger">❌ パスワードは4文字以上にしてください</div>
                 `;
                 return;
             }
@@ -297,9 +297,9 @@
             const updateData = { display_name: displayName, role: role };
             if (password) {
                 // パスワードバリデーション
-                if (password.length < 6) {
+                if (password.length < 4) {
                     document.getElementById('edit-result').innerHTML = `
-                        <div class="alert alert-danger">❌ パスワードは6文字以上にしてください</div>
+                        <div class="alert alert-danger">❌ パスワードは4文字以上にしてください</div>
                     `;
                     return;
                 }
