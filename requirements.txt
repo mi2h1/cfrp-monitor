@@ -5,4 +5,5 @@ requests
 python-dateutil
 trafilatura>=1.6.0
 readability-lxml>=0.8.1
-beautifulsoup4>=4.12.0 
+beautifulsoup4>=4.12.0
+PyJWT==2.8.0 
