@@ -65,3 +65,6 @@ raw/2025-07-07
 # Sample/migration data
 sample_candidates/
 migrate_*.py
+
+# Database schema (sensitive)
+database-schema-complete.md

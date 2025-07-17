@@ -141,8 +141,8 @@ class handler(BaseHTTPRequestHandler):
             if not supabase_url or not supabase_key:
                 return None
             
-            # まずは基本的な記事取得をテスト
-            url = f"{supabase_url}/rest/v1/articles?select=*&order=created_at.desc&limit=100"
+            # itemsテーブルから記事を取得
+            url = f"{supabase_url}/rest/v1/items?select=*&order=added_at.desc&limit=100"
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',
@@ -179,18 +179,20 @@ class handler(BaseHTTPRequestHandler):
             if not data.get('url') or not data.get('title'):
                 return None
             
-            # 記事データを準備
-            article_data = {
+            # itemsテーブル用のデータを準備
+            item_data = {
                 'url': data['url'],
                 'title': data['title'],
-                'summary': data.get('summary', ''),
+                'body': data.get('body', ''),
                 'source_id': data.get('source_id'),
-                'user_id': user_data['user_id'],
-                'created_at': datetime.datetime.now().isoformat()
+                'last_edited_by': user_data['user_id'],
+                'src_type': data.get('src_type', 'manual'),
+                'status': 'unread',
+                'published_at': data.get('published_at', datetime.datetime.now().date().isoformat())
             }
             
             # データベースに追加
-            url = f"{supabase_url}/rest/v1/articles"
+            url = f"{supabase_url}/rest/v1/items"
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',
@@ -199,7 +201,7 @@ class handler(BaseHTTPRequestHandler):
             
             req = urllib.request.Request(
                 url, 
-                data=json.dumps(article_data).encode('utf-8'),
+                data=json.dumps(item_data).encode('utf-8'),
                 headers=headers
             )
             

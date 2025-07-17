@@ -51,8 +51,8 @@
                             <input type="text" class="form-control" id="title" required>
                         </div>
                         <div class="mb-3">
-                            <label for="summary" class="form-label">要約</label>
-                            <textarea class="form-control" id="summary" rows="3"></textarea>
+                            <label for="body" class="form-label">本文</label>
+                            <textarea class="form-control" id="body" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="source_id" class="form-label">情報源ID</label>
@@ -155,10 +155,11 @@
                     <div class="card">
                         <div class="card-body">
                             <h6 class="card-title">${article.title}</h6>
-                            <p class="card-text">${article.summary || '要約なし'}</p>
+                            <p class="card-text">${article.body ? article.body.substring(0, 100) + '...' : '本文なし'}</p>
                             <small class="text-muted">
-                                作成者: ${article.users?.display_name || 'unknown'}<br>
-                                作成日: ${new Date(article.created_at).toLocaleDateString()}
+                                追加者: ${article.last_edited_by || 'unknown'}<br>
+                                追加日: ${new Date(article.added_at).toLocaleDateString()}<br>
+                                ステータス: ${article.status || 'unread'}
                             </small>
                             <br>
                             <a href="${article.url}" target="_blank" class="btn btn-sm btn-primary">記事を見る</a>
@@ -181,8 +182,8 @@
             const articleData = {
                 url: formData.get('url'),
                 title: formData.get('title'),
-                summary: formData.get('summary'),
-                source_id: formData.get('source_id') ? parseInt(formData.get('source_id')) : null
+                body: formData.get('body'),
+                source_id: formData.get('source_id') ? formData.get('source_id') : null
             };
 
             try {
