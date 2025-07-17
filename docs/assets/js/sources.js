@@ -370,12 +370,9 @@ function setupEventListeners() {
 
     // コンパクトカードクリックのイベント委譲
     document.getElementById('sourcesContainer').addEventListener('click', (e) => {
-        console.log('Container clicked, target:', e.target);
         const card = e.target.closest('.compact-card');
-        console.log('Found card:', card);
         if (card) {
             const sourceId = card.dataset.id; // UUID文字列なのでparseIntしない
-            console.log('Card sourceId:', sourceId);
             openEditMode(sourceId);
         }
     });
@@ -405,12 +402,6 @@ async function saveSource(sourceId) {
     const relevance = parseInt(card.querySelector('.relevance-input').value) || 0;
     const description = card.querySelector('.description-textarea')?.value;
     
-    // デバッグ: description の値を確認
-    console.log('Description value:', description);
-    console.log('Description type:', typeof description);
-    console.log('Description length:', description ? description.length : 'undefined');
-    console.log('Is empty string:', description === '');
-    
     // URLリストを収集
     const urlInputs = card.querySelectorAll('.url-input');
     const urls = Array.from(urlInputs)
@@ -425,9 +416,6 @@ async function saveSource(sourceId) {
             urls: urls
         };
         
-        // デバッグ: 送信データを確認
-        console.log('Update data being sent:', JSON.stringify(updateData, null, 2));
-        
         const response = await fetch(`/api/sources?id=${sourceId}`, {
             method: 'PATCH',
             headers: {
@@ -438,10 +426,6 @@ async function saveSource(sourceId) {
         });
         
         const data = await response.json();
-        
-        // デバッグ: APIレスポンスを確認
-        console.log('API Response:', data);
-        console.log('Response status:', response.status);
         
         if (!data.success) {
             throw new Error(data.error || '保存に失敗しました');
@@ -839,10 +823,7 @@ function isValidUrl(string) {
 
 // 編集モードを開く
 function openEditMode(sourceId) {
-    console.log('openEditMode called with sourceId:', sourceId);
-    
     const source = sources.find(s => s.id === sourceId);
-    console.log('found source:', source);
     
     if (!source) {
         console.error('Source not found for id:', sourceId);
@@ -863,8 +844,6 @@ function openEditMode(sourceId) {
     
     // スクロールして編集エリアを表示
     editContainer.scrollIntoView({ behavior: 'smooth' });
-    
-    console.log('Edit mode opened successfully');
 }
 
 // 編集モードを閉じる
@@ -948,7 +927,6 @@ async function loadCandidates() {
         }
         
         candidates = data.candidates || [];
-        console.log('候補読み込み完了:', candidates.length, '件');
         
     } catch (error) {
         console.error('候補読み込みエラー:', error);
@@ -981,13 +959,11 @@ function switchViewMode(mode) {
         // 情報源リストモード
         sourceFilters.classList.add('show');
         candidateFilters.classList.remove('show');
-        console.log('情報源リストモード設定完了');
         renderSources();
     } else if (mode === 'candidates') {
         // 探索候補モード
         sourceFilters.classList.remove('show');
         candidateFilters.classList.add('show');
-        console.log('探索候補モード設定完了');
         renderCandidates();
     }
 }

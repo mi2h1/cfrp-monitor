@@ -191,26 +191,35 @@ async function addUser(userId, password, displayName, role) {
         }
         
         try {
-            // パスワードをハッシュ化
-            const { hash, salt } = await hashPassword(password);
+            const authToken = localStorage.getItem('auth_token');
+            if (!authToken) {
+                window.location.href = '/login';
+                return false;
+            }
             
-            const { data, error } = await supabase
-            .from('users')
-            .insert([{
+            const userData = {
                 user_id: userId,
-                password_hash: hash,
-                password_salt: salt,
+                password: password,
                 display_name: displayName || userId,
                 role: role
-            }])
-            .select()
-            .single();
-        
-            if (error) {
-                if (error.code === '23505') {
+            };
+            
+            const response = await fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                if (data.error && data.error.includes('already exists')) {
                     showAlert('そのユーザーIDは既に使用されています');
                 } else {
-                    showAlert('ユーザー追加に失敗しました: ' + error.message);
+                    showAlert('ユーザー追加に失敗しました: ' + (data.error || 'Unknown error'));
                 }
                 return false;
             }
@@ -253,6 +262,12 @@ function editUser(userId) {
 // ユーザー更新
 async function updateUser(userId, displayName, newPassword, role) {
     try {
+        const authToken = localStorage.getItem('auth_token');
+        if (!authToken) {
+            window.location.href = '/login';
+            return false;
+        }
+        
         const updateData = {};
         
         if (displayName) {
@@ -260,16 +275,7 @@ async function updateUser(userId, displayName, newPassword, role) {
         }
         
         if (newPassword && newPassword.length >= 4) {
-            try {
-                // パスワードをハッシュ化
-                const { hash, salt } = await hashPassword(newPassword);
-                updateData.password_hash = hash;
-                updateData.password_salt = salt;
-            } catch (error) {
-                console.error('Password hashing error:', error);
-                showAlert('パスワードのハッシュ化に失敗しました: ' + error.message, 'danger', 'editUserAlertContainer');
-                return false;
-            }
+            updateData.password = newPassword;
         } else if (newPassword && newPassword.length < 4) {
             showAlert('パスワードは4文字以上で入力してください', 'danger', 'editUserAlertContainer');
             return false;
@@ -279,12 +285,21 @@ async function updateUser(userId, displayName, newPassword, role) {
             updateData.role = role;
         }
         
-        const { error } = await supabase
-            .from('users')
-            .update(updateData)
-            .eq('user_id', userId);
+        const response = await fetch(`/api/users?id=${encodeURIComponent(userId)}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateData)
+        });
         
-        if (error) throw error;
+        const data = await response.json();
+        
+        if (!data.success) {
+            showAlert('ユーザー更新に失敗しました: ' + (data.error || 'Unknown error'), 'danger', 'editUserAlertContainer');
+            return false;
+        }
         
         showAlert('ユーザー情報を更新しました', 'success', 'editUserAlertContainer');
         await loadUsers();
@@ -309,12 +324,26 @@ async function deleteUser(userId) {
     }
     
     try {
-        const { error } = await supabase
-            .from('users')
-            .delete()
-            .eq('user_id', userId);
+        const authToken = localStorage.getItem('auth_token');
+        if (!authToken) {
+            window.location.href = '/login';
+            return;
+        }
         
-        if (error) throw error;
+        const response = await fetch(`/api/users?id=${encodeURIComponent(userId)}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            alert('ユーザー削除に失敗しました: ' + (data.error || 'Unknown error'));
+            return;
+        }
         
         alert('ユーザーを削除しました');
         await loadUsers();

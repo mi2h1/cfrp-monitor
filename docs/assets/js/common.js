@@ -87,13 +87,10 @@ function logout() {
 
 // ログイン状態の表示とログアウト機能を設定
 function setupAuthUI() {
-    console.log('setupAuthUI called');
     const userInfo = document.getElementById('userInfo');
     const logoutBtn = document.getElementById('logoutBtn');
     
-    console.log('userInfo:', userInfo, 'logoutBtn:', logoutBtn);
     if (!userInfo || !logoutBtn) {
-        console.log('userInfo or logoutBtn not found, returning');
         return;
     }
     
@@ -130,7 +127,6 @@ function setupAuthUI() {
 // データベース直接アクセス制限は削除（APIベースに移行のため）
 function restrictDirectDatabaseAccess() {
     // API移行に伴い、Supabaseクライアント制限は無効化
-    console.log('Database access restrictions disabled - using API-based access control');
 }
 
 // セッションタイムアウト機能
