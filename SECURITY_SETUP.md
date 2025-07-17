@@ -10,9 +10,13 @@
 -- 全テーブルでRLSを有効化
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.sources ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.articles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.source_candidates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.task_logs ENABLE ROW LEVEL SECURITY;
+
+-- バックアップテーブルも保護
+ALTER TABLE public.sources_backup ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.items_backup ENABLE ROW LEVEL SECURITY;
 ```
 
 ## 2. セキュリティポリシーの設定
@@ -109,11 +113,11 @@ CREATE POLICY "Editor and above can insert sources" ON public.sources
   );
 ```
 
-### articlesテーブルのポリシー
+### itemsテーブルのポリシー（記事管理）
 
 ```sql
 -- 全権限で記事を閲覧可能
-CREATE POLICY "All users can view articles" ON public.articles
+CREATE POLICY "All users can view items" ON public.items
   FOR SELECT USING (
     EXISTS (
       SELECT 1 FROM public.users 
@@ -123,12 +127,26 @@ CREATE POLICY "All users can view articles" ON public.articles
   );
 
 -- 全権限で記事を更新可能
-CREATE POLICY "All users can update articles" ON public.articles
+CREATE POLICY "All users can update items" ON public.items
   FOR UPDATE USING (
     EXISTS (
       SELECT 1 FROM public.users 
       WHERE user_id = current_setting('app.current_user_id', true)
       AND role IN ('admin', 'editor', 'viewer')
+    )
+  );
+
+-- 記事は自動で追加されるため、システムレベルでのみ挿入可能
+CREATE POLICY "System can insert items" ON public.items
+  FOR INSERT WITH CHECK (true);
+
+-- 管理者のみが記事を削除可能
+CREATE POLICY "Admin can delete items" ON public.items
+  FOR DELETE USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE user_id = current_setting('app.current_user_id', true)
+      AND role = 'admin'
     )
   );
 ```
@@ -163,6 +181,33 @@ CREATE POLICY "Editor and above can update source candidates" ON public.source_c
 -- 管理者のみがタスクログを閲覧可能
 CREATE POLICY "Admin can view task logs" ON public.task_logs
   FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE user_id = current_setting('app.current_user_id', true)
+      AND role = 'admin'
+    )
+  );
+
+-- システムのみがタスクログを挿入可能
+CREATE POLICY "System can insert task logs" ON public.task_logs
+  FOR INSERT WITH CHECK (true);
+```
+
+### バックアップテーブルのポリシー
+
+```sql
+-- 管理者のみがバックアップテーブルにアクセス可能
+CREATE POLICY "Admin can access sources backup" ON public.sources_backup
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE user_id = current_setting('app.current_user_id', true)
+      AND role = 'admin'
+    )
+  );
+
+CREATE POLICY "Admin can access items backup" ON public.items_backup
+  FOR ALL USING (
     EXISTS (
       SELECT 1 FROM public.users 
       WHERE user_id = current_setting('app.current_user_id', true)
@@ -239,7 +284,88 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
-## 4. 追加のセキュリティ対策
+## 4. 緊急時の簡易対策（RLS設定前）
+
+### JavaScriptレベルでの最低限の制御
+
+```javascript
+// common.jsに追加
+function restrictDirectDatabaseAccess() {
+    // 開発者ツールでのSupabaseアクセスを制限
+    if (typeof supabase !== 'undefined') {
+        const originalFrom = supabase.from;
+        
+        supabase.from = function(table) {
+            // 権限チェック
+            const user = getCurrentUser();
+            if (!user) {
+                throw new Error('認証が必要です');
+            }
+            
+            // テーブルごとの権限チェック
+            switch(table) {
+                case 'users':
+                    if (!isAdmin()) {
+                        throw new Error('ユーザー情報へのアクセスは管理者のみ可能です');
+                    }
+                    break;
+                case 'sources':
+                case 'source_candidates':
+                    if (!canEditSources()) {
+                        throw new Error('情報源管理の権限がありません');
+                    }
+                    break;
+                case 'task_logs':
+                    if (!isAdmin()) {
+                        throw new Error('タスクログへのアクセスは管理者のみ可能です');
+                    }
+                    break;
+                case 'sources_backup':
+                case 'items_backup':
+                    if (!isAdmin()) {
+                        throw new Error('バックアップデータへのアクセスは管理者のみ可能です');
+                    }
+                    break;
+            }
+            
+            return originalFrom.call(this, table);
+        };
+    }
+}
+
+// ページ読み込み時に実行
+document.addEventListener('DOMContentLoaded', restrictDirectDatabaseAccess);
+```
+
+### 本番環境での追加制限
+
+```javascript
+// 本番環境では開発者ツールの使用を制限
+if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    // 開発者ツール検知
+    setInterval(() => {
+        if (window.outerHeight - window.innerHeight > 200 || 
+            window.outerWidth - window.innerWidth > 200) {
+            document.body.innerHTML = '<h1>開発者ツールの使用は禁止されています</h1>';
+        }
+    }, 1000);
+    
+    // 右クリック無効化
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    
+    // キーボードショートカット無効化
+    document.addEventListener('keydown', e => {
+        if (e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+            (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+            (e.ctrlKey && e.key === 'u')) {
+            e.preventDefault();
+        }
+    });
+}
+```
+
+## 5. 追加のセキュリティ対策
 
 ### API制限の設定
 
@@ -284,13 +410,31 @@ document.addEventListener('click', () => {
 setInterval(checkSessionTimeout, 60000); // 1分ごと
 ```
 
-## 5. 実装手順
+## 6. 実装手順（優先順位順）
 
-1. **即座に実行**: RLSの有効化
-2. **ポリシー設定**: 上記SQLを順次実行
-3. **JavaScript更新**: 認証コンテキストの実装
-4. **テスト**: 各権限レベルでのアクセステスト
-5. **監視**: ログの確認とセキュリティ監視
+### 🚨 **最優先（今すぐ実行）**
+1. **RLSの有効化** - 全テーブルで即座に実行
+2. **JavaScript簡易制限** - common.jsに追加
+
+### 🔒 **高優先（24時間以内）**
+3. **データベースポリシー設定** - 上記SQLを順次実行
+4. **認証コンテキスト実装** - set_config関数とコンテキスト設定
+
+### 📋 **中優先（1週間以内）**
+5. **セッション管理強化** - タイムアウト機能の実装
+6. **本番環境制限** - 開発者ツール制限など
+
+### 🔍 **低優先（継続的）**
+7. **監視とログ確認** - 定期的なセキュリティチェック
+8. **テストと改善** - 各権限レベルでのアクセステスト
+
+### 実際のテーブル構造に基づく対象
+- **users**: ユーザー情報（パスワードハッシュ、権限含む）
+- **sources**: 情報源データ
+- **items**: 記事データ（旧articles）
+- **source_candidates**: 情報源候補
+- **task_logs**: タスク実行ログ
+- **sources_backup, items_backup**: バックアップデータ
 
 ## 6. 定期的な確認事項
 
