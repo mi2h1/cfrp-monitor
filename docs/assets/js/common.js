@@ -58,9 +58,9 @@ async function initializeNavigation(activePageId) {
         if (data.success) {
             generateNavigation(data.layout.navigation, activePageId);
             displayUserInfo(data.user, data.layout.user_menu);
-            document.getElementById('logoutBtn').style.display = 'block';
             window.userFeatures = data.layout.features;
             setupUnifiedLogout();
+            setupSidebarToggle();
             return data.layout;
         } else {
             throw new Error(data.error || 'レイアウト取得に失敗');
@@ -77,33 +77,39 @@ async function initializeNavigation(activePageId) {
     }
 }
 
-// 統一されたナビゲーション生成関数
+// 統一されたナビゲーション生成関数（サイドバー用）
 function generateNavigation(navItems, activePageId) {
-    const navContainer = document.getElementById('dynamicNavigation');
+    const navContainer = document.getElementById('sidebarNav');
     if (!navContainer) return;
     
     navContainer.innerHTML = navItems.map(item => 
-        `<a class="nav-link ${(activePageId === item.id) ? 'active' : ''}" href="${item.href}">${item.label}</a>`
+        `<div class="nav-item">
+            <a class="nav-link ${(activePageId === item.id) ? 'active' : ''}" href="${item.href}">
+                <span class="nav-icon">${item.label.split(' ')[0]}</span>
+                <span>${item.label.split(' ').slice(1).join(' ')}</span>
+            </a>
+        </div>`
     ).join('');
 }
 
-// 統一されたユーザー情報表示関数
+// 統一されたユーザー情報表示関数（サイドバー用）
 function displayUserInfo(user, userMenu) {
-    const userInfoElement = document.getElementById('userInfo');
-    if (!userInfoElement) return;
+    const userNameElement = document.getElementById('userName');
+    const userRoleElement = document.getElementById('userRole');
     
-    userInfoElement.innerHTML = `
-        <i class="bi bi-person-circle"></i> ${userMenu.display_name} 
-        <span class="badge bg-secondary">${userMenu.role_display}</span>
-    `;
+    if (userNameElement) {
+        userNameElement.textContent = userMenu.display_name;
+    }
+    if (userRoleElement) {
+        userRoleElement.textContent = userMenu.role_display;
+    }
 }
 
-// 統一されたログアウト処理
+// 統一されたログアウト処理（サイドバー用）
 function setupUnifiedLogout() {
     const logoutBtn = document.getElementById('logoutBtn');
     if (!logoutBtn) return;
     
-    // 既存のイベントリスナーを削除（重複回避）
     logoutBtn.replaceWith(logoutBtn.cloneNode(true));
     const newLogoutBtn = document.getElementById('logoutBtn');
     
@@ -116,6 +122,18 @@ function setupUnifiedLogout() {
             window.location.href = '/login';
         }
     });
+}
+
+// サイドバートグル機能
+function setupSidebarToggle() {
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+        });
+    }
 }
 
 // 権限チェック用ヘルパー関数
