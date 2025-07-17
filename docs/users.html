@@ -164,84 +164,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 動的レイアウト生成
+        // 統一ナビゲーションシステムを使用
         document.addEventListener('DOMContentLoaded', async function() {
-            const authToken = localStorage.getItem('auth_token');
+            // 'users'をアクティブページとしてナビゲーション初期化
+            const layout = await initializeNavigation('users');
             
-            // 認証チェック
-            if (!authToken) {
-                window.location.href = '/login';
+            // レイアウト初期化が失敗した場合は処理を中止
+            if (!layout) {
                 return;
             }
             
-            try {
-                // レイアウト設定を取得
-                const response = await fetch('/api/layout', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // ナビゲーションを動的生成（ユーザー管理をアクティブに）
-                    generateNavigation(data.layout.navigation, 'users');
-                    
-                    // ユーザー情報表示
-                    displayUserInfo(data.user, data.layout.user_menu);
-                    
-                    // ログアウトボタンを表示
-                    document.getElementById('logoutBtn').style.display = 'block';
-                    
-                    // グローバルに機能権限を保存
-                    window.userFeatures = data.layout.features;
-                    
-                    // ユーザー管理権限チェック
-                    if (!data.layout.features.can_manage_users) {
-                        alert('ユーザー管理の権限がありません');
-                        window.location.href = '/';
-                        return;
-                    }
-                    
-                } else {
-                    throw new Error(data.error || 'レイアウト取得に失敗');
-                }
-                
-            } catch (error) {
-                console.error('Layout loading error:', error);
-                localStorage.removeItem('auth_token');
-                localStorage.removeItem('user_info');
-                window.location.href = '/login';
+            // ユーザー管理権限チェック
+            if (!checkPagePermission('can_manage_users')) {
+                return;
             }
-            
-            // ログアウト処理
-            document.getElementById('logoutBtn').addEventListener('click', function() {
-                if (confirm('ログアウトしますか？')) {
-                    localStorage.removeItem('auth_token');
-                    localStorage.removeItem('user_info');
-                    window.location.href = '/login';
-                }
-            });
         });
-        
-        // ナビゲーション生成関数
-        function generateNavigation(navItems, activeId) {
-            const navContainer = document.getElementById('dynamicNavigation');
-            navContainer.innerHTML = navItems.map(item => 
-                `<a class="nav-link ${(activeId === item.id) ? 'active' : ''}" href="${item.href}">${item.label}</a>`
-            ).join('');
-        }
-        
-        // ユーザー情報表示関数
-        function displayUserInfo(user, userMenu) {
-            document.getElementById('userInfo').innerHTML = `
-                <i class="bi bi-person-circle"></i> ${userMenu.display_name} 
-                <span class="badge bg-secondary">${userMenu.role_display}</span>
-            `;
-        }
     </script>
     <script src="assets/js/common.js"></script>
     <script src="assets/js/security.js"></script>

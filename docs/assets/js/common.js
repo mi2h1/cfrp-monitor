@@ -31,6 +31,117 @@ async function verifyPassword(password, storedHash, salt) {
 
 // APIベースのシステムに移行済み - Supabaseクライアントは不要
 
+// ===========================================
+// 統一ナビゲーションシステム
+// ===========================================
+
+// 統一されたナビゲーション初期化システム
+async function initializeNavigation(activePageId) {
+    const authToken = localStorage.getItem('auth_token');
+    
+    // 認証チェック
+    if (!authToken) {
+        window.location.href = '/login';
+        return null;
+    }
+    
+    try {
+        // レイアウト設定を取得
+        const response = await fetch('/api/layout', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // ナビゲーションを動的生成
+            generateNavigation(data.layout.navigation, activePageId);
+            
+            // ユーザー情報表示
+            displayUserInfo(data.user, data.layout.user_menu);
+            
+            // ログアウトボタンを表示
+            document.getElementById('logoutBtn').style.display = 'block';
+            
+            // グローバルに機能権限を保存
+            window.userFeatures = data.layout.features;
+            
+            // ログアウト処理のセットアップ
+            setupUnifiedLogout();
+            
+            return data.layout;
+        } else {
+            throw new Error(data.error || 'レイアウト取得に失敗');
+        }
+        
+    } catch (error) {
+        console.error('Layout loading error:', error);
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user_info');
+        window.location.href = '/login';
+        return null;
+    }
+}
+
+// 統一されたナビゲーション生成関数
+function generateNavigation(navItems, activePageId) {
+    const navContainer = document.getElementById('dynamicNavigation');
+    if (!navContainer) return;
+    
+    navContainer.innerHTML = navItems.map(item => 
+        `<a class="nav-link ${(activePageId === item.id) ? 'active' : ''}" href="${item.href}">${item.label}</a>`
+    ).join('');
+}
+
+// 統一されたユーザー情報表示関数
+function displayUserInfo(user, userMenu) {
+    const userInfoElement = document.getElementById('userInfo');
+    if (!userInfoElement) return;
+    
+    userInfoElement.innerHTML = `
+        <i class="bi bi-person-circle"></i> ${userMenu.display_name} 
+        <span class="badge bg-secondary">${userMenu.role_display}</span>
+    `;
+}
+
+// 統一されたログアウト処理
+function setupUnifiedLogout() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (!logoutBtn) return;
+    
+    // 既存のイベントリスナーを削除（重複回避）
+    logoutBtn.replaceWith(logoutBtn.cloneNode(true));
+    const newLogoutBtn = document.getElementById('logoutBtn');
+    
+    newLogoutBtn.addEventListener('click', function() {
+        if (confirm('ログアウトしますか？')) {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_info');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUserData');
+            window.location.href = '/login';
+        }
+    });
+}
+
+// 権限チェック用ヘルパー関数
+function checkPagePermission(requiredFeature) {
+    if (!window.userFeatures || !window.userFeatures[requiredFeature]) {
+        alert('このページにアクセスする権限がありません');
+        window.location.href = '/';
+        return false;
+    }
+    return true;
+}
+
+// ===========================================
+// 従来の認証システム（互換性のため残存）
+// ==========================================
+
 // 認証管理
 function getCurrentUser() {
     const userId = localStorage.getItem('currentUser');
@@ -82,7 +193,9 @@ function canViewArticles() {
 function logout() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentUserData');
-    window.location.href = 'login.html';
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_info');
+    window.location.href = '/login';
 }
 
 // ログイン状態の表示とログアウト機能を設定
