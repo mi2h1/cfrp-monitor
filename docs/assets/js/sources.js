@@ -7,6 +7,20 @@ let currentViewMode = 'sources'; // 'sources' または 'candidates'
 
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
+    // 権限チェック
+    if (!canEditSources()) {
+        document.body.innerHTML = `
+            <div class="container-fluid py-4">
+                <div class="alert alert-danger text-center">
+                    <h4>アクセス拒否</h4>
+                    <p>情報源管理にアクセスする権限がありません。</p>
+                    <a href="index.html" class="btn btn-primary">記事管理に戻る</a>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
     await loadSources();
     await loadCandidates();
     await loadLastTaskLog();

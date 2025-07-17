@@ -76,29 +76,36 @@ function createUserCard(user) {
     const isAdminUser = user.user_id === 'admin';
     const lastLogin = user.last_login ? new Date(user.last_login).toLocaleString('ja-JP') : '未ログイン';
     const createdAt = new Date(user.created_at).toLocaleString('ja-JP');
+    const role = user.role || 'viewer';
+    const roleColor = getRoleColor(role);
+    const roleLabel = getRoleLabel(role);
     
     return `
         <div class="col-md-6 col-lg-4 mb-3">
             <div class="card ${isAdminUser ? 'border-warning' : ''}">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">
-                        ${isAdminUser ? '👑 ' : '👤 '}${escapeHtml(user.display_name || user.user_id)}
+                        ${getRoleIcon(role)} ${escapeHtml(user.display_name || user.user_id)}
                     </h6>
-                    ${!isAdminUser ? `
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                ⚙️
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" onclick="editUser('${user.user_id}')">編集</a></li>
-                                <li><a class="dropdown-item text-danger" href="#" onclick="deleteUser('${user.user_id}')">削除</a></li>
-                            </ul>
-                        </div>
-                    ` : '<span class="badge bg-warning text-dark">管理者</span>'}
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-${roleColor}">${roleLabel}</span>
+                        ${!isAdminUser || getCurrentUser()?.userId === 'admin' ? `
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    ⚙️
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="editUser('${user.user_id}')">編集</a></li>
+                                    ${user.user_id !== 'admin' ? '<li><a class="dropdown-item text-danger" href="#" onclick="deleteUser(\'${user.user_id}\')">削除</a></li>' : ''}
+                                </ul>
+                            </div>
+                        ` : ''}
+                    </div>
                 </div>
                 <div class="card-body">
                     <p class="card-text">
                         <strong>ユーザーID:</strong> ${escapeHtml(user.user_id)}<br>
+                        <strong>権限:</strong> ${roleLabel}<br>
                         <strong>作成日:</strong> ${createdAt}<br>
                         <strong>最終ログイン:</strong> ${lastLogin}
                     </p>
@@ -111,12 +118,14 @@ function createUserCard(user) {
 // 統計情報更新
 function updateStats() {
     const totalUsers = users.length;
-    const adminUsers = users.filter(user => user.user_id === 'admin').length;
-    const regularUsers = totalUsers - adminUsers;
+    const adminUsers = users.filter(user => user.role === 'admin').length;
+    const editorUsers = users.filter(user => user.role === 'editor').length;
+    const viewerUsers = users.filter(user => user.role === 'viewer').length;
     
     document.getElementById('totalUsers').textContent = totalUsers;
     document.getElementById('adminUsers').textContent = adminUsers;
-    document.getElementById('regularUsers').textContent = regularUsers;
+    document.getElementById('editorUsers').textContent = editorUsers;
+    document.getElementById('viewerUsers').textContent = viewerUsers;
 }
 
 // アラート表示
@@ -133,7 +142,7 @@ function showAlert(message, type = 'danger', containerId = 'addUserAlertContaine
 }
 
 // 新規ユーザー追加
-async function addUser(userId, password, displayName) {
+async function addUser(userId, password, displayName, role) {
     try {
         if (!userId || userId.length < 3) {
             showAlert('ユーザーIDは3文字以上で入力してください');
@@ -145,12 +154,18 @@ async function addUser(userId, password, displayName) {
             return false;
         }
         
+        if (!role) {
+            showAlert('権限を選択してください');
+            return false;
+        }
+        
         const { data, error } = await supabase
             .from('users')
             .insert([{
                 user_id: userId,
                 password_hash: password,
-                display_name: displayName || userId
+                display_name: displayName || userId,
+                role: role
             }])
             .select()
             .single();
@@ -184,13 +199,14 @@ function editUser(userId) {
     document.getElementById('editUserId').value = userId;
     document.getElementById('editDisplayName').value = user.display_name || '';
     document.getElementById('editUserPassword').value = '';
+    document.getElementById('editUserRole').value = user.role || 'viewer';
     
     const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
     modal.show();
 }
 
 // ユーザー更新
-async function updateUser(userId, displayName, newPassword) {
+async function updateUser(userId, displayName, newPassword, role) {
     try {
         const updateData = {};
         
@@ -203,6 +219,10 @@ async function updateUser(userId, displayName, newPassword) {
         } else if (newPassword && newPassword.length < 4) {
             showAlert('パスワードは4文字以上で入力してください', 'danger', 'editUserAlertContainer');
             return false;
+        }
+        
+        if (role) {
+            updateData.role = role;
         }
         
         const { error } = await supabase
@@ -270,8 +290,9 @@ function setupEventListeners() {
         const userId = document.getElementById('newUserId').value.trim();
         const password = document.getElementById('newUserPassword').value.trim();
         const displayName = document.getElementById('newDisplayName').value.trim();
+        const role = document.getElementById('newUserRole').value;
         
-        if (await addUser(userId, password, displayName)) {
+        if (await addUser(userId, password, displayName, role)) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
             setTimeout(() => {
                 modal.hide();
@@ -285,8 +306,9 @@ function setupEventListeners() {
         const userId = document.getElementById('editUserId').value;
         const displayName = document.getElementById('editDisplayName').value.trim();
         const newPassword = document.getElementById('editUserPassword').value.trim();
+        const role = document.getElementById('editUserRole').value;
         
-        if (await updateUser(userId, displayName, newPassword)) {
+        if (await updateUser(userId, displayName, newPassword, role)) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
             setTimeout(() => {
                 modal.hide();
@@ -316,4 +338,32 @@ function setupEventListeners() {
         document.getElementById('editUserAlertContainer').innerHTML = '';
         currentEditingUserId = null;
     });
+}
+
+// 権限関連のユーティリティ関数
+function getRoleColor(role) {
+    const colors = {
+        'admin': 'danger',
+        'editor': 'warning',
+        'viewer': 'info'
+    };
+    return colors[role] || 'secondary';
+}
+
+function getRoleLabel(role) {
+    const labels = {
+        'admin': '管理者',
+        'editor': '編集者',
+        'viewer': '閲覧者'
+    };
+    return labels[role] || '不明';
+}
+
+function getRoleIcon(role) {
+    const icons = {
+        'admin': '👑',
+        'editor': '✏️',
+        'viewer': '👤'
+    };
+    return icons[role] || '👤';
 }

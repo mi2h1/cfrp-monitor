@@ -24,6 +24,36 @@ function isLoggedIn() {
     return getCurrentUser() !== null;
 }
 
+// 権限チェック関数
+function hasRole(requiredRole) {
+    const user = getCurrentUser();
+    if (!user || !user.data || !user.data.role) return false;
+    
+    const roleHierarchy = {
+        'admin': 3,
+        'editor': 2,
+        'viewer': 1
+    };
+    
+    const userLevel = roleHierarchy[user.data.role] || 0;
+    const requiredLevel = roleHierarchy[requiredRole] || 0;
+    
+    return userLevel >= requiredLevel;
+}
+
+// 特定の権限チェック
+function isAdmin() {
+    return hasRole('admin');
+}
+
+function canEditSources() {
+    return hasRole('editor');
+}
+
+function canViewArticles() {
+    return hasRole('viewer');
+}
+
 function logout() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentUserData');
@@ -47,10 +77,16 @@ function setupAuthUI() {
         userInfo.textContent = `👤 ${user.data.display_name || user.userId}`;
         logoutBtn.style.display = 'block';
         
-        // 管理者の場合はユーザー管理リンクを表示
+        // 権限に応じてナビゲーションリンクを表示
         const userManagementLink = document.getElementById('userManagementLink');
-        if (userManagementLink && user.userId === 'admin') {
+        const sourcesLink = document.getElementById('sourcesLink');
+        
+        if (userManagementLink && isAdmin()) {
             userManagementLink.classList.remove('hidden');
+        }
+        
+        if (sourcesLink && !canEditSources()) {
+            sourcesLink.classList.add('hidden');
         }
         
         logoutBtn.addEventListener('click', () => {

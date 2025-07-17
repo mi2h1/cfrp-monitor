@@ -119,7 +119,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             .insert([{
                 user_id: newUserId,
                 password_hash: newPassword,
-                display_name: displayName || newUserId
+                display_name: displayName || newUserId,
+                role: 'viewer'
             }])
             .select()
             .single();
