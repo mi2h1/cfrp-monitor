@@ -4,26 +4,36 @@ let sources = [];
 let candidates = [];
 let currentEditingSourceId = null;
 let currentViewMode = 'sources'; // 'sources' または 'candidates'
+let authToken = null;
+let userFeatures = null;
 
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
-    // 権限チェック
-    if (!canEditSources()) {
+    // 認証チェック
+    authToken = localStorage.getItem('auth_token');
+    if (!authToken) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    // 機能権限チェック（グローバル変数から取得）
+    if (!window.userFeatures || !window.userFeatures.can_manage_sources) {
         document.body.innerHTML = `
             <div class="container-fluid py-4">
                 <div class="alert alert-danger text-center">
                     <h4>アクセス拒否</h4>
                     <p>情報源管理にアクセスする権限がありません。</p>
-                    <a href="index.html" class="btn btn-primary">記事管理に戻る</a>
+                    <a href="/" class="btn btn-primary">記事管理に戻る</a>
                 </div>
             </div>
         `;
         return;
     }
     
+    userFeatures = window.userFeatures;
+    
     await loadSources();
     await loadCandidates();
-    await loadLastTaskLog();
     setupEventListeners();
     
     // 明示的に情報源リストモードに設定
@@ -34,21 +44,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadSources() {
     try {
         const deletedFilter = document.getElementById('deletedFilter')?.value || 'active';
-        let query = supabase.from('sources').select('*');
         
-        // 削除フィルターに応じてクエリを調整
-        if (deletedFilter === 'active') {
-            query = query.or('deleted.eq.false,deleted.is.null');
-        } else if (deletedFilter === 'deleted') {
-            query = query.eq('deleted', true);
+        const response = await fetch(`/api/sources?include_deleted=${deletedFilter}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || '情報源の読み込みに失敗しました');
         }
-        // 'all'の場合はフィルタなし
         
-        const { data, error } = await query.order('name');
-        
-        if (error) throw error;
-        
-        sources = data || [];
+        sources = data.sources || [];
         populateFilters();
         renderSources();
         updateStats();
@@ -59,52 +70,11 @@ async function loadSources() {
     } catch (error) {
         console.error('情報源読み込みエラー:', error);
         document.getElementById('loading').innerHTML = 
-            '<div class="alert alert-danger">情報源の読み込みに失敗しました</div>';
+            '<div class="alert alert-danger">情報源の読み込みに失敗しました: ' + error.message + '</div>';
     }
 }
 
-// 最終タスク実行ログを読み込み
-async function loadLastTaskLog() {
-    try {
-        const { data, error } = await supabase
-            .from('task_logs')
-            .select('*')
-            .in('task_type', ['weekly_source_discovery', 'weekly_multilingual_discovery'])
-            .order('executed_at', { ascending: false })
-            .limit(1);
-        
-        if (error) throw error;
-        
-        if (data && data.length > 0) {
-            const lastLog = data[0];
-            const executedAt = new Date(lastLog.executed_at).toLocaleString('ja-JP');
-            const statusBadge = lastLog.status === 'success' 
-                ? '<span class="badge bg-success">成功</span>'
-                : '<span class="badge bg-danger">失敗</span>';
-            
-            // タスクタイプに応じた表示文字列
-            let taskLabel = '週次情報源探索';
-            if (lastLog.task_type === 'weekly_multilingual_discovery') {
-                taskLabel = '多言語情報源探索';
-            }
-            
-            // 発見候補数も表示
-            const candidatesCount = lastLog.articles_added || 0;
-            const candidatesText = candidatesCount > 0 ? ` (${candidatesCount}件発見)` : '';
-            
-            // ナビバーに表示
-            const userInfo = document.getElementById('userInfo');
-            if (userInfo) {
-                const logInfo = document.createElement('span');
-                logInfo.className = 'navbar-text text-white-50 me-3';
-                logInfo.innerHTML = `🔍 ${taskLabel} 最終実行: ${executedAt} ${statusBadge}${candidatesText}`;
-                userInfo.parentNode.insertBefore(logInfo, userInfo);
-            }
-        }
-    } catch (error) {
-        console.error('タスクログ読み込みエラー:', error);
-    }
-}
+// タスクログ機能は現在のAPIでは実装しないため削除
 
 // フィルターを設定
 function populateFilters() {
@@ -428,22 +398,27 @@ async function saveSource(sourceId) {
         .filter(url => url.length > 0);
     
     try {
-        const currentUser = getCurrentUser();
         const updateData = {
             acquisition_mode: mode,
             relevance: relevance,
             description: description || null,
-            urls: urls,
-            updated_at: new Date().toISOString(),
-            last_edited_by: currentUser ? currentUser.userId : null
+            urls: urls
         };
         
-        const { error } = await supabase
-            .from('sources')
-            .update(updateData)
-            .eq('id', sourceId);
+        const response = await fetch(`/api/sources?id=${sourceId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateData)
+        });
         
-        if (error) throw error;
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || '保存に失敗しました');
+        }
         
         // UIを更新
         const saveBtn = card.querySelector('.save-btn');
@@ -469,7 +444,6 @@ async function saveSource(sourceId) {
             sources[sourceIndex].description = description || null;
             sources[sourceIndex].urls = urls;
             sources[sourceIndex].updated_at = new Date().toISOString();
-            sources[sourceIndex].last_edited_by = currentUser ? currentUser.userId : null;
         }
         
         // 一覧表示を更新
@@ -893,18 +867,19 @@ async function deleteSource() {
     }
     
     try {
-        // 論理削除（deletedフラグをtrueに設定）
-        const currentUser = getCurrentUser();
-        const { error } = await supabase
-            .from('sources')
-            .update({ 
-                deleted: true,
-                updated_at: new Date().toISOString(),
-                last_edited_by: currentUser ? currentUser.userId : null
-            })
-            .eq('id', currentEditingSourceId);
+        const response = await fetch(`/api/sources?id=${currentEditingSourceId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
-        if (error) throw error;
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || '削除に失敗しました');
+        }
         
         // ローカルの配列からも削除
         sources = sources.filter(s => s.id !== currentEditingSourceId);
@@ -931,14 +906,21 @@ async function deleteSource() {
 // 候補一覧を読み込み
 async function loadCandidates() {
     try {
-        const { data, error } = await supabase
-            .from('source_candidates')
-            .select('*')
-            .order('discovered_at', { ascending: false });
+        const response = await fetch('/api/source-candidates', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
-        if (error) throw error;
+        const data = await response.json();
         
-        candidates = data || [];
+        if (!data.success) {
+            throw new Error(data.error || '候補の読み込みに失敗しました');
+        }
+        
+        candidates = data.candidates || [];
         console.log('候補読み込み完了:', candidates.length, '件');
         
     } catch (error) {
@@ -1090,55 +1072,11 @@ async function approveCandidate(candidateId) {
         const candidate = candidates.find(c => c.id === candidateId);
         if (!candidate) return;
         
-        // 既存の情報源との重複チェック
-        const { data: existingSources, error: checkError } = await supabase
-            .from('sources')
-            .select('id, name, domain')
-            .eq('domain', candidate.domain);
-        
-        if (checkError) throw checkError;
-        
-        // 重複チェック
-        if (existingSources && existingSources.length > 0) {
-            const existingSource = existingSources[0];
-            const confirmed = confirm(`⚠️ 重複警告\n\n既に同じドメインの情報源が存在します：\n- 既存: ${existingSource.name}\n- 候補: ${candidate.name}\n- ドメイン: ${candidate.domain}\n\nこの候補を却下しますか？`);
-            
-            if (confirmed) {
-                // 自動的に却下処理
-                await rejectCandidate(candidateId);
-                alert('重複のため候補を却下しました');
-                return;
-            } else {
-                // ユーザーがキャンセルした場合は処理を中断
-                return;
-            }
+        if (!confirm(`候補「${candidate.name}」を承認して情報源に追加しますか？`)) {
+            return;
         }
         
-        // URLの重複チェック
-        const candidateUrls = candidate.urls;
-        const { data: existingUrls, error: urlCheckError } = await supabase
-            .from('sources')
-            .select('id, name, urls')
-            .overlaps('urls', candidateUrls);
-        
-        if (urlCheckError) throw urlCheckError;
-        
-        if (existingUrls && existingUrls.length > 0) {
-            const existingSource = existingUrls[0];
-            const duplicateUrls = existingSource.urls.filter(url => candidateUrls.includes(url));
-            
-            const confirmed = confirm(`⚠️ URL重複警告\n\n既存の情報源と同じURLが含まれています：\n- 既存: ${existingSource.name}\n- 候補: ${candidate.name}\n- 重複URL: ${duplicateUrls.join(', ')}\n\nこの候補を却下しますか？`);
-            
-            if (confirmed) {
-                await rejectCandidate(candidateId);
-                alert('URL重複のため候補を却下しました');
-                return;
-            } else {
-                return;
-            }
-        }
-        
-        // 重複なし - sources テーブルに追加
+        // 情報源に追加
         const sourceData = {
             name: candidate.name,
             urls: candidate.urls,
@@ -1150,23 +1088,39 @@ async function approveCandidate(candidateId) {
             relevance: Math.min(10, Math.max(1, Math.round(candidate.relevance_score * 10)))
         };
         
-        const { error: insertError } = await supabase
-            .from('sources')
-            .insert(sourceData);
+        const sourceResponse = await fetch('/api/sources', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(sourceData)
+        });
         
-        if (insertError) throw insertError;
+        const sourceResult = await sourceResponse.json();
+        
+        if (!sourceResult.success) {
+            throw new Error(sourceResult.error || '情報源の追加に失敗しました');
+        }
         
         // 候補のステータスを更新
-        const { error: updateError } = await supabase
-            .from('source_candidates')
-            .update({
+        const candidateResponse = await fetch(`/api/source-candidates?id=${candidateId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 status: 'approved',
-                reviewed_at: new Date().toISOString(),
                 reviewer_notes: '管理画面から承認'
             })
-            .eq('id', candidateId);
+        });
         
-        if (updateError) throw updateError;
+        const candidateResult = await candidateResponse.json();
+        
+        if (!candidateResult.success) {
+            throw new Error(candidateResult.error || '候補ステータスの更新に失敗しました');
+        }
         
         // 画面を更新
         await loadSources();
@@ -1184,16 +1138,23 @@ async function approveCandidate(candidateId) {
 // 候補の保留
 async function holdCandidate(candidateId) {
     try {
-        const { error } = await supabase
-            .from('source_candidates')
-            .update({
+        const response = await fetch(`/api/source-candidates?id=${candidateId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 status: 'on_hold',
-                reviewed_at: new Date().toISOString(),
                 reviewer_notes: '管理画面から保留'
             })
-            .eq('id', candidateId);
+        });
         
-        if (error) throw error;
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || '候補の保留に失敗しました');
+        }
         
         await loadCandidates();
         renderCandidates();
@@ -1209,16 +1170,23 @@ async function rejectCandidate(candidateId) {
     if (!confirm('この候補を却下しますか？')) return;
     
     try {
-        const { error } = await supabase
-            .from('source_candidates')
-            .update({
+        const response = await fetch(`/api/source-candidates?id=${candidateId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 status: 'rejected',
-                reviewed_at: new Date().toISOString(),
                 reviewer_notes: '管理画面から却下'
             })
-            .eq('id', candidateId);
+        });
         
-        if (error) throw error;
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || '候補の却下に失敗しました');
+        }
         
         await loadCandidates();
         renderCandidates();

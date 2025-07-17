@@ -14,10 +14,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50 version-text">v2025.01.08.12</small></a>
-            <div class="navbar-nav">
-                <a class="nav-link active" href="index.html">📰 記事管理</a>
-                <a class="nav-link" id="sourcesLink" href="sources.html">📡 情報源管理</a>
-                <a class="nav-link" id="userManagementLink" href="users.html" style="display: none;">👥 ユーザー管理</a>
+            <div class="navbar-nav" id="dynamicNavigation">
+                <!-- 動的ナビゲーションがここに生成される -->
             </div>
             <div class="navbar-nav">
                 <span class="navbar-text me-3" id="userInfo">
@@ -118,10 +116,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // APIベースの認証チェック
-        document.addEventListener('DOMContentLoaded', function() {
+        // 動的レイアウト生成
+        document.addEventListener('DOMContentLoaded', async function() {
             const authToken = localStorage.getItem('auth_token');
-            const userInfo = localStorage.getItem('user_info');
             
             // 認証チェック
             if (!authToken) {
@@ -129,27 +126,40 @@
                 return;
             }
             
-            // ユーザー情報表示
-            if (userInfo) {
-                try {
-                    const user = JSON.parse(userInfo);
-                    document.getElementById('userInfo').innerHTML = `
-                        <i class="bi bi-person-circle"></i> ${user.display_name || user.user_id} 
-                        <span class="badge bg-secondary">${user.role}</span>
-                    `;
-                    
-                    // 管理者のみユーザー管理リンクを表示
-                    if (user.role === 'admin') {
-                        document.getElementById('userManagementLink').style.display = 'block';
+            try {
+                // レイアウト設定を取得
+                const response = await fetch('/api/layout', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
                     }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // ナビゲーションを動的生成
+                    generateNavigation(data.layout.navigation);
+                    
+                    // ユーザー情報表示
+                    displayUserInfo(data.user, data.layout.user_menu);
                     
                     // ログアウトボタンを表示
                     document.getElementById('logoutBtn').style.display = 'block';
-                } catch (e) {
-                    console.error('Failed to parse user info:', e);
-                    localStorage.removeItem('user_info');
-                    window.location.href = '/login';
+                    
+                    // グローバルに機能権限を保存
+                    window.userFeatures = data.layout.features;
+                    
+                } else {
+                    throw new Error(data.error || 'レイアウト取得に失敗');
                 }
+                
+            } catch (error) {
+                console.error('Layout loading error:', error);
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_info');
+                window.location.href = '/login';
             }
             
             // ログアウト処理
@@ -161,6 +171,22 @@
                 }
             });
         });
+        
+        // ナビゲーション生成関数
+        function generateNavigation(navItems) {
+            const navContainer = document.getElementById('dynamicNavigation');
+            navContainer.innerHTML = navItems.map(item => 
+                `<a class="nav-link ${item.active ? 'active' : ''}" href="${item.href}">${item.label}</a>`
+            ).join('');
+        }
+        
+        // ユーザー情報表示関数
+        function displayUserInfo(user, userMenu) {
+            document.getElementById('userInfo').innerHTML = `
+                <i class="bi bi-person-circle"></i> ${userMenu.display_name} 
+                <span class="badge bg-secondary">${userMenu.role_display}</span>
+            `;
+        }
     </script>
     <script src="assets/js/common.js"></script>
     <script src="assets/js/security.js"></script>

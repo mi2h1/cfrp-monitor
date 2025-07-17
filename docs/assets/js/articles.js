@@ -3,54 +3,69 @@
 let articles = [];
 let sources = [];
 let currentPage = 1;
+let authToken = null;
+let userFeatures = null;
 
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
+    // 認証チェックはメインページのスクリプトで実行済み
+    authToken = localStorage.getItem('auth_token');
+    userFeatures = window.userFeatures;
+    
     await loadSources();
     await loadArticles();
-    await loadLastTaskLog();
     setupEventListeners();
 });
 
 // ソース一覧を読み込み
 async function loadSources() {
     try {
-        const { data, error } = await supabase
-            .from('sources')
-            .select('id, name, domain')
-            .order('name');
+        const response = await fetch('/api/sources', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
-        if (error) throw error;
+        const data = await response.json();
         
-        sources = data || [];
-        populateSourceFilter();
+        if (data.success) {
+            sources = data.sources || [];
+            populateSourceFilter();
+        } else {
+            console.error('ソース読み込みエラー:', data.error);
+        }
     } catch (error) {
         console.error('ソース読み込みエラー:', error);
     }
 }
 
-// 記事の総件数を取得（フィルタリング条件付き）
+// 記事の総件数を取得（API経由）
 async function getTotalArticlesCount(statusFilter = '', flaggedFilter = '', sourceFilter = '') {
     try {
-        let query = supabase
-            .from('items')
-            .select('*', { count: 'exact', head: true });
+        let url = '/api/articles?count_only=true';
         
         // フィルタリング条件を適用
-        if (statusFilter) {
-            query = query.eq('status', statusFilter);
-        }
-        if (flaggedFilter) {
-            query = query.eq('flagged', flaggedFilter === 'true');
-        }
-        if (sourceFilter) {
-            query = query.eq('source_id', sourceFilter);
-        }
+        if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
+        if (flaggedFilter) url += `&flagged=${encodeURIComponent(flaggedFilter)}`;
+        if (sourceFilter) url += `&source_id=${encodeURIComponent(sourceFilter)}`;
         
-        const { count, error } = await query;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
-        if (error) throw error;
-        return count || 0;
+        const data = await response.json();
+        
+        if (data.success) {
+            return data.count || 0;
+        } else {
+            throw new Error(data.error || '総件数取得に失敗しました');
+        }
     } catch (error) {
         console.error('総件数取得エラー:', error);
         return 0;
@@ -91,22 +106,45 @@ async function loadArticlesPage(page, totalCount = null) {
             totalCount = await getTotalArticlesCount(statusFilter, flaggedFilter, sourceFilter);
         }
         
-        // クエリを構築
-        let query = supabase
-            .from('items')
-            .select(`
-                *,
-                sources(name, domain)
-            `);
+        // API URLを構築
+        let url = `/api/articles?limit=${itemsPerPage}&offset=${offset}&order=${sortOrder}`;
         
         // フィルタリング条件を適用
         if (statusFilter) {
-            query = query.eq('status', statusFilter);
+            url += `&status=${encodeURIComponent(statusFilter)}`;
         }
         if (flaggedFilter) {
-            query = query.eq('flagged', flaggedFilter === 'true');
+            url += `&flagged=${encodeURIComponent(flaggedFilter)}`;
         }
         if (sourceFilter) {
+            url += `&source_id=${encodeURIComponent(sourceFilter)}`;
+        }
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || '記事の読み込みに失敗しました');
+        }
+        
+        articles = data.articles || [];
+        currentPage = page;
+        
+        renderArticles();
+        updatePagination(totalCount, itemsPerPage, page);
+        
+    } catch (error) {
+        console.error('記事ページ読み込みエラー:', error);
+        document.getElementById('articlesContainer').innerHTML = '<div class="alert alert-danger">記事の読み込みに失敗しました: ' + error.message + '</div>';
+    }
+}
             query = query.eq('source_id', sourceFilter);
         }
         
