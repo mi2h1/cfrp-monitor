@@ -1,5 +1,34 @@
 // CFRP Monitor - 共通JavaScript
 
+// パスワードハッシュ化関数
+async function hashPassword(password, salt = null) {
+    // ソルトが指定されていない場合は新しいソルトを生成
+    if (!salt) {
+        salt = crypto.getRandomValues(new Uint8Array(16));
+        salt = Array.from(salt, byte => byte.toString(16).padStart(2, '0')).join('');
+    }
+    
+    // パスワードとソルトを結合
+    const saltedPassword = password + salt;
+    
+    // SHA-256でハッシュ化
+    const encoder = new TextEncoder();
+    const data = encoder.encode(saltedPassword);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    
+    // ハッシュを16進数文字列に変換
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    return { hash: hashHex, salt: salt };
+}
+
+// パスワード検証関数
+async function verifyPassword(password, storedHash, salt) {
+    const { hash } = await hashPassword(password, salt);
+    return hash === storedHash;
+}
+
 // Supabaseの設定
 const SUPABASE_URL = 'https://nvchsqotmchzpharujap.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52Y2hzcW90bWNoenBoYXJ1amFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUzMDc2OTAsImV4cCI6MjA2MDg4MzY5MH0.h6MdiDYNySabXxpeS_92KWuwUQlavQqv-9GJyKCn2jo';

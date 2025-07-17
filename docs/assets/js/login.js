@@ -51,15 +51,22 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     }
 
     try {
-        // ユーザーの存在確認とパスワード認証
+        // ユーザーの存在確認
         const { data, error } = await supabase
             .from('users')
             .select('*')
             .eq('user_id', userId)
-            .eq('password_hash', password)
             .single();
 
         if (error || !data) {
+            showAlert('ユーザーIDまたはパスワードが間違っています');
+            return;
+        }
+
+        // パスワード検証
+        const isPasswordValid = await verifyPassword(password, data.password_hash, data.password_salt);
+        
+        if (!isPasswordValid) {
             showAlert('ユーザーIDまたはパスワードが間違っています');
             return;
         }
@@ -113,12 +120,16 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     }
 
     try {
+        // パスワードをハッシュ化
+        const { hash, salt } = await hashPassword(newPassword);
+        
         // 新規ユーザー作成
         const { data, error } = await supabase
             .from('users')
             .insert([{
                 user_id: newUserId,
-                password_hash: newPassword,
+                password_hash: hash,
+                password_salt: salt,
                 display_name: displayName || newUserId,
                 role: 'viewer'
             }])
