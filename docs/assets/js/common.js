@@ -42,11 +42,11 @@ async function initializeNavigation(activePageId) {
     console.log('initializeNavigation called with activePageId:', activePageId);
     console.log('Auth token from localStorage:', authToken ? 'exists' : 'not found');
     
-    // 認証チェック
+    // 認証チェック（デバッグ用に一時的に無効化）
     if (!authToken) {
-        console.log('No auth token found, redirecting to login');
-        window.location.href = '/login';
-        return null;
+        console.log('No auth token found, but continuing for debug (normally would redirect to login)');
+        // window.location.href = '/login';
+        // return null;
     }
     
     try {
@@ -87,12 +87,12 @@ async function initializeNavigation(activePageId) {
         
     } catch (error) {
         console.error('Layout loading error:', error);
-        console.log('Clearing localStorage and redirecting to login');
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user_info');
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('currentUserData');
-        window.location.href = '/login';
+        console.log('Error occurred but not redirecting for debug purposes');
+        // localStorage.removeItem('auth_token');
+        // localStorage.removeItem('user_info');
+        // localStorage.removeItem('currentUser');
+        // localStorage.removeItem('currentUserData');
+        // window.location.href = '/login';
         return null;
     }
 }
