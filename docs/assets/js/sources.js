@@ -1224,6 +1224,132 @@ async function rejectCandidate(candidateId) {
     }
 }
 
+// 候補の詳細を表示
+function viewCandidateDetails(candidateId) {
+    const candidate = candidates.find(c => c.id === candidateId);
+    if (!candidate) {
+        alert('候補が見つかりません');
+        return;
+    }
+    
+    const statusText = getStatusText(candidate.status);
+    const discoveryMethodText = getDiscoveryMethodText(candidate.discovery_method);
+    const relevancePercent = (candidate.relevance_score * 100).toFixed(1);
+    
+    const detailsHtml = `
+        <div class="candidate-details">
+            <h5>${escapeHtml(candidate.name)}</h5>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>ドメイン:</strong> ${escapeHtml(candidate.domain)}
+                </div>
+                <div class="col-md-6">
+                    <strong>ステータス:</strong> 
+                    <span class="badge bg-${getStatusColor(candidate.status)}">${statusText}</span>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>言語:</strong> ${escapeHtml(candidate.language)}
+                </div>
+                <div class="col-md-6">
+                    <strong>関連度:</strong> ${relevancePercent}%
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>発見日:</strong> ${new Date(candidate.discovered_at).toLocaleDateString('ja-JP')}
+                </div>
+                <div class="col-md-6">
+                    <strong>発見方法:</strong> ${discoveryMethodText}
+                </div>
+            </div>
+            
+            ${candidate.category ? `
+                <div class="mb-3">
+                    <strong>カテゴリ:</strong> ${escapeHtml(candidate.category)}
+                </div>
+            ` : ''}
+            
+            ${candidate.country_code ? `
+                <div class="mb-3">
+                    <strong>国コード:</strong> ${escapeHtml(candidate.country_code)}
+                </div>
+            ` : ''}
+            
+            <div class="mb-3">
+                <strong>フィードURL:</strong>
+                <ul class="list-unstyled ms-3">
+                    ${candidate.urls.map(url => `
+                        <li>📡 <a href="${escapeHtml(url)}" target="_blank">${escapeHtml(url)}</a></li>
+                    `).join('')}
+                </ul>
+            </div>
+            
+            ${candidate.reviewer_notes ? `
+                <div class="mb-3">
+                    <strong>審査メモ:</strong>
+                    <div class="bg-light p-2 rounded">${escapeHtml(candidate.reviewer_notes)}</div>
+                </div>
+            ` : ''}
+            
+            ${candidate.status === 'pending' ? `
+                <div class="mt-4">
+                    <button class="btn btn-success me-2" onclick="approveCandidate('${candidate.id}'); document.getElementById('candidateDetailsModal').style.display='none';">
+                        ✅ 承認
+                    </button>
+                    <button class="btn btn-warning me-2" onclick="holdCandidate('${candidate.id}'); document.getElementById('candidateDetailsModal').style.display='none';">
+                        ⏸️ 保留
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="rejectCandidate('${candidate.id}'); document.getElementById('candidateDetailsModal').style.display='none';">
+                        ❌ 却下
+                    </button>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    // 簡易モーダルで表示
+    showModal('候補詳細', detailsHtml);
+}
+
+// 簡易モーダル表示関数
+function showModal(title, content) {
+    // 既存のモーダルがあれば削除
+    const existingModal = document.getElementById('candidateDetailsModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // モーダルHTML作成
+    const modalHtml = `
+        <div id="candidateDetailsModal" class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1050; display: flex; align-items: center; justify-content: center;">
+            <div class="modal-content" style="background: white; border-radius: 8px; max-width: 800px; max-height: 90vh; overflow-y: auto; margin: 20px;">
+                <div class="modal-header" style="padding: 15px 20px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: between; align-items: center;">
+                    <h5 style="margin: 0;">${escapeHtml(title)}</h5>
+                    <button type="button" style="background: none; border: none; font-size: 24px; cursor: pointer;" onclick="document.getElementById('candidateDetailsModal').remove();">×</button>
+                </div>
+                <div class="modal-body" style="padding: 20px;">
+                    ${content}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // DOMに追加
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // 背景クリックで閉じる
+    document.getElementById('candidateDetailsModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.remove();
+        }
+    });
+}
+
 // ユーティリティ関数
 function getStatusColor(status) {
     const colors = {
