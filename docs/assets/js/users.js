@@ -96,7 +96,7 @@ function createUserCard(user) {
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="#" onclick="editUser('${user.user_id}')">編集</a></li>
-                                    ${user.user_id !== 'admin' ? '<li><a class="dropdown-item text-danger" href="#" onclick="deleteUser(\'${user.user_id}\')">削除</a></li>' : ''}
+                                    ${user.user_id !== 'admin' ? `<li><a class="dropdown-item text-danger" href="#" onclick="deleteUser('${user.user_id}')">削除</a></li>` : ''}
                                 </ul>
                             </div>
                         ` : ''}
