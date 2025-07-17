@@ -138,7 +138,7 @@ async function loadArticlesPage(page, totalCount = null) {
         currentPage = page;
         
         renderArticles();
-        updatePagination(totalCount, itemsPerPage, page);
+        renderPagination(totalCount, itemsPerPage, page);
         
     } catch (error) {
         console.error('記事ページ読み込みエラー:', error);
