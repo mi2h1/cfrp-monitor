@@ -105,19 +105,28 @@ class handler(BaseHTTPRequestHandler):
         """JWTトークンの検証"""
         try:
             auth_header = self.headers.get('Authorization')
+            print(f"DEBUG: Authorization header: {auth_header}")
+            
             if not auth_header or not auth_header.startswith('Bearer '):
+                print("DEBUG: No valid Authorization header")
                 return None
             
             token = auth_header.split(' ')[1]
+            print(f"DEBUG: Token: {token[:20]}...")
+            
             secret = os.environ.get('JWT_SECRET', 'default-secret-key')
+            print(f"DEBUG: JWT Secret exists: {bool(secret)}")
             
             # トークンをデコード
             payload = jwt.decode(token, secret, algorithms=['HS256'])
+            print(f"DEBUG: Token payload: {payload}")
             return payload
             
         except jwt.ExpiredSignatureError:
+            print("DEBUG: Token expired")
             return None
-        except jwt.InvalidTokenError:
+        except jwt.InvalidTokenError as e:
+            print(f"DEBUG: Invalid token: {e}")
             return None
         except Exception as e:
             print(f"Token verification error: {e}")
