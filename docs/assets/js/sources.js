@@ -9,15 +9,29 @@ let userFeatures = null;
 
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
-    // 認証チェック
+    // 認証チェックはメインページのスクリプトで実行済み
     authToken = localStorage.getItem('auth_token');
-    if (!authToken) {
-        window.location.href = '/login';
-        return;
-    }
     
-    // 機能権限チェック（グローバル変数から取得）
-    if (!window.userFeatures || !window.userFeatures.can_manage_sources) {
+    // レイアウトAPIの呼び出しが完了するまで待機
+    const checkAuthInterval = setInterval(() => {
+        if (window.userFeatures) {
+            clearInterval(checkAuthInterval);
+            initializePage();
+        }
+    }, 100);
+    
+    // 5秒後にタイムアウト
+    setTimeout(() => {
+        clearInterval(checkAuthInterval);
+        if (!window.userFeatures) {
+            window.location.href = '/login';
+        }
+    }, 5000);
+});
+
+async function initializePage() {
+    // 権限チェック
+    if (!window.userFeatures.can_manage_sources) {
         document.body.innerHTML = `
             <div class="container-fluid py-4">
                 <div class="alert alert-danger text-center">
@@ -38,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 明示的に情報源リストモードに設定
     switchViewMode('sources');
-});
+}
 
 // 情報源一覧を読み込み
 async function loadSources() {
