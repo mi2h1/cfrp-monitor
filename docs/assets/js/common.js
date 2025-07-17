@@ -47,6 +47,12 @@ function setupAuthUI() {
         userInfo.textContent = `👤 ${user.data.display_name || user.userId}`;
         logoutBtn.style.display = 'block';
         
+        // 管理者の場合はユーザー管理リンクを表示
+        const userManagementLink = document.getElementById('userManagementLink');
+        if (userManagementLink && user.userId === 'admin') {
+            userManagementLink.classList.remove('hidden');
+        }
+        
         logoutBtn.addEventListener('click', () => {
             if (confirm('ログアウトしますか？')) {
                 logout();
