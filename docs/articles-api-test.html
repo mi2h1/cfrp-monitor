@@ -285,7 +285,7 @@
             console.log('DEBUG: Article ID:', id);
 
             try {
-                const response = await fetch(`/api/articles/${id}`, {
+                const response = await fetch(`/api/articles?id=${id}&action=update`, {
                     method: 'PATCH',
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
@@ -338,7 +338,7 @@
             console.log('DEBUG: Deleting article ID:', id);
 
             try {
-                const response = await fetch(`/api/articles/${id}`, {
+                const response = await fetch(`/api/articles?id=${id}&action=delete`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${authToken}`,

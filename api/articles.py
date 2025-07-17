@@ -119,17 +119,17 @@ class handler(BaseHTTPRequestHandler):
             post_data = self.rfile.read(content_length)
             data = json.loads(post_data.decode('utf-8'))
             
-            # 記事ID取得
-            path_parts = self.path.split('/')
-            if len(path_parts) < 3 or not path_parts[2]:
+            # 記事ID取得（クエリパラメータから）
+            query_params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            article_id = query_params.get('id', [None])[0]
+            
+            if not article_id:
                 response = {
                     "success": False,
                     "error": "記事IDが指定されていません"
                 }
                 self.wfile.write(json.dumps(response).encode('utf-8'))
                 return
-            
-            article_id = path_parts[2]
             
             # 記事更新
             result = self.update_article(article_id, data, user_data)
@@ -172,17 +172,17 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps(response).encode('utf-8'))
                 return
             
-            # 記事ID取得
-            path_parts = self.path.split('/')
-            if len(path_parts) < 3 or not path_parts[2]:
+            # 記事ID取得（クエリパラメータから）
+            query_params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            article_id = query_params.get('id', [None])[0]
+            
+            if not article_id:
                 response = {
                     "success": False,
                     "error": "記事IDが指定されていません"
                 }
                 self.wfile.write(json.dumps(response).encode('utf-8'))
                 return
-            
-            article_id = path_parts[2]
             
             # 記事削除
             result = self.delete_article(article_id, user_data)
