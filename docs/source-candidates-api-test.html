@@ -281,7 +281,7 @@
                 'on_hold': 'secondary'
             };
 
-            listDiv.innerHTML = candidates.map(candidate => `
+            listDiv.innerHTML = candidates.map((candidate, index) => `
                 <div class="col-md-6 mb-3">
                     <div class="card">
                         <div class="card-body">
@@ -296,12 +296,15 @@
                                 <span class="badge bg-${statusColors[candidate.status] || 'secondary'}">${statusLabels[candidate.status] || candidate.status}</span><br>
                                 <strong>発見日:</strong> ${candidate.discovered_at ? new Date(candidate.discovered_at).toLocaleDateString() : '未設定'}
                             </p>
-                            <button class="btn btn-sm btn-warning" onclick="editCandidate('${candidate.id}', '${candidate.name}', '${candidate.domain}', '${JSON.stringify(candidate.urls || []).replace(/'/g, '\\'')}', '${candidate.site_url || ''}', '${candidate.category || ''}', '${candidate.language || 'unknown'}', '${candidate.country_code || ''}', ${candidate.relevance_score || 0}, '${candidate.status || 'pending'}', '${candidate.reviewer_notes || ''}')">編集</button>
-                            <button class="btn btn-sm btn-danger ms-1" onclick="deleteCandidate('${candidate.id}', '${candidate.name}')">削除</button>
+                            <button class="btn btn-sm btn-warning" onclick="editCandidateById(${index})">編集</button>
+                            <button class="btn btn-sm btn-danger ms-1" onclick="deleteCandidateById(${index})">削除</button>
                         </div>
                     </div>
                 </div>
             `).join('');
+            
+            // グローバル変数に候補データを保存
+            window.currentCandidates = candidates;
         }
 
         // 情報源候補追加
@@ -360,30 +363,34 @@
             }
         });
 
-        // 候補編集モーダルを開く
-        function editCandidate(id, name, domain, urlsJson, siteUrl, category, language, countryCode, relevanceScore, status, reviewerNotes) {
-            document.getElementById('edit-candidate-id').value = id;
-            document.getElementById('edit-name').value = name;
-            document.getElementById('edit-domain').value = domain;
+        // インデックスによる候補編集モーダルを開く
+        function editCandidateById(index) {
+            const candidate = window.currentCandidates[index];
+            if (!candidate) return;
             
-            try {
-                const urls = JSON.parse(urlsJson);
-                document.getElementById('edit-urls').value = urls.join(', ');
-            } catch (e) {
-                document.getElementById('edit-urls').value = '';
-            }
-            
-            document.getElementById('edit-site-url').value = siteUrl;
-            document.getElementById('edit-category').value = category;
-            document.getElementById('edit-language').value = language;
-            document.getElementById('edit-country-code').value = countryCode;
-            document.getElementById('edit-relevance-score').value = relevanceScore;
-            document.getElementById('edit-status').value = status;
-            document.getElementById('edit-reviewer-notes').value = reviewerNotes;
+            document.getElementById('edit-candidate-id').value = candidate.id;
+            document.getElementById('edit-name').value = candidate.name || '';
+            document.getElementById('edit-domain').value = candidate.domain || '';
+            document.getElementById('edit-urls').value = candidate.urls ? candidate.urls.join(', ') : '';
+            document.getElementById('edit-site-url').value = candidate.site_url || '';
+            document.getElementById('edit-category').value = candidate.category || '';
+            document.getElementById('edit-language').value = candidate.language || 'unknown';
+            document.getElementById('edit-country-code').value = candidate.country_code || '';
+            document.getElementById('edit-relevance-score').value = candidate.relevance_score || 0;
+            document.getElementById('edit-status').value = candidate.status || 'pending';
+            document.getElementById('edit-reviewer-notes').value = candidate.reviewer_notes || '';
             document.getElementById('edit-result').innerHTML = '';
             
             const modal = new bootstrap.Modal(document.getElementById('editModal'));
             modal.show();
+        }
+
+        // インデックスによる候補削除
+        function deleteCandidateById(index) {
+            const candidate = window.currentCandidates[index];
+            if (!candidate) return;
+            
+            deleteCandidate(candidate.id, candidate.name);
         }
 
         // 候補更新
