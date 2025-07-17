@@ -141,19 +141,27 @@ class handler(BaseHTTPRequestHandler):
             if not supabase_url or not supabase_key:
                 return None
             
-            # 記事を取得（情報源と結合）
-            url = f"{supabase_url}/rest/v1/articles?select=*,sources(*),users(display_name)&order=created_at.desc&limit=100"
+            # まずは基本的な記事取得をテスト
+            url = f"{supabase_url}/rest/v1/articles?select=*&order=created_at.desc&limit=100"
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',
                 'Content-Type': 'application/json'
             }
             
+            print(f"DEBUG: Supabase URL: {url}")
+            
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req) as response:
                 data = json.loads(response.read().decode('utf-8'))
+                print(f"DEBUG: Articles count: {len(data)}")
                 return data
                 
+        except urllib.error.HTTPError as e:
+            print(f"Get articles HTTP error: {e.code} - {e.reason}")
+            error_body = e.read().decode('utf-8')
+            print(f"Error body: {error_body}")
+            return None
         except Exception as e:
             print(f"Get articles error: {e}")
             return None
