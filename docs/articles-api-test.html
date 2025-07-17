@@ -44,19 +44,19 @@
                     <form id="addArticleForm">
                         <div class="mb-3">
                             <label for="url" class="form-label">URL</label>
-                            <input type="url" class="form-control" id="url" required>
+                            <input type="url" class="form-control" id="url" name="url" required>
                         </div>
                         <div class="mb-3">
                             <label for="title" class="form-label">タイトル</label>
-                            <input type="text" class="form-control" id="title" required>
+                            <input type="text" class="form-control" id="title" name="title" required>
                         </div>
                         <div class="mb-3">
                             <label for="body" class="form-label">本文</label>
-                            <textarea class="form-control" id="body" rows="3"></textarea>
+                            <textarea class="form-control" id="body" name="body" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="source_id" class="form-label">情報源ID</label>
-                            <input type="number" class="form-control" id="source_id" placeholder="オプション">
+                            <input type="text" class="form-control" id="source_id" name="source_id" placeholder="オプション">
                         </div>
                         <button type="submit" class="btn btn-primary">記事追加</button>
                     </form>
