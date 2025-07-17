@@ -159,15 +159,13 @@ async function addUser(userId, password, displayName, role) {
             return false;
         }
         
-        // パスワードをハッシュ化
-        const { hash, salt } = await hashPassword(password);
-        
+        // 緊急: 一時的に平文保存（後で修正）
         const { data, error } = await supabase
             .from('users')
             .insert([{
                 user_id: userId,
-                password_hash: hash,
-                password_salt: salt,
+                password_hash: password,
+                password_salt: null,
                 display_name: displayName || userId,
                 role: role
             }])
@@ -219,10 +217,9 @@ async function updateUser(userId, displayName, newPassword, role) {
         }
         
         if (newPassword && newPassword.length >= 4) {
-            // パスワードをハッシュ化
-            const { hash, salt } = await hashPassword(newPassword);
-            updateData.password_hash = hash;
-            updateData.password_salt = salt;
+            // 緊急: 一時的に平文保存（後で修正）
+            updateData.password_hash = newPassword;
+            updateData.password_salt = null;
         } else if (newPassword && newPassword.length < 4) {
             showAlert('パスワードは4文字以上で入力してください', 'danger', 'editUserAlertContainer');
             return false;

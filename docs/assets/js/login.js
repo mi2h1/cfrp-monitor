@@ -63,12 +63,20 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             return;
         }
 
-        // パスワード検証
-        const isPasswordValid = await verifyPassword(password, data.password_hash, data.password_salt);
-        
-        if (!isPasswordValid) {
-            showAlert('ユーザーIDまたはパスワードが間違っています');
-            return;
+        // 緊急: 平文パスワード照合（後で修正）
+        if (data.password_salt) {
+            // ハッシュ化されたパスワードの場合
+            const isPasswordValid = await verifyPassword(password, data.password_hash, data.password_salt);
+            if (!isPasswordValid) {
+                showAlert('ユーザーIDまたはパスワードが間違っています');
+                return;
+            }
+        } else {
+            // 平文パスワードの場合
+            if (data.password_hash !== password) {
+                showAlert('ユーザーIDまたはパスワードが間違っています');
+                return;
+            }
         }
 
         // ログイン成功
