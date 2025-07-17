@@ -39,8 +39,12 @@ async function verifyPassword(password, storedHash, salt) {
 async function initializeNavigation(activePageId) {
     const authToken = localStorage.getItem('auth_token');
     
+    console.log('initializeNavigation called with activePageId:', activePageId);
+    console.log('Auth token from localStorage:', authToken ? 'exists' : 'not found');
+    
     // 認証チェック
     if (!authToken) {
+        console.log('No auth token found, redirecting to login');
         window.location.href = '/login';
         return null;
     }
@@ -56,6 +60,8 @@ async function initializeNavigation(activePageId) {
         });
         
         const data = await response.json();
+        
+        console.log('Layout API response:', data);
         
         if (data.success) {
             // ナビゲーションを動的生成
@@ -75,13 +81,17 @@ async function initializeNavigation(activePageId) {
             
             return data.layout;
         } else {
+            console.log('Layout API failed:', data.error);
             throw new Error(data.error || 'レイアウト取得に失敗');
         }
         
     } catch (error) {
         console.error('Layout loading error:', error);
+        console.log('Clearing localStorage and redirecting to login');
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user_info');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('currentUserData');
         window.location.href = '/login';
         return null;
     }

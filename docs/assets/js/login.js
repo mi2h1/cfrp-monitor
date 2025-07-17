@@ -1,8 +1,8 @@
 // CFRP Monitor - ログインページJavaScript
 
 // 既にログインしている場合はリダイレクト
-if (localStorage.getItem('currentUser')) {
-    window.location.href = 'index.html';
+if (localStorage.getItem('auth_token')) {
+    window.location.href = '/';
 }
 
 // アラート表示関数
@@ -51,50 +51,36 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     }
 
     try {
-        // ユーザーの存在確認
-        const { data, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('user_id', userId)
-            .single();
-
-        if (error || !data) {
-            showAlert('ユーザーIDまたはパスワードが間違っています');
+        // 認証APIを呼び出し
+        const response = await fetch('/api/auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                password: password
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            showAlert(data.error || 'ログインに失敗しました');
             return;
         }
-
-        // パスワード検証（ハッシュ化済み・平文の両方に対応）
-        let isPasswordValid = false;
         
-        if (data.password_salt && data.password_salt.trim() !== '') {
-            // ハッシュ化されたパスワードの場合
-            isPasswordValid = await verifyPassword(password, data.password_hash, data.password_salt);
-        } else {
-            // 平文パスワードの場合（既存ユーザー向け）
-            isPasswordValid = (data.password_hash === password);
-        }
+        // JWTトークンを保存
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('user_info', JSON.stringify(data.user));
         
-        if (!isPasswordValid) {
-            showAlert('ユーザーIDまたはパスワードが間違っています');
-            return;
-        }
-
-        // ログイン成功
+        // 従来のlocalStorageキーも互換性のため保存
         localStorage.setItem('currentUser', userId);
-        localStorage.setItem('currentUserData', JSON.stringify(data));
+        localStorage.setItem('currentUserData', JSON.stringify(data.user));
         
-        // 認証コンテキストを設定
-        await setAuthContext(userId);
-        
-        // 最終ログイン時刻を更新
-        await supabase
-            .from('users')
-            .update({ last_login: new Date().toISOString() })
-            .eq('user_id', userId);
-
         showAlert('ログインしました！リダイレクト中...', 'success');
         setTimeout(() => {
-            window.location.href = 'index.html';
+            window.location.href = '/';
         }, 1000);
 
     } catch (error) {
@@ -131,37 +117,55 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     }
 
     try {
-        // パスワードをハッシュ化
-        const { hash, salt } = await hashPassword(newPassword);
-        
-        // 新規ユーザー作成
-        const { data, error } = await supabase
-            .from('users')
-            .insert([{
+        // ユーザー登録APIを呼び出し
+        const response = await fetch('/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 user_id: newUserId,
-                password_hash: hash,
-                password_salt: salt,
+                password: newPassword,
                 display_name: displayName || newUserId,
                 role: 'viewer'
-            }])
-            .select()
-            .single();
+            })
+        });
+        
+        const data = await response.json();
 
-        if (error) {
-            if (error.code === '23505') { // unique constraint violation
+        if (!data.success) {
+            if (data.error && data.error.includes('already exists')) {
                 showAlert('そのユーザーIDは既に使用されています', 'danger', 'registerAlertContainer');
             } else {
-                showAlert('登録に失敗しました: ' + error.message, 'danger', 'registerAlertContainer');
+                showAlert('登録に失敗しました: ' + (data.error || 'Unknown error'), 'danger', 'registerAlertContainer');
             }
             return;
         }
 
         // 登録成功後、自動ログイン
-        localStorage.setItem('currentUser', newUserId);
-        localStorage.setItem('currentUserData', JSON.stringify(data));
+        // JWTトークンを保存（登録成功後にログイン処理を実行）
+        const loginResponse = await fetch('/api/auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: newUserId,
+                password: newPassword
+            })
+        });
         
-        // 認証コンテキストを設定
-        await setAuthContext(newUserId);
+        const loginData = await loginResponse.json();
+        
+        if (loginData.success) {
+            // JWTトークンを保存
+            localStorage.setItem('auth_token', loginData.token);
+            localStorage.setItem('user_info', JSON.stringify(loginData.user));
+            
+            // 従来のlocalStorageキーも互換性のため保存
+            localStorage.setItem('currentUser', newUserId);
+            localStorage.setItem('currentUserData', JSON.stringify(loginData.user));
+        }
         
         showAlert('登録完了！ログインしました。リダイレクト中...', 'success', 'registerAlertContainer');
         
@@ -169,7 +173,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
         setTimeout(() => {
             modal.hide();
-            window.location.href = 'index.html';
+            window.location.href = '/';
         }, 1000);
 
     } catch (error) {
