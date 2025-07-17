@@ -169,14 +169,19 @@ class handler(BaseHTTPRequestHandler):
     def add_article(self, data, user_data):
         """記事を追加"""
         try:
+            print(f"DEBUG: Add article called with data: {data}")
+            print(f"DEBUG: User data: {user_data}")
+            
             supabase_url = os.environ.get('SUPABASE_URL')
             supabase_key = os.environ.get('SUPABASE_KEY')
             
             if not supabase_url or not supabase_key:
+                print("DEBUG: Missing environment variables")
                 return None
             
             # 必須フィールドの確認
             if not data.get('url') or not data.get('title'):
+                print("DEBUG: Missing required fields (url or title)")
                 return None
             
             # itemsテーブル用のデータを準備
@@ -191,6 +196,8 @@ class handler(BaseHTTPRequestHandler):
                 'published_at': data.get('published_at', datetime.datetime.now().date().isoformat())
             }
             
+            print(f"DEBUG: Item data to insert: {item_data}")
+            
             # データベースに追加
             url = f"{supabase_url}/rest/v1/items"
             headers = {
@@ -198,6 +205,8 @@ class handler(BaseHTTPRequestHandler):
                 'Authorization': f'Bearer {supabase_key}',
                 'Content-Type': 'application/json'
             }
+            
+            print(f"DEBUG: Supabase URL: {url}")
             
             req = urllib.request.Request(
                 url, 
@@ -207,8 +216,14 @@ class handler(BaseHTTPRequestHandler):
             
             with urllib.request.urlopen(req) as response:
                 result = json.loads(response.read().decode('utf-8'))
+                print(f"DEBUG: Insert result: {result}")
                 return result[0] if result else None
                 
+        except urllib.error.HTTPError as e:
+            print(f"Add article HTTP error: {e.code} - {e.reason}")
+            error_body = e.read().decode('utf-8')
+            print(f"Error body: {error_body}")
+            return None
         except Exception as e:
             print(f"Add article error: {e}")
             return None
