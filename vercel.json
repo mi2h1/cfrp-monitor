@@ -23,6 +23,10 @@
     {
       "source": "/users-test",
       "destination": "/docs/users-api-test.html"
+    },
+    {
+      "source": "/sources-test",
+      "destination": "/docs/sources-api-test.html"
     }
   ]
 }
