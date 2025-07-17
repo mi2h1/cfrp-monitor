@@ -108,10 +108,6 @@ class handler(BaseHTTPRequestHandler):
     def verify_password(self, password, user_data):
         """パスワード検証"""
         try:
-            print(f"DEBUG: User data keys: {list(user_data.keys())}")
-            print(f"DEBUG: Password salt: {user_data.get('password_salt', 'None')}")
-            print(f"DEBUG: Password hash: {user_data.get('password_hash', 'None')[:20]}...")
-            
             # ハッシュ化されたパスワードがある場合
             if user_data.get('password_salt') and user_data.get('password_salt').strip():
                 salt = user_data['password_salt'].strip()
@@ -119,22 +115,14 @@ class handler(BaseHTTPRequestHandler):
                 salted_password = password + salt
                 password_hash = hashlib.sha256(salted_password.encode('utf-8')).hexdigest()
                 
-                print(f"DEBUG: Input password: '{password}'")
-                print(f"DEBUG: Salt: '{salt}'")
-                print(f"DEBUG: Salted password: '{salted_password}'")
-                print(f"DEBUG: Generated hash: {password_hash[:20]}...")
-                print(f"DEBUG: Stored hash: {user_data['password_hash'][:20]}...")
-                
                 # ハッシュが一致しない場合は、平文パスワードもチェック
                 if password_hash == user_data['password_hash']:
                     return True
                 else:
-                    # 平文パスワードとしてもチェック
-                    print(f"DEBUG: Hash mismatch, trying plain text: '{password}' == '{user_data['password_hash']}'")
+                    # 平文パスワードとしてもチェック（後方互換性）
                     return password == user_data['password_hash']
             else:
                 # 平文パスワードの場合（後方互換性）
-                print(f"DEBUG: Plain text comparison: '{password}' == '{user_data['password_hash']}'")
                 return password == user_data['password_hash']
         except Exception as e:
             print(f"Password verification error: {e}")

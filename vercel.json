@@ -15,14 +15,6 @@
     {
       "source": "/users",
       "destination": "/docs/users.html"
-    },
-    {
-      "source": "/test-api",
-      "destination": "/docs/test-api.html"
-    },
-    {
-      "source": "/test-auth",
-      "destination": "/docs/test-auth.html"
     }
   ]
 }
