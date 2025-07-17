@@ -159,10 +159,13 @@ async function addUser(userId, password, displayName, role) {
             return false;
         }
         
-        // パスワードをハッシュ化
-        const { hash, salt } = await hashPassword(password);
-        
-        const { data, error } = await supabase
+        try {
+            // パスワードをハッシュ化
+            console.log('Hashing password for new user:', userId);
+            const { hash, salt } = await hashPassword(password);
+            console.log('Hash result:', { hash: hash.substring(0, 10) + '...', salt: salt.substring(0, 10) + '...' });
+            
+            const { data, error } = await supabase
             .from('users')
             .insert([{
                 user_id: userId,
@@ -174,24 +177,28 @@ async function addUser(userId, password, displayName, role) {
             .select()
             .single();
         
-        if (error) {
-            if (error.code === '23505') {
-                showAlert('そのユーザーIDは既に使用されています');
+            if (error) {
+                if (error.code === '23505') {
+                    showAlert('そのユーザーIDは既に使用されています');
+                } else {
+                    showAlert('ユーザー追加に失敗しました: ' + error.message);
+                }
+                return false;
+            }
+            
+            showAlert('ユーザーを追加しました', 'success');
+            await loadUsers();
+            return true;
+            
+        } catch (error) {
+            console.error('ユーザー追加エラー:', error);
+            if (error.message.includes('hashPassword')) {
+                showAlert('パスワードのハッシュ化に失敗しました: ' + error.message);
             } else {
-                showAlert('ユーザー追加に失敗しました: ' + error.message);
+                showAlert('ユーザー追加に失敗しました');
             }
             return false;
         }
-        
-        showAlert('ユーザーを追加しました', 'success');
-        await loadUsers();
-        return true;
-        
-    } catch (error) {
-        console.error('ユーザー追加エラー:', error);
-        showAlert('ユーザー追加に失敗しました');
-        return false;
-    }
 }
 
 // ユーザー編集
@@ -219,10 +226,18 @@ async function updateUser(userId, displayName, newPassword, role) {
         }
         
         if (newPassword && newPassword.length >= 4) {
-            // パスワードをハッシュ化
-            const { hash, salt } = await hashPassword(newPassword);
-            updateData.password_hash = hash;
-            updateData.password_salt = salt;
+            try {
+                // パスワードをハッシュ化
+                console.log('Hashing password for user:', userId);
+                const { hash, salt } = await hashPassword(newPassword);
+                console.log('Hash result:', { hash: hash.substring(0, 10) + '...', salt: salt.substring(0, 10) + '...' });
+                updateData.password_hash = hash;
+                updateData.password_salt = salt;
+            } catch (error) {
+                console.error('Password hashing error:', error);
+                showAlert('パスワードのハッシュ化に失敗しました: ' + error.message, 'danger', 'editUserAlertContainer');
+                return false;
+            }
         } else if (newPassword && newPassword.length < 4) {
             showAlert('パスワードは4文字以上で入力してください', 'danger', 'editUserAlertContainer');
             return false;
@@ -232,6 +247,10 @@ async function updateUser(userId, displayName, newPassword, role) {
             updateData.role = role;
         }
         
+        // デバッグ用：送信するデータを確認
+        console.log('Updating user with data:', updateData);
+        console.log('Update data keys:', Object.keys(updateData));
+        
         const { error } = await supabase
             .from('users')
             .update(updateData)
@@ -240,6 +259,19 @@ async function updateUser(userId, displayName, newPassword, role) {
         if (error) throw error;
         
         showAlert('ユーザー情報を更新しました', 'success', 'editUserAlertContainer');
+        
+        // デバッグ用：更新後のデータを確認
+        const { data: updatedUser, error: fetchError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('user_id', userId)
+            .single();
+        
+        if (updatedUser) {
+            console.log('Updated user data from DB:', updatedUser);
+            console.log('Password field:', updatedUser.password_hash ? 'Hashed' : 'Plain text');
+        }
+        
         await loadUsers();
         return true;
         
