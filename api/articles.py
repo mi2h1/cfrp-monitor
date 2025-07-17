@@ -97,10 +97,120 @@ class handler(BaseHTTPRequestHandler):
             }
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
+    def do_PATCH(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        
+        try:
+            # 認証チェック
+            user_data = self.verify_token()
+            if not user_data:
+                response = {
+                    "success": False,
+                    "error": "認証が必要です"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            # リクエストボディを取得
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+            
+            # 記事ID取得
+            path_parts = self.path.split('/')
+            if len(path_parts) < 3 or not path_parts[2]:
+                response = {
+                    "success": False,
+                    "error": "記事IDが指定されていません"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            article_id = path_parts[2]
+            
+            # 記事更新
+            result = self.update_article(article_id, data, user_data)
+            
+            if result:
+                response = {
+                    "success": True,
+                    "message": "記事を更新しました",
+                    "article": result
+                }
+            else:
+                response = {
+                    "success": False,
+                    "error": "記事の更新に失敗しました"
+                }
+            
+            self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+            
+        except Exception as e:
+            response = {
+                "success": False,
+                "error": f"サーバーエラー: {str(e)}"
+            }
+            self.wfile.write(json.dumps(response).encode('utf-8'))
+
+    def do_DELETE(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        
+        try:
+            # 認証チェック
+            user_data = self.verify_token()
+            if not user_data:
+                response = {
+                    "success": False,
+                    "error": "認証が必要です"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            # 記事ID取得
+            path_parts = self.path.split('/')
+            if len(path_parts) < 3 or not path_parts[2]:
+                response = {
+                    "success": False,
+                    "error": "記事IDが指定されていません"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            article_id = path_parts[2]
+            
+            # 記事削除
+            result = self.delete_article(article_id, user_data)
+            
+            if result:
+                response = {
+                    "success": True,
+                    "message": "記事を削除しました"
+                }
+            else:
+                response = {
+                    "success": False,
+                    "error": "記事の削除に失敗しました"
+                }
+            
+            self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+            
+        except Exception as e:
+            response = {
+                "success": False,
+                "error": f"サーバーエラー: {str(e)}"
+            }
+            self.wfile.write(json.dumps(response).encode('utf-8'))
+
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         self.end_headers()
 
@@ -239,4 +349,103 @@ class handler(BaseHTTPRequestHandler):
             return None
         except Exception as e:
             print(f"Add article error: {e}")
+            return None
+
+    def update_article(self, article_id, data, user_data):
+        """記事を更新"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return None
+            
+            # 更新データを準備
+            update_data = {}
+            if data.get('title'):
+                update_data['title'] = data['title']
+            if data.get('body') is not None:
+                update_data['body'] = data['body']
+            if data.get('url'):
+                update_data['url'] = data['url']
+            if data.get('source_id'):
+                update_data['source_id'] = data['source_id']
+            if data.get('status'):
+                update_data['status'] = data['status']
+            if data.get('flagged') is not None:
+                update_data['flagged'] = data['flagged']
+            if data.get('comments') is not None:
+                update_data['comments'] = data['comments']
+            
+            # 更新者情報を追加
+            update_data['last_edited_by'] = user_data['user_id']
+            update_data['reviewed_at'] = datetime.datetime.now().isoformat()
+            update_data['reviewer'] = user_data['user_id']
+            
+            # データベースを更新
+            url = f"{supabase_url}/rest/v1/items?id=eq.{article_id}"
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            }
+            
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(update_data).encode('utf-8'),
+                headers=headers,
+                method='PATCH'
+            )
+            
+            with urllib.request.urlopen(req) as response:
+                response_body = response.read().decode('utf-8')
+                if response_body.strip():
+                    result = json.loads(response_body)
+                    return result[0] if isinstance(result, list) and result else result
+                else:
+                    return {"success": True, "message": "Item updated successfully"}
+                    
+        except urllib.error.HTTPError as e:
+            print(f"Update article HTTP error: {e.code} - {e.reason}")
+            error_body = e.read().decode('utf-8')
+            print(f"Error body: {error_body}")
+            return None
+        except Exception as e:
+            print(f"Update article error: {e}")
+            return None
+
+    def delete_article(self, article_id, user_data):
+        """記事を削除"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return None
+            
+            # データベースから削除
+            url = f"{supabase_url}/rest/v1/items?id=eq.{article_id}"
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json'
+            }
+            
+            req = urllib.request.Request(
+                url,
+                headers=headers,
+                method='DELETE'
+            )
+            
+            with urllib.request.urlopen(req) as response:
+                return True
+                    
+        except urllib.error.HTTPError as e:
+            print(f"Delete article HTTP error: {e.code} - {e.reason}")
+            error_body = e.read().decode('utf-8')
+            print(f"Error body: {error_body}")
+            return None
+        except Exception as e:
+            print(f"Delete article error: {e}")
             return None
