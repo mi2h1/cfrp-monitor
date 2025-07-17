@@ -48,13 +48,7 @@ function enableProductionSecurity() {
     // 定期的にチェック
     setInterval(detectDevTools, 1000);
     
-    // 右クリック無効化
-    document.addEventListener('contextmenu', e => {
-        e.preventDefault();
-        return false;
-    });
-    
-    // キーボードショートカット無効化
+    // 開発者ツール関連のキーボードショートカットのみ無効化
     document.addEventListener('keydown', e => {
         // F12
         if (e.key === 'F12') {
@@ -85,26 +79,6 @@ function enableProductionSecurity() {
             e.preventDefault();
             return false;
         }
-        
-        // Ctrl+S (保存)
-        if (e.ctrlKey && e.key === 's') {
-            e.preventDefault();
-            return false;
-        }
-    });
-    
-    // テキスト選択無効化
-    document.addEventListener('selectstart', e => {
-        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-            e.preventDefault();
-            return false;
-        }
-    });
-    
-    // ドラッグ無効化
-    document.addEventListener('dragstart', e => {
-        e.preventDefault();
-        return false;
     });
     
     // コンソール警告
