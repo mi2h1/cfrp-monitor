@@ -11,14 +11,32 @@ function isAdmin() {
 
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
-    // 管理者権限チェック
-    if (!isAdmin()) {
+    // レイアウトAPIの呼び出しが完了するまで待機
+    const checkAuthInterval = setInterval(() => {
+        if (window.userFeatures) {
+            clearInterval(checkAuthInterval);
+            initializePage();
+        }
+    }, 100);
+    
+    // 5秒後にタイムアウト
+    setTimeout(() => {
+        clearInterval(checkAuthInterval);
+        if (!window.userFeatures) {
+            window.location.href = '/login';
+        }
+    }, 5000);
+});
+
+async function initializePage() {
+    // 権限チェック
+    if (!window.userFeatures.can_manage_users) {
         document.body.innerHTML = `
             <div class="container-fluid py-4">
                 <div class="alert alert-danger text-center">
                     <h4>アクセス拒否</h4>
-                    <p>このページにアクセスする権限がありません。</p>
-                    <a href="index.html" class="btn btn-primary">記事管理に戻る</a>
+                    <p>ユーザー管理にアクセスする権限がありません。</p>
+                    <a href="/" class="btn btn-primary">記事管理に戻る</a>
                 </div>
             </div>
         `;
@@ -27,19 +45,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await loadUsers();
     setupEventListeners();
-});
+}
 
 // ユーザー一覧を読み込み
 async function loadUsers() {
     try {
-        const { data, error } = await supabase
-            .from('users')
-            .select('*')
-            .order('created_at', { ascending: false });
+        const authToken = localStorage.getItem('auth_token');
+        if (!authToken) {
+            window.location.href = '/login';
+            return;
+        }
         
-        if (error) throw error;
+        const response = await fetch('/api/users', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
-        users = data || [];
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || 'ユーザー情報の読み込みに失敗しました');
+        }
+        
+        users = data.users || [];
         renderUsers();
         updateStats();
         
@@ -50,7 +81,7 @@ async function loadUsers() {
     } catch (error) {
         console.error('ユーザー読み込みエラー:', error);
         document.getElementById('loading').innerHTML = 
-            '<div class="alert alert-danger">ユーザー情報の読み込みに失敗しました</div>';
+            '<div class="alert alert-danger">ユーザー情報の読み込みに失敗しました: ' + error.message + '</div>';
     }
 }
 
