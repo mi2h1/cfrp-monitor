@@ -157,6 +157,10 @@ function setupAuthUI() {
 
 // データベース直接アクセスを制限
 function restrictDirectDatabaseAccess() {
+    // 緊急: 一時的に制限を無効化（ログイン復旧のため）
+    console.log('Database access restrictions temporarily disabled for emergency login fix');
+    return;
+    
     // 開発者ツールでのSupabaseアクセスを制限
     if (typeof supabase !== 'undefined') {
         const originalFrom = supabase.from;
