@@ -116,9 +116,54 @@
         </nav>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // APIベースの認証チェック
+        document.addEventListener('DOMContentLoaded', function() {
+            const authToken = localStorage.getItem('auth_token');
+            const userInfo = localStorage.getItem('user_info');
+            
+            // 認証チェック
+            if (!authToken) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            // ユーザー情報表示
+            if (userInfo) {
+                try {
+                    const user = JSON.parse(userInfo);
+                    document.getElementById('userInfo').innerHTML = `
+                        <i class="bi bi-person-circle"></i> ${user.display_name || user.user_id} 
+                        <span class="badge bg-secondary">${user.role}</span>
+                    `;
+                    
+                    // 管理者のみユーザー管理リンクを表示
+                    if (user.role === 'admin') {
+                        document.getElementById('userManagementLink').classList.remove('hidden');
+                    }
+                    
+                    // ログアウトボタンを表示
+                    document.getElementById('logoutBtn').classList.remove('hidden');
+                } catch (e) {
+                    console.error('Failed to parse user info:', e);
+                    localStorage.removeItem('user_info');
+                    window.location.href = '/login';
+                }
+            }
+            
+            // ログアウト処理
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('ログアウトしますか？')) {
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('user_info');
+                    window.location.href = '/login';
+                }
+            });
+        });
+    </script>
     <script src="assets/js/common.js"></script>
     <script src="assets/js/security.js"></script>
     <script src="assets/js/articles.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
