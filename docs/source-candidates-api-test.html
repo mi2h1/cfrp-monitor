@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情報源候補管理API テスト - CFRP Monitor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>情報源候補管理API テスト</h1>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">認証状態</h5>
+                        <div id="auth-status" class="alert alert-info">
+                            トークンをセットしてください
+                        </div>
+                        <button class="btn btn-primary" onclick="loadAuthFromStorage()">認証情報読み込み</button>
+                        <button class="btn btn-secondary" onclick="clearAuth()">認証クリア</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">候補取得テスト</h5>
+                        <button class="btn btn-success" onclick="getCandidates()">候補一覧取得</button>
+                        <div id="candidates-result" class="mt-3 alert alert-info">
+                            候補取得ボタンを押してください
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">情報源候補追加テスト</h5>
+                    <form id="addCandidateForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">情報源名</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="domain" class="form-label">ドメイン</label>
+                                    <input type="text" class="form-control" id="domain" name="domain" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="urls" class="form-label">URL（カンマ区切り）</label>
+                                    <input type="text" class="form-control" id="urls" name="urls" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="site_url" class="form-label">サイトURL</label>
+                                    <input type="url" class="form-control" id="site_url" name="site_url">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="category" class="form-label">カテゴリ</label>
+                                    <input type="text" class="form-control" id="category" name="category" value="unknown">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="language" class="form-label">言語</label>
+                                    <select class="form-control" id="language" name="language">
+                                        <option value="ja">日本語</option>
+                                        <option value="en">English</option>
+                                        <option value="unknown">不明</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="country_code" class="form-label">国コード</label>
+                                    <input type="text" class="form-control" id="country_code" name="country_code" value="JP">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="relevance_score" class="form-label">関連度スコア (0.0-1.0)</label>
+                                    <input type="number" class="form-control" id="relevance_score" name="relevance_score" min="0" max="1" step="0.1" value="0.5">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="discovery_method" class="form-label">発見方法</label>
+                                    <select class="form-control" id="discovery_method" name="discovery_method">
+                                        <option value="manual">手動</option>
+                                        <option value="weekly_source_discovery">週次発見</option>
+                                        <option value="weekly_multilingual_discovery">週次多言語発見</option>
+                                        <option value="unknown">不明</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reviewer_notes" class="form-label">レビューノート</label>
+                                    <textarea class="form-control" id="reviewer_notes" name="reviewer_notes" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">候補追加</button>
+                    </form>
+                    <div id="add-result" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h3>情報源候補一覧</h3>
+            <div id="candidates-list" class="row">
+                候補を取得してください
+            </div>
+        </div>
+
+        <!-- 候補編集モーダル -->
+        <div class="modal fade" id="editModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">情報源候補編集</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editCandidateForm">
+                            <input type="hidden" id="edit-candidate-id">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="edit-name" class="form-label">情報源名</label>
+                                        <input type="text" class="form-control" id="edit-name">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-domain" class="form-label">ドメイン</label>
+                                        <input type="text" class="form-control" id="edit-domain">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-urls" class="form-label">URL（カンマ区切り）</label>
+                                        <input type="text" class="form-control" id="edit-urls">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-site-url" class="form-label">サイトURL</label>
+                                        <input type="url" class="form-control" id="edit-site-url">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-category" class="form-label">カテゴリ</label>
+                                        <input type="text" class="form-control" id="edit-category">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="edit-language" class="form-label">言語</label>
+                                        <select class="form-control" id="edit-language">
+                                            <option value="ja">日本語</option>
+                                            <option value="en">English</option>
+                                            <option value="unknown">不明</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-country-code" class="form-label">国コード</label>
+                                        <input type="text" class="form-control" id="edit-country-code">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-relevance-score" class="form-label">関連度スコア (0.0-1.0)</label>
+                                        <input type="number" class="form-control" id="edit-relevance-score" min="0" max="1" step="0.1">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-status" class="form-label">ステータス</label>
+                                        <select class="form-control" id="edit-status">
+                                            <option value="pending">保留中</option>
+                                            <option value="approved">承認済み</option>
+                                            <option value="rejected">却下</option>
+                                            <option value="on_hold">一時停止</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-reviewer-notes" class="form-label">レビューノート</label>
+                                        <textarea class="form-control" id="edit-reviewer-notes" rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div id="edit-result"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                        <button type="button" class="btn btn-primary" onclick="updateCandidate()">更新</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+        let userData = null;
+
+        // 認証情報をlocalStorageから読み込み
+        function loadAuthFromStorage() {
+            authToken = localStorage.getItem('auth_token');
+            userData = JSON.parse(localStorage.getItem('user_info') || '{}');
+            
+            if (authToken) {
+                document.getElementById('auth-status').innerHTML = `
+                    <strong>✅ 認証済み</strong><br>
+                    ユーザー: ${userData.display_name || 'unknown'}<br>
+                    権限: ${userData.role || 'unknown'}
+                `;
+                document.getElementById('auth-status').className = 'alert alert-success';
+            } else {
+                document.getElementById('auth-status').innerHTML = '❌ 認証されていません';
+                document.getElementById('auth-status').className = 'alert alert-danger';
+            }
+        }
+
+        // 認証クリア
+        function clearAuth() {
+            authToken = null;
+            userData = null;
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_info');
+            document.getElementById('auth-status').innerHTML = 'トークンをセットしてください';
+            document.getElementById('auth-status').className = 'alert alert-info';
+        }
+
+        // 情報源候補一覧取得
+        async function getCandidates() {
+            if (!authToken) {
+                alert('先に認証してください');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/source-candidates', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('candidates-result').innerHTML = `
+                        <strong>✅ 候補取得成功</strong><br>
+                        件数: ${data.count}件
+                    `;
+                    document.getElementById('candidates-result').className = 'mt-3 alert alert-success';
+                    
+                    displayCandidates(data.candidates);
+                } else {
+                    document.getElementById('candidates-result').innerHTML = `❌ エラー: ${data.error}`;
+                    document.getElementById('candidates-result').className = 'mt-3 alert alert-danger';
+                }
+            } catch (error) {
+                document.getElementById('candidates-result').innerHTML = `❌ エラー: ${error.message}`;
+                document.getElementById('candidates-result').className = 'mt-3 alert alert-danger';
+            }
+        }
+
+        // 候補一覧表示
+        function displayCandidates(candidates) {
+            const listDiv = document.getElementById('candidates-list');
+            
+            if (candidates.length === 0) {
+                listDiv.innerHTML = '<p>候補がありません</p>';
+                return;
+            }
+
+            const statusLabels = {
+                'pending': '保留中',
+                'approved': '承認済み',
+                'rejected': '却下',
+                'on_hold': '一時停止'
+            };
+
+            const statusColors = {
+                'pending': 'warning',
+                'approved': 'success',
+                'rejected': 'danger',
+                'on_hold': 'secondary'
+            };
+
+            listDiv.innerHTML = candidates.map(candidate => `
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">${candidate.name}</h6>
+                            <p class="card-text">
+                                <strong>ドメイン:</strong> ${candidate.domain}<br>
+                                <strong>URL数:</strong> ${candidate.urls ? candidate.urls.length : 0}<br>
+                                <strong>カテゴリ:</strong> ${candidate.category || 'unknown'}<br>
+                                <strong>言語:</strong> ${candidate.language || 'unknown'}<br>
+                                <strong>関連度:</strong> ${candidate.relevance_score || 0}<br>
+                                <strong>発見方法:</strong> ${candidate.discovery_method || 'unknown'}<br>
+                                <span class="badge bg-${statusColors[candidate.status] || 'secondary'}">${statusLabels[candidate.status] || candidate.status}</span><br>
+                                <strong>発見日:</strong> ${candidate.discovered_at ? new Date(candidate.discovered_at).toLocaleDateString() : '未設定'}
+                            </p>
+                            <button class="btn btn-sm btn-warning" onclick="editCandidate('${candidate.id}', '${candidate.name}', '${candidate.domain}', '${JSON.stringify(candidate.urls || []).replace(/'/g, '\\'')}', '${candidate.site_url || ''}', '${candidate.category || ''}', '${candidate.language || 'unknown'}', '${candidate.country_code || ''}', ${candidate.relevance_score || 0}, '${candidate.status || 'pending'}', '${candidate.reviewer_notes || ''}')">編集</button>
+                            <button class="btn btn-sm btn-danger ms-1" onclick="deleteCandidate('${candidate.id}', '${candidate.name}')">削除</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 情報源候補追加
+        document.getElementById('addCandidateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!authToken) {
+                alert('先に認証してください');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const urls = formData.get('urls').split(',').map(url => url.trim()).filter(url => url);
+            
+            const candidateData = {
+                name: formData.get('name'),
+                domain: formData.get('domain'),
+                urls: urls,
+                site_url: formData.get('site_url'),
+                category: formData.get('category'),
+                language: formData.get('language'),
+                country_code: formData.get('country_code'),
+                relevance_score: parseFloat(formData.get('relevance_score')),
+                discovery_method: formData.get('discovery_method'),
+                reviewer_notes: formData.get('reviewer_notes')
+            };
+
+            try {
+                const response = await fetch('/api/source-candidates', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(candidateData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('add-result').innerHTML = `
+                        <div class="alert alert-success">✅ 候補追加成功</div>
+                    `;
+                    e.target.reset();
+                    // 候補一覧を更新
+                    getCandidates();
+                } else {
+                    document.getElementById('add-result').innerHTML = `
+                        <div class="alert alert-danger">❌ エラー: ${data.error}</div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('add-result').innerHTML = `
+                    <div class="alert alert-danger">❌ エラー: ${error.message}</div>
+                `;
+            }
+        });
+
+        // 候補編集モーダルを開く
+        function editCandidate(id, name, domain, urlsJson, siteUrl, category, language, countryCode, relevanceScore, status, reviewerNotes) {
+            document.getElementById('edit-candidate-id').value = id;
+            document.getElementById('edit-name').value = name;
+            document.getElementById('edit-domain').value = domain;
+            
+            try {
+                const urls = JSON.parse(urlsJson);
+                document.getElementById('edit-urls').value = urls.join(', ');
+            } catch (e) {
+                document.getElementById('edit-urls').value = '';
+            }
+            
+            document.getElementById('edit-site-url').value = siteUrl;
+            document.getElementById('edit-category').value = category;
+            document.getElementById('edit-language').value = language;
+            document.getElementById('edit-country-code').value = countryCode;
+            document.getElementById('edit-relevance-score').value = relevanceScore;
+            document.getElementById('edit-status').value = status;
+            document.getElementById('edit-reviewer-notes').value = reviewerNotes;
+            document.getElementById('edit-result').innerHTML = '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+
+        // 候補更新
+        async function updateCandidate() {
+            if (!authToken) {
+                alert('先に認証してください');
+                return;
+            }
+
+            const candidateId = document.getElementById('edit-candidate-id').value;
+            const name = document.getElementById('edit-name').value;
+            const domain = document.getElementById('edit-domain').value;
+            const urlsText = document.getElementById('edit-urls').value;
+            const urls = urlsText.split(',').map(url => url.trim()).filter(url => url);
+            const siteUrl = document.getElementById('edit-site-url').value;
+            const category = document.getElementById('edit-category').value;
+            const language = document.getElementById('edit-language').value;
+            const countryCode = document.getElementById('edit-country-code').value;
+            const relevanceScore = parseFloat(document.getElementById('edit-relevance-score').value);
+            const status = document.getElementById('edit-status').value;
+            const reviewerNotes = document.getElementById('edit-reviewer-notes').value;
+
+            const updateData = {
+                name: name,
+                domain: domain,
+                urls: urls,
+                site_url: siteUrl,
+                category: category,
+                language: language,
+                country_code: countryCode,
+                relevance_score: relevanceScore,
+                status: status,
+                reviewer_notes: reviewerNotes
+            };
+
+            try {
+                const response = await fetch(`/api/source-candidates?id=${candidateId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('edit-result').innerHTML = `
+                        <div class="alert alert-success">✅ 候補更新成功</div>
+                    `;
+                    // 候補一覧を更新
+                    getCandidates();
+                    // モーダルを閉じる
+                    setTimeout(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                    }, 1500);
+                } else {
+                    document.getElementById('edit-result').innerHTML = `
+                        <div class="alert alert-danger">❌ エラー: ${data.error}</div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('edit-result').innerHTML = `
+                    <div class="alert alert-danger">❌ エラー: ${error.message}</div>
+                `;
+            }
+        }
+
+        // 候補削除
+        async function deleteCandidate(candidateId, name) {
+            if (!authToken) {
+                alert('先に認証してください');
+                return;
+            }
+
+            if (!confirm(`情報源候補「${name}」を削除しますか？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/source-candidates?id=${candidateId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ 候補削除成功');
+                    // 候補一覧を更新
+                    getCandidates();
+                } else {
+                    alert(`❌ エラー: ${data.error}`);
+                }
+            } catch (error) {
+                alert(`❌ エラー: ${error.message}`);
+            }
+        }
+
+        // ページ読み込み時に認証情報を読み込み
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAuthFromStorage();
+        });
+    </script>
+</body>
+</html>

@@ -27,6 +27,10 @@
     {
       "source": "/sources-test",
       "destination": "/docs/sources-api-test.html"
+    },
+    {
+      "source": "/candidates-test",
+      "destination": "/docs/source-candidates-api-test.html"
     }
   ]
 }
