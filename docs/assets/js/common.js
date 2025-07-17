@@ -155,52 +155,10 @@ function setupAuthUI() {
     }
 }
 
-// データベース直接アクセスを制限
+// データベース直接アクセス制限は削除（APIベースに移行のため）
 function restrictDirectDatabaseAccess() {
-    // 緊急: 一時的に制限を無効化（ログイン復旧のため）
-    console.log('Database access restrictions temporarily disabled for emergency login fix');
-    return;
-    
-    // 開発者ツールでのSupabaseアクセスを制限
-    if (typeof supabase !== 'undefined') {
-        const originalFrom = supabase.from;
-        
-        supabase.from = function(table) {
-            // 権限チェック
-            const user = getCurrentUser();
-            if (!user) {
-                throw new Error('認証が必要です');
-            }
-            
-            // テーブルごとの権限チェック
-            switch(table) {
-                case 'users':
-                    if (!isAdmin()) {
-                        throw new Error('ユーザー情報へのアクセスは管理者のみ可能です');
-                    }
-                    break;
-                case 'sources':
-                case 'source_candidates':
-                    if (!canEditSources()) {
-                        throw new Error('情報源管理の権限がありません');
-                    }
-                    break;
-                case 'task_logs':
-                    if (!isAdmin()) {
-                        throw new Error('タスクログへのアクセスは管理者のみ可能です');
-                    }
-                    break;
-                case 'sources_backup':
-                case 'items_backup':
-                    if (!isAdmin()) {
-                        throw new Error('バックアップデータへのアクセスは管理者のみ可能です');
-                    }
-                    break;
-            }
-            
-            return originalFrom.call(this, table);
-        };
-    }
+    // API移行に伴い、Supabaseクライアント制限は無効化
+    console.log('Database access restrictions disabled - using API-based access control');
 }
 
 // セッションタイムアウト機能

@@ -145,55 +145,8 @@ async function loadArticlesPage(page, totalCount = null) {
         document.getElementById('articlesContainer').innerHTML = '<div class="alert alert-danger">記事の読み込みに失敗しました: ' + error.message + '</div>';
     }
 }
-            query = query.eq('source_id', sourceFilter);
-        }
-        
-        // ソート条件を適用
-        const ascending = sortOrder === 'asc';
-        query = query.order('published_at', { ascending });
-        
-        // ページネーション
-        query = query.range(offset, offset + itemsPerPage - 1);
-        
-        const { data, error } = await query;
-        
-        if (error) throw error;
-        
-        // グローバル変数を更新
-        articles = data || [];
-        currentPage = page;
-        
-        // 表示を更新
-        renderArticlesWithServerPagination(totalCount, itemsPerPage);
-        
-    } catch (error) {
-        console.error('ページ読み込みエラー:', error);
-        throw error;
-    }
-}
 
-// 最終タスク実行ログを読み込み
-async function loadLastTaskLog() {
-    try {
-        const { data, error } = await supabase
-            .from('task_logs')
-            .select('*')
-            .eq('task_type', 'daily_crawl')
-            .order('executed_at', { ascending: false })
-            .limit(1);
-        
-        if (error) throw error;
-        
-        if (data && data.length > 0) {
-            const lastLog = data[0];
-            const executedAt = new Date(lastLog.executed_at).toLocaleString('ja-JP');
-            const statusBadge = lastLog.status === 'success' 
-                ? '<span class="badge bg-success">成功</span>'
-                : '<span class="badge bg-danger">失敗</span>';
-            
-            // ナビバーに表示
-            const userInfo = document.getElementById('userInfo');
-            if (userInfo) {
+// タスクログ機能は削除（APIで実装しないため）
                 const logInfo = document.createElement('span');
                 logInfo.className = 'navbar-text text-white-50 me-3';
                 logInfo.innerHTML = `📅 最終実行: ${executedAt} ${statusBadge}`;
@@ -503,19 +456,26 @@ async function saveArticle(articleId) {
     const comments = editCard.querySelector('.comment-textarea').value;
     
     try {
-        const currentUser = getCurrentUser();
-        const { error } = await supabase
-            .from('items')
-            .update({
-                status: status,
-                flagged: flagged,
-                comments: comments || null,
-                reviewed_at: new Date().toISOString(),
-                last_edited_by: currentUser ? currentUser.userId : null
-            })
-            .eq('id', articleId);
+        // TODO: API経由で記事を更新する処理に置き換える
+        const updateData = {
+            status: status,
+            flagged: flagged,
+            comments: comments || null
+        };
         
-        if (error) throw error;
+        const response = await fetch(`/api/articles?id=${articleId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateData)
+        });
+        
+        const data = await response.json();
+        if (!data.success) {
+            throw new Error(data.error || '更新に失敗しました');
+        }
         
         // UIを更新
         const saveBtn = editCard.querySelector('.save-btn');
@@ -535,7 +495,6 @@ async function saveArticle(articleId) {
             articles[articleIndex].flagged = flagged;
             articles[articleIndex].comments = comments || null;
             articles[articleIndex].reviewed_at = new Date().toISOString();
-            articles[articleIndex].last_edited_by = currentUser ? currentUser.userId : null;
         }
         
     } catch (error) {
