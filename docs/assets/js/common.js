@@ -29,35 +29,7 @@ async function verifyPassword(password, storedHash, salt) {
     return hash === storedHash;
 }
 
-// Supabaseの設定
-const SUPABASE_URL = 'https://nvchsqotmchzpharujap.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52Y2hzcW90bWNoenBoYXJ1amFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUzMDc2OTAsImV4cCI6MjA2MDg4MzY5MH0.h6MdiDYNySabXxpeS_92KWuwUQlavQqv-9GJyKCn2jo';
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// 認証コンテキスト設定
-async function setAuthContext(userId) {
-    if (!userId) return false;
-    
-    try {
-        // Supabaseのセッションに認証情報を設定
-        const { error } = await supabase.rpc('set_config', {
-            config_name: 'app.current_user_id',
-            config_value: userId
-        });
-        
-        if (error) {
-            console.warn('認証コンテキスト設定に失敗:', error);
-            return false;
-        }
-        
-        console.log('認証コンテキスト設定成功:', userId);
-        return true;
-    } catch (error) {
-        console.warn('認証コンテキスト設定エラー:', error);
-        return false;
-    }
-}
+// APIベースのシステムに移行済み - Supabaseクライアントは不要
 
 // 認証管理
 function getCurrentUser() {
@@ -184,12 +156,6 @@ function trackActivity() {
 document.addEventListener('DOMContentLoaded', async () => {
     setupAuthUI();
     restrictDirectDatabaseAccess();
-    
-    // 認証コンテキストを設定
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-        await setAuthContext(currentUser.userId);
-    }
     
     // アクティビティ監視開始
     trackActivity();

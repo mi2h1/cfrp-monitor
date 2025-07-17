@@ -403,7 +403,7 @@ async function saveSource(sourceId) {
     const card = document.querySelector(`[data-id="${sourceId}"]`);
     const mode = card.querySelector('.mode-select').value;
     const relevance = parseInt(card.querySelector('.relevance-input').value) || 0;
-    const description = card.querySelector('.description-textarea')?.value || '';
+    const description = card.querySelector('.description-textarea')?.value;
     
     // URLリストを収集
     const urlInputs = card.querySelectorAll('.url-input');
@@ -415,7 +415,7 @@ async function saveSource(sourceId) {
         const updateData = {
             acquisition_mode: mode,
             relevance: relevance,
-            description: description || null,
+            description: description === '' ? null : description,
             urls: urls
         };
         
@@ -455,7 +455,7 @@ async function saveSource(sourceId) {
         if (sourceIndex !== -1) {
             sources[sourceIndex].acquisition_mode = mode;
             sources[sourceIndex].relevance = relevance;
-            sources[sourceIndex].description = description || null;
+            sources[sourceIndex].description = description === '' ? null : description;
             sources[sourceIndex].urls = urls;
             sources[sourceIndex].updated_at = new Date().toISOString();
         }
