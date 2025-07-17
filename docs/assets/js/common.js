@@ -157,10 +157,6 @@ function setupAuthUI() {
 
 // データベース直接アクセスを制限
 function restrictDirectDatabaseAccess() {
-    // 一時的に無効化 - RLS設定完了後に有効化
-    console.log('Database access restrictions temporarily disabled');
-    return;
-    
     // 開発者ツールでのSupabaseアクセスを制限
     if (typeof supabase !== 'undefined') {
         const originalFrom = supabase.from;
