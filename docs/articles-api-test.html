@@ -281,6 +281,8 @@
             const url = document.getElementById('edit-url').value;
 
             const updateData = { title, body, url };
+            console.log('DEBUG: Update data:', updateData);
+            console.log('DEBUG: Article ID:', id);
 
             try {
                 const response = await fetch(`/api/articles/${id}`, {
@@ -292,7 +294,13 @@
                     body: JSON.stringify(updateData)
                 });
 
-                const data = await response.json();
+                console.log('DEBUG: Response status:', response.status);
+                console.log('DEBUG: Response headers:', [...response.headers.entries()]);
+                
+                const responseText = await response.text();
+                console.log('DEBUG: Raw response:', responseText);
+                
+                const data = responseText ? JSON.parse(responseText) : {};
                 
                 if (data.success) {
                     document.getElementById('edit-result').innerHTML = `
@@ -327,6 +335,8 @@
                 return;
             }
 
+            console.log('DEBUG: Deleting article ID:', id);
+
             try {
                 const response = await fetch(`/api/articles/${id}`, {
                     method: 'DELETE',
@@ -336,7 +346,11 @@
                     }
                 });
 
-                const data = await response.json();
+                console.log('DEBUG: Delete response status:', response.status);
+                const responseText = await response.text();
+                console.log('DEBUG: Delete raw response:', responseText);
+                
+                const data = responseText ? JSON.parse(responseText) : {};
                 
                 if (data.success) {
                     alert('✅ 記事削除成功');
