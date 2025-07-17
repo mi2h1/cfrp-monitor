@@ -125,7 +125,13 @@ class handler(BaseHTTPRequestHandler):
                 print(f"DEBUG: Generated hash: {password_hash[:20]}...")
                 print(f"DEBUG: Stored hash: {user_data['password_hash'][:20]}...")
                 
-                return password_hash == user_data['password_hash']
+                # ハッシュが一致しない場合は、平文パスワードもチェック
+                if password_hash == user_data['password_hash']:
+                    return True
+                else:
+                    # 平文パスワードとしてもチェック
+                    print(f"DEBUG: Hash mismatch, trying plain text: '{password}' == '{user_data['password_hash']}'")
+                    return password == user_data['password_hash']
             else:
                 # 平文パスワードの場合（後方互換性）
                 print(f"DEBUG: Plain text comparison: '{password}' == '{user_data['password_hash']}'")
