@@ -161,9 +161,7 @@ async function addUser(userId, password, displayName, role) {
         
         try {
             // パスワードをハッシュ化
-            console.log('Hashing password for new user:', userId);
             const { hash, salt } = await hashPassword(password);
-            console.log('Hash result:', { hash: hash.substring(0, 10) + '...', salt: salt.substring(0, 10) + '...' });
             
             const { data, error } = await supabase
             .from('users')
@@ -199,6 +197,11 @@ async function addUser(userId, password, displayName, role) {
             }
             return false;
         }
+    } catch (error) {
+        console.error('予期しないエラー:', error);
+        showAlert('予期しないエラーが発生しました');
+        return false;
+    }
 }
 
 // ユーザー編集
