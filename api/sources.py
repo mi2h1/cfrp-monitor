@@ -385,7 +385,7 @@ class handler(BaseHTTPRequestHandler):
                 update_data['country_code'] = data['country_code']
             if data.get('relevance') is not None:
                 update_data['relevance'] = data['relevance']
-            if data.get('description') is not None:
+            if 'description' in data:
                 print(f"DEBUG: Description in data: '{data.get('description')}' (type: {type(data.get('description'))})")
                 update_data['description'] = data['description']
             if data.get('urls') is not None:
