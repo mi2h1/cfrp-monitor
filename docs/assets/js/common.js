@@ -241,8 +241,8 @@ function setupAuthUI() {
         });
     } else {
         // 未ログインの場合はログインページにリダイレクト
-        if (!window.location.pathname.includes('login.html')) {
-            window.location.href = 'login.html';
+        if (!window.location.pathname.includes('/login')) {
+            window.location.href = '/login';
         }
     }
 }
@@ -262,7 +262,7 @@ function checkSessionTimeout() {
     if (lastActivity && (now - parseInt(lastActivity)) > SESSION_TIMEOUT) {
         logout();
         alert('セッションがタイムアウトしました。再度ログインしてください。');
-        window.location.href = 'login.html';
+        window.location.href = '/login';
     }
 }
 
