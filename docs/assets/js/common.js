@@ -60,7 +60,6 @@ async function initializeNavigation(activePageId) {
             displayUserInfo(data.user, data.layout.user_menu);
             window.userFeatures = data.layout.features;
             setupUnifiedLogout();
-            setupSidebarToggle();
             return data.layout;
         } else {
             throw new Error(data.error || 'レイアウト取得に失敗');
@@ -124,17 +123,6 @@ function setupUnifiedLogout() {
     });
 }
 
-// サイドバートグル機能
-function setupSidebarToggle() {
-    const toggleBtn = document.getElementById('sidebarToggle');
-    const sidebar = document.getElementById('sidebar');
-    
-    if (toggleBtn && sidebar) {
-        toggleBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-        });
-    }
-}
 
 // 権限チェック用ヘルパー関数
 function checkPagePermission(requiredFeature) {

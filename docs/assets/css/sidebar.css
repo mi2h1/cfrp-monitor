@@ -23,6 +23,7 @@ body {
     left: 0;
     z-index: 1000;
     overflow-y: auto;
+    overflow-x: hidden;
     transition: all 0.3s ease;
 }
 
@@ -202,79 +203,3 @@ body {
     }
 }
 
-/* サイドバー折りたたみ */
-.sidebar.collapsed {
-    width: 70px;
-}
-
-.sidebar.collapsed .sidebar-header {
-    text-align: center;
-    padding: 1rem 0.5rem;
-}
-
-.sidebar.collapsed .sidebar-brand {
-    font-size: 1rem;
-}
-
-.sidebar.collapsed .version-text {
-    display: none;
-}
-
-.sidebar.collapsed .nav-link {
-    padding: 0.75rem;
-    justify-content: center;
-}
-
-.sidebar.collapsed .nav-link span {
-    display: none;
-}
-
-.sidebar.collapsed .nav-icon {
-    margin-right: 0;
-}
-
-.sidebar.collapsed .sidebar-user {
-    padding: 0.5rem;
-}
-
-.sidebar.collapsed .user-details {
-    display: none;
-}
-
-.sidebar.collapsed .logout-btn {
-    padding: 0.5rem;
-    font-size: 0;
-}
-
-.sidebar.collapsed .logout-btn::before {
-    content: "🚪";
-    font-size: 1rem;
-}
-
-.sidebar.collapsed + .main-content {
-    margin-left: 70px;
-}
-
-/* トグルボタン */
-.sidebar-toggle {
-    position: absolute;
-    top: 1rem;
-    right: -15px;
-    width: 30px;
-    height: 30px;
-    background-color: #2c2c2c;
-    border: 2px solid #444;
-    border-radius: 50%;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 0.75rem;
-    transition: all 0.2s ease;
-}
-
-.sidebar-toggle:hover {
-    background-color: #007bff;
-    border-color: #007bff;
-}
