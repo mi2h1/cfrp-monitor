@@ -19,6 +19,10 @@
     {
       "source": "/articles-test",
       "destination": "/docs/articles-api-test.html"
+    },
+    {
+      "source": "/users-test",
+      "destination": "/docs/users-api-test.html"
     }
   ]
 }

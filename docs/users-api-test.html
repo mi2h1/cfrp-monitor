@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>記事API テスト - CFRP Monitor</title>
+    <title>ユーザー管理API テスト - CFRP Monitor</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <div class="container mt-5">
-        <h1>記事API テスト</h1>
+        <h1>ユーザー管理API テスト</h1>
         
         <div class="row mt-4">
             <div class="col-md-6">
@@ -28,10 +28,10 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">記事取得テスト</h5>
-                        <button class="btn btn-success" onclick="getArticles()">記事一覧取得</button>
-                        <div id="articles-result" class="mt-3 alert alert-info">
-                            記事取得ボタンを押してください
+                        <h5 class="card-title">ユーザー取得テスト</h5>
+                        <button class="btn btn-success" onclick="getUsers()">ユーザー一覧取得</button>
+                        <div id="users-result" class="mt-3 alert alert-info">
+                            ユーザー取得ボタンを押してください
                         </div>
                     </div>
                 </div>
@@ -41,25 +41,29 @@
         <div class="mt-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">記事追加テスト</h5>
-                    <form id="addArticleForm">
+                    <h5 class="card-title">ユーザー追加テスト</h5>
+                    <form id="addUserForm">
                         <div class="mb-3">
-                            <label for="url" class="form-label">URL</label>
-                            <input type="url" class="form-control" id="url" name="url" required>
+                            <label for="user_id" class="form-label">ユーザーID</label>
+                            <input type="text" class="form-control" id="user_id" name="user_id" required>
                         </div>
                         <div class="mb-3">
-                            <label for="title" class="form-label">タイトル</label>
-                            <input type="text" class="form-control" id="title" name="title" required>
+                            <label for="display_name" class="form-label">表示名</label>
+                            <input type="text" class="form-control" id="display_name" name="display_name">
                         </div>
                         <div class="mb-3">
-                            <label for="body" class="form-label">本文</label>
-                            <textarea class="form-control" id="body" name="body" rows="3"></textarea>
+                            <label for="password" class="form-label">パスワード</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
                         </div>
                         <div class="mb-3">
-                            <label for="source_id" class="form-label">情報源ID</label>
-                            <input type="text" class="form-control" id="source_id" name="source_id" placeholder="オプション">
+                            <label for="role" class="form-label">権限</label>
+                            <select class="form-control" id="role" name="role">
+                                <option value="viewer">閲覧者</option>
+                                <option value="editor">編集者</option>
+                                <option value="admin">管理者</option>
+                            </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">記事追加</button>
+                        <button type="submit" class="btn btn-primary">ユーザー追加</button>
                     </form>
                     <div id="add-result" class="mt-3"></div>
                 </div>
@@ -67,41 +71,45 @@
         </div>
 
         <div class="mt-4">
-            <h3>記事一覧</h3>
-            <div id="articles-list" class="row">
-                記事を取得してください
+            <h3>ユーザー一覧</h3>
+            <div id="users-list" class="row">
+                ユーザーを取得してください
             </div>
         </div>
 
-        <!-- 記事編集モーダル -->
+        <!-- ユーザー編集モーダル -->
         <div class="modal fade" id="editModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">記事編集</h5>
+                        <h5 class="modal-title">ユーザー編集</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="editArticleForm">
-                            <input type="hidden" id="edit-id">
+                        <form id="editUserForm">
+                            <input type="hidden" id="edit-user-id">
                             <div class="mb-3">
-                                <label for="edit-title" class="form-label">タイトル</label>
-                                <input type="text" class="form-control" id="edit-title" required>
+                                <label for="edit-display-name" class="form-label">表示名</label>
+                                <input type="text" class="form-control" id="edit-display-name">
                             </div>
                             <div class="mb-3">
-                                <label for="edit-url" class="form-label">URL</label>
-                                <input type="url" class="form-control" id="edit-url" required>
+                                <label for="edit-role" class="form-label">権限</label>
+                                <select class="form-control" id="edit-role">
+                                    <option value="viewer">閲覧者</option>
+                                    <option value="editor">編集者</option>
+                                    <option value="admin">管理者</option>
+                                </select>
                             </div>
                             <div class="mb-3">
-                                <label for="edit-body" class="form-label">本文</label>
-                                <textarea class="form-control" id="edit-body" rows="4"></textarea>
+                                <label for="edit-password" class="form-label">新しいパスワード（変更する場合のみ）</label>
+                                <input type="password" class="form-control" id="edit-password">
                             </div>
                         </form>
                         <div id="edit-result"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-                        <button type="button" class="btn btn-primary" onclick="updateArticle()">更新</button>
+                        <button type="button" class="btn btn-primary" onclick="updateUser()">更新</button>
                     </div>
                 </div>
             </div>
@@ -140,15 +148,15 @@
             document.getElementById('auth-status').className = 'alert alert-info';
         }
 
-        // 記事一覧取得
-        async function getArticles() {
+        // ユーザー一覧取得
+        async function getUsers() {
             if (!authToken) {
                 alert('先に認証してください');
                 return;
             }
 
             try {
-                const response = await fetch('/api/articles', {
+                const response = await fetch('/api/users', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
@@ -159,55 +167,53 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    document.getElementById('articles-result').innerHTML = `
-                        <strong>✅ 記事取得成功</strong><br>
+                    document.getElementById('users-result').innerHTML = `
+                        <strong>✅ ユーザー取得成功</strong><br>
                         件数: ${data.count}件
                     `;
-                    document.getElementById('articles-result').className = 'mt-3 alert alert-success';
+                    document.getElementById('users-result').className = 'mt-3 alert alert-success';
                     
-                    displayArticles(data.articles);
+                    displayUsers(data.users);
                 } else {
-                    document.getElementById('articles-result').innerHTML = `❌ エラー: ${data.error}`;
-                    document.getElementById('articles-result').className = 'mt-3 alert alert-danger';
+                    document.getElementById('users-result').innerHTML = `❌ エラー: ${data.error}`;
+                    document.getElementById('users-result').className = 'mt-3 alert alert-danger';
                 }
             } catch (error) {
-                document.getElementById('articles-result').innerHTML = `❌ エラー: ${error.message}`;
-                document.getElementById('articles-result').className = 'mt-3 alert alert-danger';
+                document.getElementById('users-result').innerHTML = `❌ エラー: ${error.message}`;
+                document.getElementById('users-result').className = 'mt-3 alert alert-danger';
             }
         }
 
-        // 記事一覧表示
-        function displayArticles(articles) {
-            const listDiv = document.getElementById('articles-list');
+        // ユーザー一覧表示
+        function displayUsers(users) {
+            const listDiv = document.getElementById('users-list');
             
-            if (articles.length === 0) {
-                listDiv.innerHTML = '<p>記事がありません</p>';
+            if (users.length === 0) {
+                listDiv.innerHTML = '<p>ユーザーがいません</p>';
                 return;
             }
 
-            listDiv.innerHTML = articles.map(article => `
+            listDiv.innerHTML = users.map(user => `
                 <div class="col-md-6 mb-3">
                     <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">${article.title}</h6>
-                            <p class="card-text">${article.body ? article.body.substring(0, 100) + '...' : '本文なし'}</p>
-                            <small class="text-muted">
-                                追加者: ${article.last_edited_by || 'unknown'}<br>
-                                追加日: ${new Date(article.added_at).toLocaleDateString()}<br>
-                                ステータス: ${article.status || 'unread'}
-                            </small>
-                            <br>
-                            <a href="${article.url}" target="_blank" class="btn btn-sm btn-primary">記事を見る</a>
-                            <button class="btn btn-sm btn-warning ms-1" onclick="editArticle('${article.id}', '${article.title}', '${article.body || ''}', '${article.url}')">編集</button>
-                            <button class="btn btn-sm btn-danger ms-1" onclick="deleteArticle('${article.id}', '${article.title}')">削除</button>
+                            <h6 class="card-title">${user.display_name || user.user_id}</h6>
+                            <p class="card-text">
+                                <strong>ユーザーID:</strong> ${user.user_id}<br>
+                                <strong>権限:</strong> ${user.role}<br>
+                                <strong>作成日:</strong> ${new Date(user.created_at).toLocaleDateString()}<br>
+                                <strong>最終ログイン:</strong> ${user.last_login ? new Date(user.last_login).toLocaleDateString() : '未ログイン'}
+                            </p>
+                            <button class="btn btn-sm btn-warning" onclick="editUser('${user.user_id}', '${user.display_name || ''}', '${user.role}')">編集</button>
+                            <button class="btn btn-sm btn-danger ms-1" onclick="deleteUser('${user.user_id}', '${user.display_name || user.user_id}')">削除</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // 記事追加
-        document.getElementById('addArticleForm').addEventListener('submit', async function(e) {
+        // ユーザー追加
+        document.getElementById('addUserForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             if (!authToken) {
@@ -216,33 +222,32 @@
             }
 
             const formData = new FormData(e.target);
-            const articleData = {
-                url: formData.get('url'),
-                title: formData.get('title'),
-                body: formData.get('body'),
-                source_id: formData.get('source_id') ? formData.get('source_id') : null
+            const userData = {
+                user_id: formData.get('user_id'),
+                display_name: formData.get('display_name'),
+                password: formData.get('password'),
+                role: formData.get('role')
             };
-            
 
             try {
-                const response = await fetch('/api/articles', {
+                const response = await fetch('/api/users', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(articleData)
+                    body: JSON.stringify(userData)
                 });
 
                 const data = await response.json();
                 
                 if (data.success) {
                     document.getElementById('add-result').innerHTML = `
-                        <div class="alert alert-success">✅ 記事追加成功</div>
+                        <div class="alert alert-success">✅ ユーザー追加成功</div>
                     `;
                     e.target.reset();
-                    // 記事一覧を更新
-                    getArticles();
+                    // ユーザー一覧を更新
+                    getUsers();
                 } else {
                     document.getElementById('add-result').innerHTML = `
                         <div class="alert alert-danger">❌ エラー: ${data.error}</div>
@@ -255,34 +260,37 @@
             }
         });
 
-        // 記事編集モーダルを開く
-        function editArticle(id, title, body, url) {
-            document.getElementById('edit-id').value = id;
-            document.getElementById('edit-title').value = title;
-            document.getElementById('edit-body').value = body;
-            document.getElementById('edit-url').value = url;
+        // ユーザー編集モーダルを開く
+        function editUser(userId, displayName, role) {
+            document.getElementById('edit-user-id').value = userId;
+            document.getElementById('edit-display-name').value = displayName;
+            document.getElementById('edit-role').value = role;
+            document.getElementById('edit-password').value = '';
             document.getElementById('edit-result').innerHTML = '';
             
             const modal = new bootstrap.Modal(document.getElementById('editModal'));
             modal.show();
         }
 
-        // 記事更新
-        async function updateArticle() {
+        // ユーザー更新
+        async function updateUser() {
             if (!authToken) {
                 alert('先に認証してください');
                 return;
             }
 
-            const id = document.getElementById('edit-id').value;
-            const title = document.getElementById('edit-title').value;
-            const body = document.getElementById('edit-body').value;
-            const url = document.getElementById('edit-url').value;
+            const userId = document.getElementById('edit-user-id').value;
+            const displayName = document.getElementById('edit-display-name').value;
+            const role = document.getElementById('edit-role').value;
+            const password = document.getElementById('edit-password').value;
 
-            const updateData = { title, body, url };
+            const updateData = { display_name: displayName, role: role };
+            if (password) {
+                updateData.password = password;
+            }
 
             try {
-                const response = await fetch(`/api/articles?id=${id}&action=update`, {
+                const response = await fetch(`/api/users?id=${userId}`, {
                     method: 'PATCH',
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
@@ -295,10 +303,10 @@
                 
                 if (data.success) {
                     document.getElementById('edit-result').innerHTML = `
-                        <div class="alert alert-success">✅ 記事更新成功</div>
+                        <div class="alert alert-success">✅ ユーザー更新成功</div>
                     `;
-                    // 記事一覧を更新
-                    getArticles();
+                    // ユーザー一覧を更新
+                    getUsers();
                     // モーダルを閉じる
                     setTimeout(() => {
                         bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
@@ -315,19 +323,19 @@
             }
         }
 
-        // 記事削除
-        async function deleteArticle(id, title) {
+        // ユーザー削除
+        async function deleteUser(userId, displayName) {
             if (!authToken) {
                 alert('先に認証してください');
                 return;
             }
 
-            if (!confirm(`記事「${title}」を削除しますか？`)) {
+            if (!confirm(`ユーザー「${displayName}」を削除しますか？`)) {
                 return;
             }
 
             try {
-                const response = await fetch(`/api/articles?id=${id}&action=delete`, {
+                const response = await fetch(`/api/users?id=${userId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
@@ -338,9 +346,9 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('✅ 記事削除成功');
-                    // 記事一覧を更新
-                    getArticles();
+                    alert('✅ ユーザー削除成功');
+                    // ユーザー一覧を更新
+                    getUsers();
                 } else {
                     alert(`❌ エラー: ${data.error}`);
                 }
