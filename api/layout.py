@@ -81,7 +81,7 @@ class handler(BaseHTTPRequestHandler):
             {
                 "id": "articles",
                 "label": "📰 記事管理",
-                "href": "/",
+                "href": "/articles",
                 "active": False,
                 "roles": ["admin", "editor", "viewer"]
             }

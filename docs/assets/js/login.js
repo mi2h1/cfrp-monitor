@@ -2,7 +2,7 @@
 
 // 既にログインしている場合はリダイレクト
 if (localStorage.getItem('auth_token')) {
-    window.location.href = '/';
+    window.location.href = '/articles';
 }
 
 // アラート表示関数
@@ -80,7 +80,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         
         showAlert('ログインしました！リダイレクト中...', 'success');
         setTimeout(() => {
-            window.location.href = '/';
+            window.location.href = '/articles';
         }, 1000);
 
     } catch (error) {
@@ -173,7 +173,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
         setTimeout(() => {
             modal.hide();
-            window.location.href = '/';
+            window.location.href = '/articles';
         }, 1000);
 
     } catch (error) {

@@ -37,7 +37,7 @@ async function initializePage() {
                 <div class="alert alert-danger text-center">
                     <h4>アクセス拒否</h4>
                     <p>情報源管理にアクセスする権限がありません。</p>
-                    <a href="/" class="btn btn-primary">記事管理に戻る</a>
+                    <a href="/articles" class="btn btn-primary">記事管理に戻る</a>
                 </div>
             </div>
         `;

@@ -9,25 +9,56 @@
     <link href="assets/css/sources.css" rel="stylesheet">
 </head>
 <body>
-    <!-- ナビゲーションバー -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">CFRP Monitor <small class="text-white-50 version-text">v2025.01.08.12</small></a>
-            <div class="navbar-nav" id="dynamicNavigation">
-                <!-- 動的ナビゲーションがここに生成される -->
+    <div class="app-container">
+        <!-- モバイル用トグルボタン -->
+        <button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()">
+            ☰
+        </button>
+
+        <!-- サイドバー -->
+        <aside class="sidebar" id="sidebar">
+            <!-- サイドバーヘッダー -->
+            <div class="sidebar-header">
+                <a href="/articles" class="sidebar-brand">
+                    CFRP Monitor
+                    <span class="version-text">v2025.01.08.12</span>
+                </a>
             </div>
-            <div class="navbar-nav">
-                <span class="navbar-text me-3" id="userInfo">
-                    <!-- ユーザー情報がここに表示される -->
-                </span>
-                <button class="btn btn-outline-light btn-sm" id="logoutBtn" style="display: none;">
+
+            <!-- ナビゲーション -->
+            <nav class="sidebar-nav" id="sidebarNav">
+                <!-- 動的ナビゲーションがここに生成される -->
+            </nav>
+
+            <!-- トグルボタン -->
+            <div class="sidebar-toggle" id="sidebarToggle" title="サイドバーを折りたたむ">
+                ‹
+            </div>
+
+            <!-- ユーザー情報とログアウト -->
+            <div class="sidebar-user">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        👤
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">
+                            <!-- ユーザー名がここに表示される -->
+                        </div>
+                        <div class="user-role" id="userRole">
+                            <!-- ユーザー権限がここに表示される -->
+                        </div>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
                     ログアウト
                 </button>
             </div>
-        </div>
-    </nav>
+        </aside>
 
-    <div class="container-fluid py-4">
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="container-fluid py-4">
         <header class="mb-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <h1 class="h2 me-4">ユーザー管理</h1>

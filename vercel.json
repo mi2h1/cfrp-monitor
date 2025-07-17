@@ -17,6 +17,10 @@
       "destination": "/docs/users.html"
     },
     {
+      "source": "/articles",
+      "destination": "/docs/articles.html"
+    },
+    {
       "source": "/articles-test",
       "destination": "/docs/articles-api-test.html"
     },

@@ -140,7 +140,7 @@ function setupSidebarToggle() {
 function checkPagePermission(requiredFeature) {
     if (!window.userFeatures || !window.userFeatures[requiredFeature]) {
         alert('このページにアクセスする権限がありません');
-        window.location.href = '/';
+        window.location.href = '/articles';
         return false;
     }
     return true;
