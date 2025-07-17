@@ -78,8 +78,14 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         localStorage.setItem('currentUser', userId);
         localStorage.setItem('currentUserData', JSON.stringify(data.user));
         
+        console.log('Login successful - stored data:');
+        console.log('Token stored:', !!localStorage.getItem('auth_token'));
+        console.log('User info stored:', !!localStorage.getItem('user_info'));
+        console.log('User data:', data.user);
+        
         showAlert('ログインしました！リダイレクト中...', 'success');
         setTimeout(() => {
+            console.log('Redirecting to main page...');
             window.location.href = '/';
         }, 1000);
 

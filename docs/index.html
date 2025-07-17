@@ -115,17 +115,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 統一ナビゲーションシステムを使用
+        // 統一ナビゲーションシステムを使用（デバッグ用に一時的に無効化）
         document.addEventListener('DOMContentLoaded', async function() {
-            // 'articles'をアクティブページとしてナビゲーション初期化
-            const layout = await initializeNavigation('articles');
+            console.log('Index page loaded');
+            console.log('Auth token exists:', !!localStorage.getItem('auth_token'));
+            console.log('User info exists:', !!localStorage.getItem('user_info'));
             
-            // レイアウト初期化が失敗した場合は処理を中止
-            if (!layout) {
-                return;
+            // 一時的にナビゲーション初期化をスキップしてデバッグ
+            try {
+                const layout = await initializeNavigation('articles');
+                console.log('Navigation initialized successfully:', layout);
+            } catch (error) {
+                console.error('Navigation initialization failed:', error);
             }
-            
-            // 記事管理は全ユーザーがアクセス可能なので権限チェックは不要
         });
     </script>
     <script src="assets/js/common.js"></script>
