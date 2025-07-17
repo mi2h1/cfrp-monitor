@@ -17,13 +17,13 @@
             <div class="navbar-nav">
                 <a class="nav-link active" href="index.html">📰 記事管理</a>
                 <a class="nav-link" id="sourcesLink" href="sources.html">📡 情報源管理</a>
-                <a class="nav-link hidden" id="userManagementLink" href="users.html">👥 ユーザー管理</a>
+                <a class="nav-link" id="userManagementLink" href="users.html" style="display: none;">👥 ユーザー管理</a>
             </div>
             <div class="navbar-nav">
                 <span class="navbar-text me-3" id="userInfo">
                     <!-- ユーザー情報がここに表示される -->
                 </span>
-                <button class="btn btn-outline-light btn-sm hidden" id="logoutBtn">
+                <button class="btn btn-outline-light btn-sm" id="logoutBtn" style="display: none;">
                     ログアウト
                 </button>
             </div>
@@ -140,11 +140,11 @@
                     
                     // 管理者のみユーザー管理リンクを表示
                     if (user.role === 'admin') {
-                        document.getElementById('userManagementLink').classList.remove('hidden');
+                        document.getElementById('userManagementLink').style.display = 'block';
                     }
                     
                     // ログアウトボタンを表示
-                    document.getElementById('logoutBtn').classList.remove('hidden');
+                    document.getElementById('logoutBtn').style.display = 'block';
                 } catch (e) {
                     console.error('Failed to parse user info:', e);
                     localStorage.removeItem('user_info');
