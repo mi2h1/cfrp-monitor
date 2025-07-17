@@ -147,16 +147,6 @@ async function loadArticlesPage(page, totalCount = null) {
 }
 
 // タスクログ機能は削除（APIで実装しないため）
-                const logInfo = document.createElement('span');
-                logInfo.className = 'navbar-text text-white-50 me-3';
-                logInfo.innerHTML = `📅 最終実行: ${executedAt} ${statusBadge}`;
-                userInfo.parentNode.insertBefore(logInfo, userInfo);
-            }
-        }
-    } catch (error) {
-        console.error('タスクログ読み込みエラー:', error);
-    }
-}
 
 // ソースフィルターを設定
 function populateSourceFilter() {
