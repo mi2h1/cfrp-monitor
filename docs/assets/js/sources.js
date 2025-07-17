@@ -405,6 +405,12 @@ async function saveSource(sourceId) {
     const relevance = parseInt(card.querySelector('.relevance-input').value) || 0;
     const description = card.querySelector('.description-textarea')?.value;
     
+    // デバッグ: description の値を確認
+    console.log('Description value:', description);
+    console.log('Description type:', typeof description);
+    console.log('Description length:', description ? description.length : 'undefined');
+    console.log('Is empty string:', description === '');
+    
     // URLリストを収集
     const urlInputs = card.querySelectorAll('.url-input');
     const urls = Array.from(urlInputs)
@@ -419,6 +425,9 @@ async function saveSource(sourceId) {
             urls: urls
         };
         
+        // デバッグ: 送信データを確認
+        console.log('Update data being sent:', JSON.stringify(updateData, null, 2));
+        
         const response = await fetch(`/api/sources?id=${sourceId}`, {
             method: 'PATCH',
             headers: {
@@ -429,6 +438,10 @@ async function saveSource(sourceId) {
         });
         
         const data = await response.json();
+        
+        // デバッグ: APIレスポンスを確認
+        console.log('API Response:', data);
+        console.log('Response status:', response.status);
         
         if (!data.success) {
             throw new Error(data.error || '保存に失敗しました');

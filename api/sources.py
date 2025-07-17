@@ -363,6 +363,10 @@ class handler(BaseHTTPRequestHandler):
     def update_source(self, source_id, data, user_data):
         """情報源を更新"""
         try:
+            print(f"DEBUG: Update source called with source_id: {source_id}")
+            print(f"DEBUG: Input data: {json.dumps(data, ensure_ascii=False)}")
+            print(f"DEBUG: User data: {user_data}")
+            
             supabase_url = os.environ.get('SUPABASE_URL')
             supabase_key = os.environ.get('SUPABASE_KEY')
             
@@ -382,6 +386,7 @@ class handler(BaseHTTPRequestHandler):
             if data.get('relevance') is not None:
                 update_data['relevance'] = data['relevance']
             if data.get('description') is not None:
+                print(f"DEBUG: Description in data: '{data.get('description')}' (type: {type(data.get('description'))})")
                 update_data['description'] = data['description']
             if data.get('urls') is not None:
                 update_data['urls'] = data['urls']
@@ -411,6 +416,8 @@ class handler(BaseHTTPRequestHandler):
             update_data['updated_at'] = datetime.datetime.now().isoformat()
             
             # データベースを更新
+            print(f"DEBUG: Final update_data: {json.dumps(update_data, ensure_ascii=False)}")
+            
             url = f"{supabase_url}/rest/v1/sources?id=eq.{source_id}"
             headers = {
                 'apikey': supabase_key,
@@ -418,6 +425,9 @@ class handler(BaseHTTPRequestHandler):
                 'Content-Type': 'application/json',
                 'Prefer': 'return=representation'
             }
+            
+            print(f"DEBUG: Updating URL: {url}")
+            print(f"DEBUG: Request body: {json.dumps(update_data, ensure_ascii=False)}")
             
             req = urllib.request.Request(
                 url,
