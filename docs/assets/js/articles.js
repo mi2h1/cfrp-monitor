@@ -307,7 +307,7 @@ function filterAndSortArticles() {
 // 記事テーブル行を作成
 function createArticleTableRow(article) {
     const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
-    const pubDate = article.published_at ? new Date(article.published_at).toLocaleDateString('ja-JP') : '不明';
+    const pubDate = article.published_at ? formatJSTDate(article.published_at) : '不明';
     const flaggedClass = article.flagged ? 'table-warning' : '';
     
     return `
@@ -348,7 +348,7 @@ function createArticleTableRow(article) {
 // 詳細編集用の記事カードを作成
 function createDetailArticleCard(article) {
     const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
-    const pubDate = article.published_at ? new Date(article.published_at).toLocaleDateString('ja-JP') : '不明';
+    const pubDate = article.published_at ? formatJSTDate(article.published_at) : '不明';
     const flaggedClass = article.flagged ? 'flagged' : '';
     
     return `
@@ -404,7 +404,7 @@ function createDetailArticleCard(article) {
                 </div>
                 <div class="mt-2">
                     <button class="btn btn-success btn-sm save-btn" data-id="${article.id}">保存</button>
-                    ${article.reviewed_at ? `<small class="text-muted ms-2">最終更新: ${new Date(article.reviewed_at).toLocaleString('ja-JP')}</small>` : ''}
+                    ${article.reviewed_at ? `<small class="text-muted ms-2">最終更新: ${formatJSTDisplay(article.reviewed_at)}</small>` : ''}
                     ${article.last_edited_by ? `<small class="text-info ms-2">編集者: ${article.last_edited_by}</small>` : ''}
                 </div>
             </div>
