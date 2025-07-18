@@ -48,7 +48,7 @@ def safe_date(txt):
 def upsert(row: dict):
     try:
         # まず既存記事をチェック
-        existing = supabase.table("items").select("id").eq("url", row["url"]).execute()
+        existing = supabase.table("articles").select("id").eq("url", row["url"]).execute()
         
         if existing.data:
             # 既存記事があれば何もしない
@@ -56,7 +56,7 @@ def upsert(row: dict):
             return
         else:
             # 新規記事として挿入
-            res = supabase.table("items").insert(row).execute()
+            res = supabase.table("articles").insert(row).execute()
             err = getattr(res, "error", None) or (res.get("error") if isinstance(res, dict) else None)
             print("INSERT", "ERROR:" if err else "OK:", err or row["url"])
             

@@ -279,7 +279,7 @@ class handler(BaseHTTPRequestHandler):
             source_id = query_params.get('source_id', [None])[0]
             
             # ベースURLを構築
-            url = f"{supabase_url}/rest/v1/items?select=*,sources(name,domain)"
+            url = f"{supabase_url}/rest/v1/articles?select=*,sources(name,domain)"
             
             # フィルタリングを追加
             filters = []
@@ -339,7 +339,7 @@ class handler(BaseHTTPRequestHandler):
             source_id = query_params.get('source_id', [None])[0]
             
             # ベースURLを構築（カウントのみ）
-            url = f"{supabase_url}/rest/v1/items?select=id"
+            url = f"{supabase_url}/rest/v1/articles?select=id"
             
             # フィルタリングを追加
             filters = []
@@ -395,7 +395,7 @@ class handler(BaseHTTPRequestHandler):
                 print("DEBUG: Missing required fields (url or title)")
                 return None
             
-            # itemsテーブル用のデータを準備
+            # articlesテーブル用のデータを準備
             item_data = {
                 'url': data['url'],
                 'title': data['title'],
@@ -410,7 +410,7 @@ class handler(BaseHTTPRequestHandler):
             print(f"DEBUG: Item data to insert: {item_data}")
             
             # データベースに追加
-            url = f"{supabase_url}/rest/v1/items"
+            url = f"{supabase_url}/rest/v1/articles"
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',
@@ -481,7 +481,7 @@ class handler(BaseHTTPRequestHandler):
             update_data['reviewer'] = user_data['user_id']
             
             # データベースを更新
-            url = f"{supabase_url}/rest/v1/items?id=eq.{article_id}"
+            url = f"{supabase_url}/rest/v1/articles?id=eq.{article_id}"
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',
@@ -523,7 +523,7 @@ class handler(BaseHTTPRequestHandler):
                 return None
             
             # データベースから削除
-            url = f"{supabase_url}/rest/v1/items?id=eq.{article_id}"
+            url = f"{supabase_url}/rest/v1/articles?id=eq.{article_id}"
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',

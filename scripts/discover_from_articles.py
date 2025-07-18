@@ -67,7 +67,7 @@ class ArticleSourceDiscoverer:
         cutoff_date = (datetime.now() - timedelta(days=days)).isoformat()
         
         try:
-            result = supabase.table('items')\
+            result = supabase.table('articles')\
                 .select('*')\
                 .gte('published_at', cutoff_date)\
                 .execute()
