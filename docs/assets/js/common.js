@@ -134,6 +134,14 @@ function checkPagePermission(requiredFeature) {
     return true;
 }
 
+// モバイル用サイドバートグル（全ページ共通）
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('show');
+    }
+}
+
 // ===========================================
 // 従来の認証システム（互換性のため残存）
 // ==========================================

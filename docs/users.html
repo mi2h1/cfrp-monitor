@@ -186,23 +186,13 @@
         </main>
     </div>
 
-    <script>
-        // モバイル用サイドバートグル
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('show');
-        }
-    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            const layout = await initializeNavigation('users');
-            if (!layout) return;
-            if (!checkPagePermission('can_manage_users')) return;
-        });
+        initializeUsersPage();
     </script>
     <script src="assets/js/common.js"></script>
+    <script src="assets/js/page-init.js"></script>
     <script src="assets/js/users.js"></script>
 </body>
 </html>

@@ -138,25 +138,13 @@
         </main>
     </div>
 
-    <script>
-        // モバイル用サイドバートグル
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('show');
-        }
-    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                await initializeNavigation('articles');
-            } catch (error) {
-                console.error('Navigation initialization failed:', error);
-            }
-        });
+        initializeArticlesPage();
     </script>
     <script src="assets/js/common.js"></script>
+    <script src="assets/js/page-init.js"></script>
     <script src="assets/js/articles.js"></script>
 </body>
 </html>
