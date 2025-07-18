@@ -32,11 +32,17 @@
 - **エラーハンドリング** - try-catch文を適切に使用
 - **API通信** - 認証トークンを適切に管理
 - **空値処理** - 空文字列の場合は`null`として送信
+- **日時処理** - 必ず`timezone-utils.js`の関数を使用（JST統一）
+  - 表示: `formatJSTDisplay()`, `formatJSTDate()`, `formatJSTRelative()`
+  - 現在時刻: `nowJST()`, `nowJSTISO()`, `todayJST()`
 
-### バックエンド
+### バックエンド（Python）
 - **空値の更新** - `'field' in data`で空文字列も更新対象に含める
 - **認証チェック** - 全APIで適切な認証処理を実装
 - **エラーレスポンス** - 適切なHTTPステータスコードとエラーメッセージを返す
+- **日時処理** - 必ず`utils/timezone_utils.py`の関数を使用（JST統一）
+  - DB書き込み: `now_jst_naive_iso()`, `today_jst_iso()`
+  - 表示変換: `format_jst_display()`, `parse_to_jst()`
 
 ## 🚀 アーキテクチャ
 
@@ -66,14 +72,14 @@ vercel.json          # Vercel設定
 ## 🗃️ データベース構造（重要）
 
 ### メインテーブル
-- **items**: 記事データ（id, source_id, title, url, body, published_at, status, flagged, comments, added_at, reviewed_at, last_edited_by, reviewer）
+- **articles**: 記事データ（旧itemsテーブル）（id, source_id, title, url, body, published_at, status, flagged, comments, added_at, reviewed_at, last_edited_by, reviewer）
 - **sources**: 情報源（id, name, domain, category, country_code, relevance, urls, acquisition_mode, deleted, etc.）
 - **users**: ユーザー（user_id, display_name, role, password_hash, created_at, etc.）
 - **source_candidates**: 探索候補（id, name, domain, urls, relevance_score, status, discovery_method, etc.）
 
 ### 重要な関係性
-- items.source_id → sources.id（外部キー）
-- items.status: 'unread', 'reviewed', 'flagged', 'archived'
+- articles.source_id → sources.id（外部キー）
+- articles.status: 'unread', 'reviewed', 'flagged', 'archived'
 - sources.acquisition_mode: 'auto', 'manual', 'disabled'
 - users.role: 'admin', 'editor', 'viewer'
 
@@ -132,6 +138,12 @@ vercel.json          # Vercel設定
 - **サイドバー**: 固定幅250px、左側配置
 - **メインコンテンツ**: サイドバー分の左マージン
 - **カード**: 統一されたスタイル
+
+## 📅 重要な変更履歴
+- **2025-07-17**: 完全なデータベース構造を記録
+- **2025-07-18**: Font Awesomeアイコン統一とUI改善決定
+- **2025-07-18**: itemsテーブルをarticlesテーブルに名前変更
+- **2025-07-18**: JST日時処理統一（timezone_utils導入）
 
 ---
 
