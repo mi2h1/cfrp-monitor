@@ -80,7 +80,8 @@ class handler(BaseHTTPRequestHandler):
         navigation = [
             {
                 "id": "articles",
-                "label": "📰 記事管理",
+                "label": "記事管理",
+                "icon": "fa-newspaper",
                 "href": "/articles",
                 "active": False,
                 "roles": ["admin", "editor", "viewer"]
@@ -91,7 +92,8 @@ class handler(BaseHTTPRequestHandler):
         if role in ['admin', 'editor']:
             navigation.append({
                 "id": "sources",
-                "label": "📡 情報源管理", 
+                "label": "情報源管理",
+                "icon": "fa-rss",
                 "href": "/sources",
                 "active": False,
                 "roles": ["admin", "editor"]
@@ -101,7 +103,8 @@ class handler(BaseHTTPRequestHandler):
         if role == 'admin':
             navigation.append({
                 "id": "users",
-                "label": "👥 ユーザー管理",
+                "label": "ユーザー管理",
+                "icon": "fa-users",
                 "href": "/users", 
                 "active": False,
                 "roles": ["admin"]

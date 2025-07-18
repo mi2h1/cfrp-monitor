@@ -52,9 +52,6 @@ body {
 }
 
 /* ナビゲーション */
-.sidebar-nav {
-    padding: 1rem 0;
-}
 
 .nav-item {
     margin-bottom: 0.25rem;
@@ -91,71 +88,10 @@ body {
     font-size: 1.1rem;
 }
 
-/* ユーザー情報 */
-.sidebar-user {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #222;
-    border-top: 1px solid #444;
-    padding: 1rem;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.75rem;
-    color: #ccc;
-    font-size: 0.9rem;
-}
-
-.user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #555;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 0.75rem;
-    font-size: 1.1rem;
-}
-
-.user-details {
-    flex: 1;
-    min-width: 0;
-}
-
-.user-name {
-    font-weight: 500;
-    color: white;
-    margin-bottom: 0.25rem;
-}
-
-.user-role {
-    font-size: 0.75rem;
-    padding: 0.125rem 0.5rem;
-    border-radius: 12px;
-    background-color: #555;
-    color: #ccc;
-}
-
-.logout-btn {
-    width: 100%;
-    padding: 0.5rem;
-    background-color: transparent;
-    border: 1px solid #555;
-    color: #ccc;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    font-size: 0.875rem;
-}
-
-.logout-btn:hover {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    color: white;
+/* サイドバー下部のスペース確保 */
+.sidebar-nav {
+    padding: 1rem 0;
+    padding-bottom: 2rem; /* 下部に余白を追加 */
 }
 
 /* メインコンテンツ */

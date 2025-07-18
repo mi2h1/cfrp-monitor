@@ -84,8 +84,8 @@ function generateNavigation(navItems, activePageId) {
     navContainer.innerHTML = navItems.map(item => 
         `<div class="nav-item">
             <a class="nav-link ${(activePageId === item.id) ? 'active' : ''}" href="${item.href}">
-                <span class="nav-icon">${item.label.split(' ')[0]}</span>
-                <span>${item.label.split(' ').slice(1).join(' ')}</span>
+                <span class="nav-icon"><i class="fas ${item.icon || 'fa-circle'}"></i></span>
+                <span>${item.label}</span>
             </a>
         </div>`
     ).join('');
