@@ -201,9 +201,9 @@ function createCompactSourceCard(source) {
                     ${source.description ? `<div class="small text-info mt-1">💬 ${escapeHtml(source.description)}</div>` : ''}
                 </div>
                 <div class="compact-meta">
-                    <span>📂 ${source.category || 'その他'}</span>
-                    <span>🌍 ${source.country_code || '?'}</span>
-                    <span>⭐ ${source.relevance || 0}</span>
+                    <span><i class="fas fa-folder"></i> ${source.category || 'その他'}</span>
+                    <span><i class="fas fa-globe-americas"></i> ${source.country_code || '?'}</span>
+                    <span><i class="fas fa-star"></i> ${source.relevance || 0}</span>
                     ${source.deleted ? 
                         '<span class="badge bg-secondary ms-2">削除済み</span>' :
                         `<span class="badge bg-${getModeColor(source.acquisition_mode)} ms-2">
@@ -238,9 +238,9 @@ function createDetailSourceCard(source) {
             
             <div class="source-meta mb-2">
                 <span class="me-3"><i class="fas fa-globe"></i> ${source.domain}</span>
-                <span class="me-3">📂 ${source.category || 'その他'}</span>
-                <span class="me-3">🌍 ${source.country_code || 'Unknown'}</span>
-                <span class="me-3">⭐ ${source.relevance || 0}</span>
+                <span class="me-3"><i class="fas fa-folder"></i> ${source.category || 'その他'}</span>
+                <span class="me-3"><i class="fas fa-globe-americas"></i> ${source.country_code || 'Unknown'}</span>
+                <span class="me-3"><i class="fas fa-star"></i> ${source.relevance || 0}</span>
             </div>
             
             <div class="url-editor mb-2">
@@ -1035,7 +1035,7 @@ function renderCandidates() {
                             <i class="fas fa-check"></i> 承認
                         </button>
                         <button class="btn btn-warning btn-sm me-1" onclick="holdCandidate('${candidate.id}')">
-                            ⏸️ 保留
+                            <i class="fas fa-pause"></i> 保留
                         </button>
                         <button class="btn btn-outline-danger btn-sm" onclick="rejectCandidate('${candidate.id}')">
                             <i class="fas fa-times"></i> 却下
