@@ -1,5 +1,16 @@
 /* CFRP Monitor - 情報源管理ページ専用スタイル */
 
+/* アイコンとテキストの位置調整 */
+.small .fas, .text-muted .fas {
+    vertical-align: middle;
+    margin-right: 0.25rem;
+}
+
+.candidate-table .fas {
+    vertical-align: middle;
+    margin-right: 0.25rem;
+}
+
 /* フィルターコンテナ */
 .filter-container {
     display: none;
