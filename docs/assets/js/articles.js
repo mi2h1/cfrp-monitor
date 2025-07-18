@@ -184,8 +184,25 @@ function renderArticles() {
     const endIndex = startIndex + itemsPerPage;
     const paginatedArticles = filteredArticles.slice(startIndex, endIndex);
 
-    // 記事表示
-    container.innerHTML = paginatedArticles.map(article => createCompactArticleCard(article)).join('');
+    // テーブル形式で記事表示
+    container.innerHTML = `
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 150px;">ステータス</th>
+                        <th>タイトル</th>
+                        <th style="width: 150px;">情報源</th>
+                        <th style="width: 120px;">公開日</th>
+                        <th style="width: 100px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${paginatedArticles.map(article => createArticleTableRow(article)).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
     
     // ページネーション表示
     renderPagination(filteredArticles.length, itemsPerPage, currentPage);
