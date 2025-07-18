@@ -123,7 +123,7 @@ function createUserCard(user) {
                         ${!isAdminUser || getCurrentUser()?.userId === 'admin' ? `
                             <div class="dropdown">
                                 <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    ⚙️
+                                    <i class="fas fa-cog"></i>
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="#" onclick="editUser('${user.user_id}')">編集</a></li>
@@ -444,9 +444,9 @@ function getRoleLabel(role) {
 
 function getRoleIcon(role) {
     const icons = {
-        'admin': '👑',
-        'editor': '✏️',
-        'viewer': '👤'
+        'admin': '<i class="fas fa-crown"></i>',
+        'editor': '<i class="fas fa-edit"></i>',
+        'viewer': '<i class="fas fa-eye"></i>'
     };
-    return icons[role] || '👤';
+    return icons[role] || '<i class="fas fa-user"></i>';
 }
