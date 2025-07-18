@@ -1,0 +1,901 @@
+[
+  {
+    "id": "http://arxiv.org/abs/2507.11373v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2507.11373v1",
+    "updated": "2025-07-15T14:45:06Z",
+    "updated_parsed": [
+      2025,
+      7,
+      15,
+      14,
+      45,
+      6,
+      1,
+      196,
+      0
+    ],
+    "published": "2025-07-15T14:45:06Z",
+    "published_parsed": [
+      2025,
+      7,
+      15,
+      14,
+      45,
+      6,
+      1,
+      196,
+      0
+    ],
+    "title": "Primordial Media: the shrouded realm of composite materials",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Primordial Media: the shrouded realm of composite materials"
+    },
+    "summary": "Electromagnetic composites (metamaterials) recently underwent explosive\ngrowth fueled, in part, by advances in nanofabrication. It is commonly believed\nthat as the size of the components decreases, the behavior of a composite\nconverges to the response of a homogeneous material. Here we show that this\nintuitive understanding of the electromagnetic response of composite media is\nfundamentally flawed, even at the qualitative level. In contrast to the\nwell-understood local effective medium response, the properties of\nnanostructured composites can be dominated by electromagnetic nonlocality. We\ndemonstrate that the interplay between the nonlocality and the structural\ninhomogeneity introduces two fundamentally new electromagnetic regimes,\nprimordial metamaterials and nonlocal effective medium. We develop an\nanalytical description of these regimes and show that the behavior of\nmetamaterials in the limits of vanishing nonlocality and of vanishing component\nsize do not commute. Our work opens a new dimension in the design space of\nnanostructured electromagnetic composites.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Electromagnetic composites (metamaterials) recently underwent explosive\ngrowth fueled, in part, by advances in nanofabrication. It is commonly believed\nthat as the size of the components decreases, the behavior of a composite\nconverges to the response of a homogeneous material. Here we show that this\nintuitive understanding of the electromagnetic response of composite media is\nfundamentally flawed, even at the qualitative level. In contrast to the\nwell-understood local effective medium response, the properties of\nnanostructured composites can be dominated by electromagnetic nonlocality. We\ndemonstrate that the interplay between the nonlocality and the structural\ninhomogeneity introduces two fundamentally new electromagnetic regimes,\nprimordial metamaterials and nonlocal effective medium. We develop an\nanalytical description of these regimes and show that the behavior of\nmetamaterials in the limits of vanishing nonlocality and of vanishing component\nsize do not commute. Our work opens a new dimension in the design space of\nnanostructured electromagnetic composites."
+    },
+    "authors": [
+      {
+        "name": "Viktor Podolskiy"
+      },
+      {
+        "name": "Evgenii Narimanov"
+      }
+    ],
+    "author_detail": {
+      "name": "Evgenii Narimanov"
+    },
+    "author": "Evgenii Narimanov",
+    "arxiv_comment": "20 pages, 5 figures, 1 table",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2507.11373v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2507.11373v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "physics.optics",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "physics.optics",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2507.10121v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2507.10121v1",
+    "updated": "2025-07-14T10:05:07Z",
+    "updated_parsed": [
+      2025,
+      7,
+      14,
+      10,
+      5,
+      7,
+      0,
+      195,
+      0
+    ],
+    "published": "2025-07-14T10:05:07Z",
+    "published_parsed": [
+      2025,
+      7,
+      14,
+      10,
+      5,
+      7,
+      0,
+      195,
+      0
+    ],
+    "title": "Simulations and experiments with assemblies of fiber-reinforced soft\n  actuators",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Simulations and experiments with assemblies of fiber-reinforced soft\n  actuators"
+    },
+    "summary": "Soft continuum arms (SCAs) promise versatile manipulation through mechanical\ncompliance, for assistive devices, agriculture, search applications, or\nsurgery. However, SCAs' real-world use is challenging, partly due to their\nhard-to-control non-linear behavior. Here, a simulation framework for SCAs\nmodularly assembled out of fiber reinforced elastomeric enclosures (FREEs) is\ndeveloped and integrated with a video-tracking system for experimental testing\nand control design.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Soft continuum arms (SCAs) promise versatile manipulation through mechanical\ncompliance, for assistive devices, agriculture, search applications, or\nsurgery. However, SCAs' real-world use is challenging, partly due to their\nhard-to-control non-linear behavior. Here, a simulation framework for SCAs\nmodularly assembled out of fiber reinforced elastomeric enclosures (FREEs) is\ndeveloped and integrated with a video-tracking system for experimental testing\nand control design."
+    },
+    "authors": [
+      {
+        "name": "Seung Hyun Kim"
+      },
+      {
+        "name": "Jiamiao Guo"
+      },
+      {
+        "name": "Arman Tekinalp"
+      },
+      {
+        "name": "Heng-Sheng Chang"
+      },
+      {
+        "name": "Ugur Akcal"
+      },
+      {
+        "name": "Tixian Wang"
+      },
+      {
+        "name": "Darren Biskup"
+      },
+      {
+        "name": "Benjamin Walt"
+      },
+      {
+        "name": "Girish Chowdhary"
+      },
+      {
+        "name": "Girish Krishnan"
+      },
+      {
+        "name": "Prashant G. Mehta"
+      },
+      {
+        "name": "Mattia Gazzola"
+      }
+    ],
+    "author_detail": {
+      "name": "Mattia Gazzola"
+    },
+    "author": "Mattia Gazzola",
+    "arxiv_comment": "8 pages, 4 figures This work has been submitted to the IEEE for\n  possible publication",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2507.10121v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2507.10121v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cs.RO",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cs.RO",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2507.07849v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2507.07849v1",
+    "updated": "2025-07-10T15:27:49Z",
+    "updated_parsed": [
+      2025,
+      7,
+      10,
+      15,
+      27,
+      49,
+      3,
+      191,
+      0
+    ],
+    "published": "2025-07-10T15:27:49Z",
+    "published_parsed": [
+      2025,
+      7,
+      10,
+      15,
+      27,
+      49,
+      3,
+      191,
+      0
+    ],
+    "title": "Modulation of PEDOT properties via cobalt ferrite nanoparticles:\n  morphology, conjugation length, doping level, structure, and electrical\n  conductivity",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Modulation of PEDOT properties via cobalt ferrite nanoparticles:\n  morphology, conjugation length, doping level, structure, and electrical\n  conductivity"
+    },
+    "summary": "Composite materials based on Poly(3,4-ethylenedioxythiophene) (PEDOT) and\nCoFe$_2$O$_4$ magnetic nanoparticles (NP) were synthesized by chemical\noxidative polymerization with varying monomer and surfactant (DBSA)\nconcentrations, and were compared to PEDOT samples synthesized without NP.\nElectrical conductivity measurements were performed, which revealed that the\ncomposites are more conductive than the pure PEDOT samples, with this effect\ndepending on EDOT and DBSA contents. Characterizations by SEM and TEM\nmicroscopies, UV-Vis, FTIR and Raman spectroscopies, X-ray diffraction and\ndynamic light scattering were carried out in order to associate the morphology\nand structure of these materials to their electrical conductivity, and to\nexplain how EDOT and DBSA concentrations, and also the presence of NP, affects\nthose properties. It was found that the NP play a significant role in the\npolymerization of EDOT, influencing the formation and arrangement of polymer\nchains, as well as their conjugation length, oxidation state, and resonant\nstructures. These effects are also dependent on the DBSA content. To describe\nthe conductivity of the composites, a two-phase model based on general\neffective media theory was introduced. The analysis revealed that, at low\nreactant concentrations, the NP increase the conductivity of the adjacent PEDOT\nby over two orders of magnitude.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Composite materials based on Poly(3,4-ethylenedioxythiophene) (PEDOT) and\nCoFe$_2$O$_4$ magnetic nanoparticles (NP) were synthesized by chemical\noxidative polymerization with varying monomer and surfactant (DBSA)\nconcentrations, and were compared to PEDOT samples synthesized without NP.\nElectrical conductivity measurements were performed, which revealed that the\ncomposites are more conductive than the pure PEDOT samples, with this effect\ndepending on EDOT and DBSA contents. Characterizations by SEM and TEM\nmicroscopies, UV-Vis, FTIR and Raman spectroscopies, X-ray diffraction and\ndynamic light scattering were carried out in order to associate the morphology\nand structure of these materials to their electrical conductivity, and to\nexplain how EDOT and DBSA concentrations, and also the presence of NP, affects\nthose properties. It was found that the NP play a significant role in the\npolymerization of EDOT, influencing the formation and arrangement of polymer\nchains, as well as their conjugation length, oxidation state, and resonant\nstructures. These effects are also dependent on the DBSA content. To describe\nthe conductivity of the composites, a two-phase model based on general\neffective media theory was introduced. The analysis revealed that, at low\nreactant concentrations, the NP increase the conductivity of the adjacent PEDOT\nby over two orders of magnitude."
+    },
+    "authors": [
+      {
+        "name": "Gabriel Paciaroni"
+      },
+      {
+        "name": "María Ana Castro"
+      },
+      {
+        "name": "Carlos Acha"
+      },
+      {
+        "name": "Paula Soledad Antonel"
+      }
+    ],
+    "author_detail": {
+      "name": "Paula Soledad Antonel"
+    },
+    "author": "Paula Soledad Antonel",
+    "arxiv_doi": "10.1016/j.polymer.2025.128652",
+    "links": [
+      {
+        "title": "doi",
+        "href": "http://dx.doi.org/10.1016/j.polymer.2025.128652",
+        "rel": "related",
+        "type": "text/html"
+      },
+      {
+        "href": "http://arxiv.org/abs/2507.07849v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2507.07849v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_comment": "42 pages, 7 figures",
+    "arxiv_journal_ref": "Polymer 334 (2025) 128652",
+    "arxiv_primary_category": {
+      "term": "cond-mat.mtrl-sci",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "physics.app-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2507.00668v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2507.00668v1",
+    "updated": "2025-07-01T11:08:06Z",
+    "updated_parsed": [
+      2025,
+      7,
+      1,
+      11,
+      8,
+      6,
+      1,
+      182,
+      0
+    ],
+    "published": "2025-07-01T11:08:06Z",
+    "published_parsed": [
+      2025,
+      7,
+      1,
+      11,
+      8,
+      6,
+      1,
+      182,
+      0
+    ],
+    "title": "A coupled multiscale model of the human cornea accounting for the\n  collagenous microstructure and the extracellular matrix",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "A coupled multiscale model of the human cornea accounting for the\n  collagenous microstructure and the extracellular matrix"
+    },
+    "summary": "We present a micro-structurally based finite element model of the human\ncornea, where we explicitly describe the collagen-crosslink architecture in\nterms of a trusswork of non-linear struts, and the extracellular proteoglycan\nmatrix in terms of continuum solid elements. We regard the cornea as a\ncomposite material with strongly non-linear properties within a finite\nkinematics framework. This innovative approach is based on two previously\ndeveloped models, each of which has some drawbacks in describing stromal tissue\ndegeneration. Separation of the continuum phase from the collagen\nmicrostructure allows a more realistic capture of the macroscopic phenomena\nobserved in keratoconus pathologies, such as localized deformation.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "We present a micro-structurally based finite element model of the human\ncornea, where we explicitly describe the collagen-crosslink architecture in\nterms of a trusswork of non-linear struts, and the extracellular proteoglycan\nmatrix in terms of continuum solid elements. We regard the cornea as a\ncomposite material with strongly non-linear properties within a finite\nkinematics framework. This innovative approach is based on two previously\ndeveloped models, each of which has some drawbacks in describing stromal tissue\ndegeneration. Separation of the continuum phase from the collagen\nmicrostructure allows a more realistic capture of the macroscopic phenomena\nobserved in keratoconus pathologies, such as localized deformation."
+    },
+    "authors": [
+      {
+        "name": "Christopher Miller"
+      },
+      {
+        "name": "Maria Laura De Bellis"
+      },
+      {
+        "name": "Anna Pandolfi"
+      }
+    ],
+    "author_detail": {
+      "name": "Anna Pandolfi"
+    },
+    "author": "Anna Pandolfi",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2507.00668v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2507.00668v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "math-ph",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "math-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "math.MP",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "65Nxx",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2506.18160v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2506.18160v1",
+    "updated": "2025-06-22T20:27:48Z",
+    "updated_parsed": [
+      2025,
+      6,
+      22,
+      20,
+      27,
+      48,
+      6,
+      173,
+      0
+    ],
+    "published": "2025-06-22T20:27:48Z",
+    "published_parsed": [
+      2025,
+      6,
+      22,
+      20,
+      27,
+      48,
+      6,
+      173,
+      0
+    ],
+    "title": "Automated Plan Refinement for Improving Efficiency of Robotic Layup of\n  Composite Sheets",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Automated Plan Refinement for Improving Efficiency of Robotic Layup of\n  Composite Sheets"
+    },
+    "summary": "The automation of composite sheet layup is essential to meet the increasing\ndemand for composite materials in various industries. However, draping plans\nfor the robotic layup of composite sheets are not robust. A plan that works\nwell under a certain condition does not work well in a different condition.\nChanges in operating conditions due to either changes in material properties or\nworking environment may lead a draping plan to exhibit suboptimal performance.\nIn this paper, we present a comprehensive framework aimed at refining plans\nbased on the observed execution performance. Our framework prioritizes the\nminimization of uncompacted regions while simultaneously improving time\nefficiency. To achieve this, we integrate human expertise with data-driven\ndecision-making to refine expert-crafted plans for diverse production\nenvironments. We conduct experiments to validate the effectiveness of our\napproach, revealing significant reductions in the number of corrective paths\nrequired compared to initial expert-crafted plans. Through a combination of\nempirical data analysis, action-effectiveness modeling, and search-based\nrefinement, our system achieves superior time efficiency in robotic layup.\nExperimental results demonstrate the efficacy of our approach in optimizing the\nlayup process, thereby advancing the state-of-the-art in composite\nmanufacturing automation.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "The automation of composite sheet layup is essential to meet the increasing\ndemand for composite materials in various industries. However, draping plans\nfor the robotic layup of composite sheets are not robust. A plan that works\nwell under a certain condition does not work well in a different condition.\nChanges in operating conditions due to either changes in material properties or\nworking environment may lead a draping plan to exhibit suboptimal performance.\nIn this paper, we present a comprehensive framework aimed at refining plans\nbased on the observed execution performance. Our framework prioritizes the\nminimization of uncompacted regions while simultaneously improving time\nefficiency. To achieve this, we integrate human expertise with data-driven\ndecision-making to refine expert-crafted plans for diverse production\nenvironments. We conduct experiments to validate the effectiveness of our\napproach, revealing significant reductions in the number of corrective paths\nrequired compared to initial expert-crafted plans. Through a combination of\nempirical data analysis, action-effectiveness modeling, and search-based\nrefinement, our system achieves superior time efficiency in robotic layup.\nExperimental results demonstrate the efficacy of our approach in optimizing the\nlayup process, thereby advancing the state-of-the-art in composite\nmanufacturing automation."
+    },
+    "authors": [
+      {
+        "name": "Rutvik Patel"
+      },
+      {
+        "name": "Alec Kanyuck"
+      },
+      {
+        "name": "Zachary McNulty"
+      },
+      {
+        "name": "Zeren Yu"
+      },
+      {
+        "name": "Lisa Carlson"
+      },
+      {
+        "name": "Vann Heng"
+      },
+      {
+        "name": "Brice Johnson"
+      },
+      {
+        "name": "Satyandra K. Gupta"
+      }
+    ],
+    "author_detail": {
+      "name": "Satyandra K. Gupta"
+    },
+    "author": "Satyandra K. Gupta",
+    "arxiv_doi": "10.1109/CASE59546.2024.10711801",
+    "links": [
+      {
+        "title": "doi",
+        "href": "http://dx.doi.org/10.1109/CASE59546.2024.10711801",
+        "rel": "related",
+        "type": "text/html"
+      },
+      {
+        "href": "http://arxiv.org/abs/2506.18160v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2506.18160v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_journal_ref": "2024 IEEE 20th International Conference on Automation Science and\n  Engineering (CASE), Bari, Italy, 2024, pp. 3132-3139",
+    "arxiv_primary_category": {
+      "term": "cs.RO",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cs.RO",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2506.14462v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2506.14462v1",
+    "updated": "2025-06-17T12:20:45Z",
+    "updated_parsed": [
+      2025,
+      6,
+      17,
+      12,
+      20,
+      45,
+      1,
+      168,
+      0
+    ],
+    "published": "2025-06-17T12:20:45Z",
+    "published_parsed": [
+      2025,
+      6,
+      17,
+      12,
+      20,
+      45,
+      1,
+      168,
+      0
+    ],
+    "title": "Phase separation in multiply periodic materials with fine\n  microstructures",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Phase separation in multiply periodic materials with fine\n  microstructures"
+    },
+    "summary": "We study a Cahn-Hilliard model for phase separation in composite materials\nwith multiple periodic microstructures. These are modeled by considering a\nhighly oscillating potential. The focus of this paper is in the case where the\nscales of the microstructures are smaller than that of phase separation. We\nprovide a compactness result and prove that the {\\Gamma}-limit of the energy is\na multiple of the perimeter. In particular, using the recently introduced\nunfolding operator for multiple scales, we show that the taking the limit of\nall of the scales together is equivalent to taking one limit at the time,\nstarting from the smaller scale and keeping the larger fixed.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "We study a Cahn-Hilliard model for phase separation in composite materials\nwith multiple periodic microstructures. These are modeled by considering a\nhighly oscillating potential. The focus of this paper is in the case where the\nscales of the microstructures are smaller than that of phase separation. We\nprovide a compactness result and prove that the {\\Gamma}-limit of the energy is\na multiple of the perimeter. In particular, using the recently introduced\nunfolding operator for multiple scales, we show that the taking the limit of\nall of the scales together is equivalent to taking one limit at the time,\nstarting from the smaller scale and keeping the larger fixed."
+    },
+    "authors": [
+      {
+        "name": "Riccardo Cristoferi"
+      },
+      {
+        "name": "Luca Pignatelli"
+      }
+    ],
+    "author_detail": {
+      "name": "Luca Pignatelli"
+    },
+    "author": "Luca Pignatelli",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2506.14462v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2506.14462v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "math.AP",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "math.AP",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2506.11762v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2506.11762v1",
+    "updated": "2025-06-13T13:17:05Z",
+    "updated_parsed": [
+      2025,
+      6,
+      13,
+      13,
+      17,
+      5,
+      4,
+      164,
+      0
+    ],
+    "published": "2025-06-13T13:17:05Z",
+    "published_parsed": [
+      2025,
+      6,
+      13,
+      13,
+      17,
+      5,
+      4,
+      164,
+      0
+    ],
+    "title": "Vane rheology of a fiber-reinforced granular material",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Vane rheology of a fiber-reinforced granular material"
+    },
+    "summary": "The addition of a small quantity of flexible fibers in a granular material is\nan efficient technique to increase the yield stress of the material. While the\ninfluence of fiber addition on the mechanical strength of granular media has\nbeen studied, much less is known about the flow properties of grain-fiber\nmixtures. In this article, we explore the effect of flexible fibers on the flow\nbehavior of grain-fiber mixtures above the yield stress. We use a vane geometry\nto study the rheology of a dry granular material mixed with flexible fibers\nwith different volume fractions and properties. The vane is immersed in the\nmaterial, and the granular pressure increases with the depth of immersion. When\nthe vane begins rotating, we observe a transient regime, which depends on the\nnumber of blades and is associated with the mobilization of material between\nthe blades. Following this transient phase, a stationary regime is reached. By\nmeasuring and modeling the stationary flow that develops around the vane, we\ndeduce the effective friction coefficient of the material from the torque\nmeasured on the vane. Following this approach, we investigate the effect of the\nfiber volume fraction and the aspect ratio on the effective friction\ncoefficient of the grain-fiber mixture. Our results show that the effective\nfriction coefficient increases linearly with fiber volume fraction and\nexponentially with fiber aspect ratio. These findings provide new fundamental\ninsights into the flow properties of grain-fiber mixtures.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "The addition of a small quantity of flexible fibers in a granular material is\nan efficient technique to increase the yield stress of the material. While the\ninfluence of fiber addition on the mechanical strength of granular media has\nbeen studied, much less is known about the flow properties of grain-fiber\nmixtures. In this article, we explore the effect of flexible fibers on the flow\nbehavior of grain-fiber mixtures above the yield stress. We use a vane geometry\nto study the rheology of a dry granular material mixed with flexible fibers\nwith different volume fractions and properties. The vane is immersed in the\nmaterial, and the granular pressure increases with the depth of immersion. When\nthe vane begins rotating, we observe a transient regime, which depends on the\nnumber of blades and is associated with the mobilization of material between\nthe blades. Following this transient phase, a stationary regime is reached. By\nmeasuring and modeling the stationary flow that develops around the vane, we\ndeduce the effective friction coefficient of the material from the torque\nmeasured on the vane. Following this approach, we investigate the effect of the\nfiber volume fraction and the aspect ratio on the effective friction\ncoefficient of the grain-fiber mixture. Our results show that the effective\nfriction coefficient increases linearly with fiber volume fraction and\nexponentially with fiber aspect ratio. These findings provide new fundamental\ninsights into the flow properties of grain-fiber mixtures."
+    },
+    "authors": [
+      {
+        "name": "Ladislas Wierzchalek"
+      },
+      {
+        "name": "Georges Gauthier"
+      },
+      {
+        "name": "Baptiste Darbois-Texier"
+      }
+    ],
+    "author_detail": {
+      "name": "Baptiste Darbois-Texier"
+    },
+    "author": "Baptiste Darbois-Texier",
+    "arxiv_doi": "10.1122/8.0000960",
+    "links": [
+      {
+        "title": "doi",
+        "href": "http://dx.doi.org/10.1122/8.0000960",
+        "rel": "related",
+        "type": "text/html"
+      },
+      {
+        "href": "http://arxiv.org/abs/2506.11762v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2506.11762v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_journal_ref": "(Vol.69, Issue 3), 2025",
+    "arxiv_primary_category": {
+      "term": "cond-mat.soft",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cond-mat.soft",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2506.11203v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2506.11203v1",
+    "updated": "2025-06-12T18:02:19Z",
+    "updated_parsed": [
+      2025,
+      6,
+      12,
+      18,
+      2,
+      19,
+      3,
+      163,
+      0
+    ],
+    "published": "2025-06-12T18:02:19Z",
+    "published_parsed": [
+      2025,
+      6,
+      12,
+      18,
+      2,
+      19,
+      3,
+      163,
+      0
+    ],
+    "title": "On Universal Deformations of Compressible Cauchy Elastic Solids\n  Reinforced by Inextensible Fibers",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "On Universal Deformations of Compressible Cauchy Elastic Solids\n  Reinforced by Inextensible Fibers"
+    },
+    "summary": "Universal deformations are those that can be maintained in the absence of\nbody forces and by applying only boundary tractions, for all materials within a\ngiven constitutive class. We study the universal deformations of compressible\nisotropic Cauchy elastic solids reinforced by a single family of inextensible\nfibers. We consider straight fibers parallel to the Cartesian Z-axis in the\nreference configuration and derive the universality constraints. The principal\ninvariants of the right Cauchy-Green strain are functions of Z alone. When at\nleast one principal invariant is not constant, the strain depends only on Z,\nwith $C_{XZ} = C_{YZ} = 0$ and $C_{ZZ} = 1$, leaving three independent\ncomponents: $C_{XX}$, $C_{XY}$, and $C_{YY}$. Determining universal\ndeformations then reduces to ensuring compatibility, which is equivalent to\nrequiring that the Ricci tensor vanishes. This yields a system of four\nsecond-order, nonlinear, coupled ordinary differential equations for the three\nunknown components. We fully solve this problem using Cartan's method of moving\nframes and obtain two families of universal deformations, referred to as\nFamilies Z1 and Z2, which are inhomogeneous and non-isochoric. If all three\nprincipal invariants are constant, the problem reduces to a system of nonlinear\nPDEs reminiscent of Ericksen's open problem. In addition to homogeneous\ndeformations satisfying the Z-inextensibility constraint (Family Z0), a subset\nof Family 5 universal deformations of incompressible isotropic elasticity --\nspecifically those satisfying the inextensibility constraint -- are also\nuniversal for fiber-reinforced solids (Family 5Z). The complete solution of\nthis case remains open. Finally, we show that the universal deformations for\nthis class of Cauchy elastic solids are identical to those of the corresponding\nhyperelastic solids.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Universal deformations are those that can be maintained in the absence of\nbody forces and by applying only boundary tractions, for all materials within a\ngiven constitutive class. We study the universal deformations of compressible\nisotropic Cauchy elastic solids reinforced by a single family of inextensible\nfibers. We consider straight fibers parallel to the Cartesian Z-axis in the\nreference configuration and derive the universality constraints. The principal\ninvariants of the right Cauchy-Green strain are functions of Z alone. When at\nleast one principal invariant is not constant, the strain depends only on Z,\nwith $C_{XZ} = C_{YZ} = 0$ and $C_{ZZ} = 1$, leaving three independent\ncomponents: $C_{XX}$, $C_{XY}$, and $C_{YY}$. Determining universal\ndeformations then reduces to ensuring compatibility, which is equivalent to\nrequiring that the Ricci tensor vanishes. This yields a system of four\nsecond-order, nonlinear, coupled ordinary differential equations for the three\nunknown components. We fully solve this problem using Cartan's method of moving\nframes and obtain two families of universal deformations, referred to as\nFamilies Z1 and Z2, which are inhomogeneous and non-isochoric. If all three\nprincipal invariants are constant, the problem reduces to a system of nonlinear\nPDEs reminiscent of Ericksen's open problem. In addition to homogeneous\ndeformations satisfying the Z-inextensibility constraint (Family Z0), a subset\nof Family 5 universal deformations of incompressible isotropic elasticity --\nspecifically those satisfying the inextensibility constraint -- are also\nuniversal for fiber-reinforced solids (Family 5Z). The complete solution of\nthis case remains open. Finally, we show that the universal deformations for\nthis class of Cauchy elastic solids are identical to those of the corresponding\nhyperelastic solids."
+    },
+    "authors": [
+      {
+        "name": "Arash Yavari"
+      }
+    ],
+    "author_detail": {
+      "name": "Arash Yavari"
+    },
+    "author": "Arash Yavari",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2506.11203v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2506.11203v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "math-ph",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "math-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "math.MP",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2506.11177v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2506.11177v1",
+    "updated": "2025-06-12T11:06:09Z",
+    "updated_parsed": [
+      2025,
+      6,
+      12,
+      11,
+      6,
+      9,
+      3,
+      163,
+      0
+    ],
+    "published": "2025-06-12T11:06:09Z",
+    "published_parsed": [
+      2025,
+      6,
+      12,
+      11,
+      6,
+      9,
+      3,
+      163,
+      0
+    ],
+    "title": "Resolving Discrepancies in Wood Micromechanics: Strain-Mapped\n  Compression of Tracheid Wall Micropillars",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Resolving Discrepancies in Wood Micromechanics: Strain-Mapped\n  Compression of Tracheid Wall Micropillars"
+    },
+    "summary": "Wood's increasing role as a structural resource in sustainable materials\nselection demands accurate characterization of its mechanical behavior. Its\nperformance arises from a hierarchical structure, where the dominant\nload-bearing component is the S2 layer of tracheid cell walls-a thick,\nfiber-reinforced composite of cellulose microfibrils embedded in hemicelluloses\nand lignin. Due to the small dimensions and anisotropic nature of the S2 layer,\nmechanical testing presents significant challenges, particularly in producing\nhomogeneous stress and strain fields. In this study, we apply micropillar\ncompression (MPC) combined with digital image correlation (DIC) to Norway\nspruce tracheids, enabling direct and model-free strain measurements at the\ncell wall scale. Micropillars were oriented at different microfibril angles\n(MFAs), confirming the expected dependence of stiffness and yield stress on\nultrastructural alignment, with higher stiffness and yield stress at low MFAs.\nFor these under compression fibril-aligned kink bands occurred, while shear\nrelated failure was observed at higher angles. A parameter study on the\nacceleration voltage of the Scanning Electron Microscope revealed that electron\nbeam exposure significantly degrades pillar integrity, which could explain data\nscatter and mechanical underestimation in earlier MPC studies. By controlling\nimaging protocols and using DIC-based strain measurements, we report the\nhighest direct measurements of wood cell wall stiffness to date-up to 42 GPa\nfor MFA=0{\\deg}-closer matching micromechanical model predictions compared to\nprevious results. Findings are compared with Finite Element Method-based\ndisplacement corrections to establish a robust protocol for probing soft,\nanisotropic biological composites' mechanical behavior while clarifying\nlongstanding inconsistencies in reported results of wood MPC measurements.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Wood's increasing role as a structural resource in sustainable materials\nselection demands accurate characterization of its mechanical behavior. Its\nperformance arises from a hierarchical structure, where the dominant\nload-bearing component is the S2 layer of tracheid cell walls-a thick,\nfiber-reinforced composite of cellulose microfibrils embedded in hemicelluloses\nand lignin. Due to the small dimensions and anisotropic nature of the S2 layer,\nmechanical testing presents significant challenges, particularly in producing\nhomogeneous stress and strain fields. In this study, we apply micropillar\ncompression (MPC) combined with digital image correlation (DIC) to Norway\nspruce tracheids, enabling direct and model-free strain measurements at the\ncell wall scale. Micropillars were oriented at different microfibril angles\n(MFAs), confirming the expected dependence of stiffness and yield stress on\nultrastructural alignment, with higher stiffness and yield stress at low MFAs.\nFor these under compression fibril-aligned kink bands occurred, while shear\nrelated failure was observed at higher angles. A parameter study on the\nacceleration voltage of the Scanning Electron Microscope revealed that electron\nbeam exposure significantly degrades pillar integrity, which could explain data\nscatter and mechanical underestimation in earlier MPC studies. By controlling\nimaging protocols and using DIC-based strain measurements, we report the\nhighest direct measurements of wood cell wall stiffness to date-up to 42 GPa\nfor MFA=0{\\deg}-closer matching micromechanical model predictions compared to\nprevious results. Findings are compared with Finite Element Method-based\ndisplacement corrections to establish a robust protocol for probing soft,\nanisotropic biological composites' mechanical behavior while clarifying\nlongstanding inconsistencies in reported results of wood MPC measurements."
+    },
+    "authors": [
+      {
+        "name": "Júlio O. Amando de Barros"
+      },
+      {
+        "name": "Jakob Schwiedrzik"
+      },
+      {
+        "name": "Falk K. Wittel"
+      }
+    ],
+    "author_detail": {
+      "name": "Falk K. Wittel"
+    },
+    "author": "Falk K. Wittel",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2506.11177v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2506.11177v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "physics.bio-ph",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "physics.bio-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2506.05741v2",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2506.05741v2",
+    "updated": "2025-06-13T16:03:28Z",
+    "updated_parsed": [
+      2025,
+      6,
+      13,
+      16,
+      3,
+      28,
+      4,
+      164,
+      0
+    ],
+    "published": "2025-06-06T04:55:12Z",
+    "published_parsed": [
+      2025,
+      6,
+      6,
+      4,
+      55,
+      12,
+      4,
+      157,
+      0
+    ],
+    "title": "A Soft Robotic Module with Pneumatic Actuation and Enhanced\n  Controllability Using a Shape Memory Alloy Wire",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "A Soft Robotic Module with Pneumatic Actuation and Enhanced\n  Controllability Using a Shape Memory Alloy Wire"
+    },
+    "summary": "In this paper, a compressed air-actuated soft robotic module was developed by\nincorporating a shape memory alloy (SMA) wire into its structure to achieve the\ndesired bending angle with greater precision. First, a fiber-reinforced bending\nmodule with a strain-limiting layer made of polypropylene was fabricated. The\nSMA wire was then placed in a silicon matrix, which was used as a new\nstrain-limiting layer. A simple closed-loop control algorithm was used to\nregulate the bending angle of the soft robot within its workspace. A camera was\nutilized to measure the angular changes in the vertical plane. Different\nangles, ranging from 0 to 65 degrees, were covered to evaluate the performance\nof the module and the bending angle control algorithm. The experimental tests\ndemonstrate that using the SMA wire results in more precise control of bending\nin the vertical plane. In addition, it is possible to bend more with less\nworking pressure. The error range was reduced from an average of 5 degrees to 2\ndegrees, and the rise time was reduced from an average of 19 seconds to 3\nseconds.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "In this paper, a compressed air-actuated soft robotic module was developed by\nincorporating a shape memory alloy (SMA) wire into its structure to achieve the\ndesired bending angle with greater precision. First, a fiber-reinforced bending\nmodule with a strain-limiting layer made of polypropylene was fabricated. The\nSMA wire was then placed in a silicon matrix, which was used as a new\nstrain-limiting layer. A simple closed-loop control algorithm was used to\nregulate the bending angle of the soft robot within its workspace. A camera was\nutilized to measure the angular changes in the vertical plane. Different\nangles, ranging from 0 to 65 degrees, were covered to evaluate the performance\nof the module and the bending angle control algorithm. The experimental tests\ndemonstrate that using the SMA wire results in more precise control of bending\nin the vertical plane. In addition, it is possible to bend more with less\nworking pressure. The error range was reduced from an average of 5 degrees to 2\ndegrees, and the rise time was reduced from an average of 19 seconds to 3\nseconds."
+    },
+    "authors": [
+      {
+        "name": "Mohammadnavid Golchin"
+      }
+    ],
+    "author_detail": {
+      "name": "Mohammadnavid Golchin"
+    },
+    "author": "Mohammadnavid Golchin",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2506.05741v2",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2506.05741v2",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cs.RO",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cs.RO",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  }
+]
