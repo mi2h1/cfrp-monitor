@@ -4,6 +4,11 @@
 
 ## 🎯 基本方針
 
+### 作業開始前の必須確認事項
+- **CLAUDE.mdを読む** - このファイルで決まり事を確認
+- **database-schema-complete.mdを読む** - DBスキーマを理解してから作業開始
+- **現在の作業内容を把握** - 前回の作業内容と今回の目標を明確にする
+
 ### 作業フロー
 - **作業完了後は必ずプッシュする** - 開発環境がないため、作業完了後は毎回必ずgit pushを実行
 - **TodoWriteツールを積極的に使用** - 複数ステップの作業は必ずtodoで管理し、進捗を可視化
@@ -57,6 +62,22 @@ vercel.json          # Vercel設定
 - **admin**: 全機能アクセス可能
 - **editor**: 記事・情報源管理可能
 - **viewer**: 記事閲覧のみ
+
+## 🗃️ データベース構造（重要）
+
+### メインテーブル
+- **items**: 記事データ（id, source_id, title, url, body, published_at, status, flagged, comments, added_at, reviewed_at, last_edited_by, reviewer）
+- **sources**: 情報源（id, name, domain, category, country_code, relevance, urls, acquisition_mode, deleted, etc.）
+- **users**: ユーザー（user_id, display_name, role, password_hash, created_at, etc.）
+- **source_candidates**: 探索候補（id, name, domain, urls, relevance_score, status, discovery_method, etc.）
+
+### 重要な関係性
+- items.source_id → sources.id（外部キー）
+- items.status: 'unread', 'reviewed', 'flagged', 'archived'
+- sources.acquisition_mode: 'auto', 'manual', 'disabled'
+- users.role: 'admin', 'editor', 'viewer'
+
+**詳細は必ずdatabase-schema-complete.mdを確認すること！**
 
 ## 🔧 開発時の注意点
 
