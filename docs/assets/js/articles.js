@@ -265,10 +265,10 @@ function createCompactArticleCard(article) {
                         </h6>
                     </div>
                     <div class="d-flex align-items-center gap-3 mb-1">
-                        <small class="text-muted">📅 ${pubDate}</small>
-                        <small class="text-muted">📰 ${sourceName}</small>
+                        <small class="text-muted"><i class="fas fa-calendar-alt"></i> ${pubDate}</small>
+                        <small class="text-muted"><i class="fas fa-rss"></i> ${sourceName}</small>
                     </div>
-                    ${article.comments ? `<small class="text-muted d-block">💬 ${escapeHtml(article.comments.substring(0, 150))}${article.comments.length > 150 ? '...' : ''}</small>` : ''}
+                    ${article.comments ? `<small class="text-muted d-block"><i class="fas fa-comment"></i> ${escapeHtml(article.comments.substring(0, 150))}${article.comments.length > 150 ? '...' : ''}</small>` : ''}
                 </div>
                 <div class="text-end">
                     <button class="btn btn-outline-primary btn-sm edit-article-btn" data-id="${article.id}" onclick="event.stopPropagation();">編集</button>
@@ -298,8 +298,8 @@ function createDetailArticleCard(article) {
             </div>
             
             <div class="article-meta mb-2">
-                <span class="me-3">📅 ${pubDate}</span>
-                <span class="me-3">📰 ${sourceName}</span>
+                <span class="me-3"><i class="fas fa-calendar-alt"></i> ${pubDate}</span>
+                <span class="me-3"><i class="fas fa-rss"></i> ${sourceName}</span>
                 ${article.flagged ? '<span class="badge bg-danger">重要</span>' : ''}
             </div>
             
