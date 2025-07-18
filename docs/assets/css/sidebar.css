@@ -79,12 +79,17 @@ body {
     color: white;
 }
 
+/* ナビゲーションラベル */
+.nav-label {
+    display: flex;
+    flex-direction: column;
+}
+
 /* 最終更新時刻表示 */
 .nav-last-updated {
     font-size: 0.7rem;
     color: #888;
-    margin-top: 0.25rem;
-    margin-left: 2rem;
+    margin-top: 0.2rem;
     line-height: 1;
 }
 

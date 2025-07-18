@@ -96,9 +96,11 @@ function generateNavigation(navItems, activePageId, lastUpdated = null) {
         return `<div class="nav-item">
             <a class="nav-link ${(activePageId === item.id) ? 'active' : ''}" href="${item.href}">
                 <span class="nav-icon"><i class="fas ${item.icon || 'fa-circle'}"></i></span>
-                <span>${item.label}</span>
+                <span class="nav-label">
+                    <span>${item.label}</span>
+                    ${lastUpdatedHtml}
+                </span>
             </a>
-            ${lastUpdatedHtml}
         </div>`;
     }).join('');
 }
