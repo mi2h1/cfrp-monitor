@@ -237,7 +237,7 @@ function createDetailSourceCard(source) {
             </div>
             
             <div class="source-meta mb-2">
-                <span class="me-3">🌐 ${source.domain}</span>
+                <span class="me-3"><i class="fas fa-globe"></i> ${source.domain}</span>
                 <span class="me-3">📂 ${source.category || 'その他'}</span>
                 <span class="me-3">🌍 ${source.country_code || 'Unknown'}</span>
                 <span class="me-3">⭐ ${source.relevance || 0}</span>
@@ -253,7 +253,7 @@ function createDetailSourceCard(source) {
                             <div class="url-actions">
                                 <button class="btn btn-outline-primary btn-sm test-url-btn" 
                                         data-url="${escapeHtml(url)}" title="RSS記事を取得テスト">
-                                    🔍
+                                    <i class="fas fa-search"></i>
                                 </button>
                                 <button class="btn btn-outline-danger btn-sm remove-url-btn" 
                                         title="URLを削除">
@@ -267,7 +267,7 @@ function createDetailSourceCard(source) {
                             <input type="url" class="form-control new-url-input" 
                                    placeholder="新しいURLを追加...">
                             <button class="btn btn-outline-success add-url-btn" type="button">
-                                ➕ 追加
+                                <i class="fas fa-plus"></i> 追加
                             </button>
                         </div>
                     </div>
@@ -503,7 +503,7 @@ function addNewUrl(button) {
         <div class="url-actions">
             <button class="btn btn-outline-primary btn-sm test-url-btn" 
                     data-url="${escapeHtml(newUrl)}" title="URLをテスト">
-                🔍
+                <i class="fas fa-search"></i>
             </button>
             <button class="btn btn-outline-danger btn-sm remove-url-btn" 
                     title="URLを削除">
@@ -681,15 +681,15 @@ async function testRssFeed(url, contentElement = null) {
         // 結果を表示
         content.innerHTML = `
             <div class="alert alert-success">
-                <h6>✅ RSSフィードの取得に成功しました！</h6>
+                <h6><i class="fas fa-check-circle text-success"></i> RSSフィードの取得に成功しました！</h6>
                 <p class="mb-1">記事数: ${items.length}件</p>
             </div>
             
             <h6>最新記事のプレビュー:</h6>
             <div class="rss-article-preview">
                 <h6 class="text-primary">${escapeHtml(title)}</h6>
-                ${pubDate ? `<p class="small text-muted mb-2">📅 ${new Date(pubDate).toLocaleString('ja-JP')}</p>` : ''}
-                ${link ? `<p class="small mb-2">🔗 <a href="${escapeHtml(link)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 400px;">${escapeHtml(link)}</a></p>` : ''}
+                ${pubDate ? `<p class="small text-muted mb-2"><i class="fas fa-calendar-alt"></i> ${new Date(pubDate).toLocaleString('ja-JP')}</p>` : ''}
+                ${link ? `<p class="small mb-2"><i class="fas fa-link"></i> <a href="${escapeHtml(link)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 400px;">${escapeHtml(link)}</a></p>` : ''}
                 ${description ? `<div class="small">${escapeHtml(description.substring(0, 200))}${description.length > 200 ? '...' : ''}</div>` : ''}
             </div>
             
@@ -703,7 +703,7 @@ async function testRssFeed(url, contentElement = null) {
         if (error.message === 'ACCESS_DENIED') {
             content.innerHTML = `
                 <div class="alert alert-warning">
-                    <h6>⚠️ アクセスが拒否されました</h6>
+                    <h6><i class="fas fa-exclamation-triangle text-warning"></i> アクセスが拒否されました</h6>
                     <p>サーバーがプロキシ経由のアクセスをブロックしています。</p>
                 </div>
                 
@@ -729,7 +729,7 @@ async function testRssFeed(url, contentElement = null) {
         } else {
             content.innerHTML = `
                 <div class="alert alert-danger">
-                    <h6>❌ エラーが発生しました</h6>
+                    <h6><i class="fas fa-times-circle text-danger"></i> エラーが発生しました</h6>
                     <p class="mb-0">${escapeHtml(error.message)}</p>
                 </div>
                 
@@ -788,21 +788,21 @@ function parseManualRss() {
         // 結果を表示
         content.innerHTML = `
             <div class="alert alert-success">
-                <h6>✅ RSSフィードの解析に成功しました！（手動入力）</h6>
+                <h6><i class="fas fa-check-circle text-success"></i> RSSフィードの解析に成功しました！（手動入力）</h6>
                 <p class="mb-1">記事数: ${items.length}件</p>
             </div>
             
             <h6>最新記事のプレビュー:</h6>
             <div class="rss-article-preview">
                 <h6 class="text-primary">${escapeHtml(title)}</h6>
-                ${pubDate ? `<p class="small text-muted mb-2">📅 ${new Date(pubDate).toLocaleString('ja-JP')}</p>` : ''}
-                ${link ? `<p class="small mb-2">🔗 <a href="${escapeHtml(link)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 400px;">${escapeHtml(link)}</a></p>` : ''}
+                ${pubDate ? `<p class="small text-muted mb-2"><i class="fas fa-calendar-alt"></i> ${new Date(pubDate).toLocaleString('ja-JP')}</p>` : ''}
+                ${link ? `<p class="small mb-2"><i class="fas fa-link"></i> <a href="${escapeHtml(link)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 400px;">${escapeHtml(link)}</a></p>` : ''}
                 ${description ? `<div class="small">${escapeHtml(description.substring(0, 200))}${description.length > 200 ? '...' : ''}</div>` : ''}
             </div>
             
             <div class="mt-3 text-muted small">
                 <p class="mb-0">フォーマット: ${xml.documentElement.tagName === 'rss' ? 'RSS' : 'Atom'}</p>
-                <p class="mb-0 text-success">✅ このURLは有効なRSSフィードです</p>
+                <p class="mb-0 text-success"><i class="fas fa-check-circle"></i> このURLは有効なRSSフィードです</p>
             </div>
         `;
         
@@ -1012,37 +1012,37 @@ function renderCandidates() {
                     <strong>${escapeHtml(candidate.name)}</strong>
                 </div>
                 <div class="small text-muted">
-                    <span class="me-3">🌐 ${escapeHtml(candidate.domain)}</span>
-                    <span class="me-3">🏷️ ${escapeHtml(candidate.language)}</span>
-                    <span class="me-3">📊 ${(candidate.relevance_score * 100).toFixed(0)}%</span>
+                    <span class="me-3"><i class="fas fa-globe"></i> ${escapeHtml(candidate.domain)}</span>
+                    <span class="me-3"><i class="fas fa-language"></i> ${escapeHtml(candidate.language)}</span>
+                    <span class="me-3"><i class="fas fa-chart-line"></i> ${(candidate.relevance_score * 100).toFixed(0)}%</span>
                 </div>
             </td>
             <td>
                 <div class="small">
-                    ${candidate.urls.map(url => `<div>📡 <a href="${escapeHtml(url)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;">${escapeHtml(url)}</a></div>`).join('')}
+                    ${candidate.urls.map(url => `<div><i class="fas fa-rss"></i> <a href="${escapeHtml(url)}" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;">${escapeHtml(url)}</a></div>`).join('')}
                 </div>
             </td>
             <td>
                 <div class="small text-muted">
-                    <div>📅 ${new Date(candidate.discovered_at).toLocaleDateString('ja-JP')}</div>
-                    <div>🔍 ${getDiscoveryMethodText(candidate.discovery_method)}</div>
+                    <div><i class="fas fa-calendar-alt"></i> ${new Date(candidate.discovered_at).toLocaleDateString('ja-JP')}</div>
+                    <div><i class="fas fa-search"></i> ${getDiscoveryMethodText(candidate.discovery_method)}</div>
                 </div>
             </td>
             <td>
                 <div class="btn-group-sm">
                     ${candidate.status === 'pending' ? `
                         <button class="btn btn-success btn-sm me-1" onclick="approveCandidate('${candidate.id}')">
-                            ✅ 承認
+                            <i class="fas fa-check"></i> 承認
                         </button>
                         <button class="btn btn-warning btn-sm me-1" onclick="holdCandidate('${candidate.id}')">
                             ⏸️ 保留
                         </button>
                         <button class="btn btn-outline-danger btn-sm" onclick="rejectCandidate('${candidate.id}')">
-                            ❌ 却下
+                            <i class="fas fa-times"></i> 却下
                         </button>
                     ` : `
                         <button class="btn btn-outline-secondary btn-sm" onclick="viewCandidateDetails('${candidate.id}')">
-                            📋 詳細
+                            <i class="fas fa-info-circle"></i> 詳細
                         </button>
                     `}
                 </div>
@@ -1260,7 +1260,7 @@ function viewCandidateDetails(candidateId) {
                 <strong>フィードURL:</strong>
                 <ul class="list-unstyled ms-3">
                     ${candidate.urls.map(url => `
-                        <li>📡 <a href="${escapeHtml(url)}" target="_blank">${escapeHtml(url)}</a></li>
+                        <li><i class="fas fa-rss"></i> <a href="${escapeHtml(url)}" target="_blank">${escapeHtml(url)}</a></li>
                     `).join('')}
                 </ul>
             </div>
@@ -1275,13 +1275,13 @@ function viewCandidateDetails(candidateId) {
             ${candidate.status === 'pending' ? `
                 <div class="mt-4">
                     <button class="btn btn-success me-2" onclick="approveCandidate('${candidate.id}'); document.getElementById('candidateDetailsModal').style.display='none';">
-                        ✅ 承認
+                        <i class="fas fa-check"></i> 承認
                     </button>
                     <button class="btn btn-warning me-2" onclick="holdCandidate('${candidate.id}'); document.getElementById('candidateDetailsModal').style.display='none';">
-                        ⏸️ 保留
+                        <i class="fas fa-pause"></i> 保留
                     </button>
                     <button class="btn btn-outline-danger" onclick="rejectCandidate('${candidate.id}'); document.getElementById('candidateDetailsModal').style.display='none';">
-                        ❌ 却下
+                        <i class="fas fa-times"></i> 却下
                     </button>
                 </div>
             ` : ''}
