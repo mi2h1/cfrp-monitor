@@ -68,11 +68,6 @@ CFRP（炭素繊維強化プラスチック）業界の最新情報を自動収�
 - **source_candidates**: 探索候補管理（承認・却下・保留ステータス）
 - **task_logs**: 自動実行ログ
 
-### 重要な関係性
-- `items.source_id → sources.id`（外部キー）
-- `items.status`: 'unread', 'reviewed', 'flagged', 'archived'
-- `sources.acquisition_mode`: 'auto', 'manual', 'disabled', 'new'
-- `users.role`: 'admin', 'editor', 'viewer'
 
 ## 🌍 情報源カバレッジ
 
