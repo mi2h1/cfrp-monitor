@@ -56,7 +56,7 @@ async function initializeNavigation(activePageId) {
         const data = await response.json();
         
         if (data.success) {
-            generateNavigation(data.layout.navigation, activePageId);
+            generateNavigation(data.layout.navigation, activePageId, data.last_updated);
             displayUserInfo(data.user, data.layout.user_menu);
             window.userFeatures = data.layout.features;
             setupUnifiedLogout();
@@ -77,18 +77,30 @@ async function initializeNavigation(activePageId) {
 }
 
 // 統一されたナビゲーション生成関数（サイドバー用）
-function generateNavigation(navItems, activePageId) {
+function generateNavigation(navItems, activePageId, lastUpdated = null) {
     const navContainer = document.getElementById('sidebarNav');
     if (!navContainer) return;
     
-    navContainer.innerHTML = navItems.map(item => 
-        `<div class="nav-item">
+    navContainer.innerHTML = navItems.map(item => {
+        let lastUpdatedHtml = '';
+        
+        // 最終更新時刻を表示（記事管理と情報源管理のみ）
+        if (lastUpdated) {
+            if (item.id === 'articles' && lastUpdated.articles) {
+                lastUpdatedHtml = `<div class="nav-last-updated">最終更新：${lastUpdated.articles}</div>`;
+            } else if (item.id === 'sources' && lastUpdated.sources) {
+                lastUpdatedHtml = `<div class="nav-last-updated">最終更新：${lastUpdated.sources}</div>`;
+            }
+        }
+        
+        return `<div class="nav-item">
             <a class="nav-link ${(activePageId === item.id) ? 'active' : ''}" href="${item.href}">
                 <span class="nav-icon"><i class="fas ${item.icon || 'fa-circle'}"></i></span>
                 <span>${item.label}</span>
             </a>
-        </div>`
-    ).join('');
+            ${lastUpdatedHtml}
+        </div>`;
+    }).join('');
 }
 
 // 統一されたユーザー情報表示関数（サイドバー用）

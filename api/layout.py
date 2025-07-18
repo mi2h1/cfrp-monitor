@@ -2,6 +2,8 @@ from http.server import BaseHTTPRequestHandler
 import json
 import os
 import jwt
+import urllib.request
+import datetime
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -24,9 +26,13 @@ class handler(BaseHTTPRequestHandler):
             # ユーザー権限に基づいてナビゲーションを生成
             layout_config = self.generate_layout(user_data)
             
+            # 最終更新時刻を取得
+            last_updated_stats = self.get_last_updated_stats()
+            
             response = {
                 "success": True,
                 "layout": layout_config,
+                "last_updated": last_updated_stats,
                 "user": {
                     "user_id": user_data.get('user_id'),
                     "display_name": user_data.get('display_name'),
@@ -146,3 +152,74 @@ class handler(BaseHTTPRequestHandler):
                 }.get(role, role)
             }
         }
+
+    def get_last_updated_stats(self):
+        """記事管理と情報源管理の最終更新時刻を取得"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return None
+            
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json'
+            }
+            
+            stats = {}
+            
+            # 記事の最終更新を取得（追加日時または確認日時の新しい方）
+            try:
+                articles_url = f"{supabase_url}/rest/v1/articles?select=added_at,reviewed_at&order=added_at.desc&limit=1"
+                req = urllib.request.Request(articles_url, headers=headers)
+                with urllib.request.urlopen(req) as response:
+                    articles_data = json.loads(response.read().decode('utf-8'))
+                    if articles_data:
+                        latest_article = articles_data[0]
+                        # reviewed_atがあればそれを、なければadded_atを使用
+                        article_updated = latest_article.get('reviewed_at') or latest_article.get('added_at')
+                        if article_updated:
+                            # ISO形式からyyyy/mm/dd hh:mm形式に変換
+                            dt = datetime.datetime.fromisoformat(article_updated.replace('Z', '+00:00'))
+                            # 日本時間に変換
+                            jst = dt + datetime.timedelta(hours=9)
+                            stats['articles'] = jst.strftime('%Y/%m/%d %H:%M')
+                        else:
+                            stats['articles'] = None
+                    else:
+                        stats['articles'] = None
+            except Exception as e:
+                print(f"Articles last updated error: {e}")
+                stats['articles'] = None
+            
+            # 情報源の最終更新を取得（収集日時または更新日時の新しい方）
+            try:
+                sources_url = f"{supabase_url}/rest/v1/sources?select=updated_at,last_collected_at&order=updated_at.desc&limit=1"
+                req = urllib.request.Request(sources_url, headers=headers)
+                with urllib.request.urlopen(req) as response:
+                    sources_data = json.loads(response.read().decode('utf-8'))
+                    if sources_data:
+                        latest_source = sources_data[0]
+                        # last_collected_atがあればそれを、なければupdated_atを使用
+                        source_updated = latest_source.get('last_collected_at') or latest_source.get('updated_at')
+                        if source_updated:
+                            # ISO形式からyyyy/mm/dd hh:mm形式に変換
+                            dt = datetime.datetime.fromisoformat(source_updated.replace('Z', '+00:00'))
+                            # 日本時間に変換
+                            jst = dt + datetime.timedelta(hours=9)
+                            stats['sources'] = jst.strftime('%Y/%m/%d %H:%M')
+                        else:
+                            stats['sources'] = None
+                    else:
+                        stats['sources'] = None
+            except Exception as e:
+                print(f"Sources last updated error: {e}")
+                stats['sources'] = None
+            
+            return stats
+                
+        except Exception as e:
+            print(f"Get last updated stats error: {e}")
+            return None

@@ -79,6 +79,15 @@ body {
     color: white;
 }
 
+/* 最終更新時刻表示 */
+.nav-last-updated {
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 0.25rem;
+    margin-left: 2rem;
+    line-height: 1;
+}
+
 .nav-link.active:hover {
     background-color: #0056b3;
 }
