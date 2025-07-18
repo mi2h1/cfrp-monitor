@@ -92,6 +92,9 @@ async function loadArticles() {
 // 指定されたページの記事を取得
 async function loadArticlesPage(page, totalCount = null) {
     try {
+        // ローディング状態を表示
+        showLoadingState();
+        
         const itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
         const offset = (page - 1) * itemsPerPage;
         
@@ -131,19 +134,43 @@ async function loadArticlesPage(page, totalCount = null) {
         const data = await response.json();
         
         if (!data.success) {
+            hideLoadingState();
             throw new Error(data.error || '記事の読み込みに失敗しました');
         }
         
         articles = data.articles || [];
         currentPage = page;
         
+        // ローディング状態を非表示
+        hideLoadingState();
+        
         renderArticles();
         renderPagination(totalCount, itemsPerPage, page);
         
     } catch (error) {
         console.error('記事ページ読み込みエラー:', error);
+        hideLoadingState();
         document.getElementById('articlesContainer').innerHTML = '<div class="alert alert-danger">記事の読み込みに失敗しました: ' + error.message + '</div>';
     }
+}
+
+// ローディング状態管理関数
+function showLoadingState() {
+    const container = document.getElementById('articlesContainer');
+    container.innerHTML = `
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 300px;">
+            <div class="text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">読み込み中...</span>
+                </div>
+                <p class="text-muted">記事を読み込んでいます...</p>
+            </div>
+        </div>
+    `;
+}
+
+function hideLoadingState() {
+    // 特に何もしない（renderArticles()で内容が置き換わるため）
 }
 
 // タスクログ機能は削除（APIで実装しないため）
