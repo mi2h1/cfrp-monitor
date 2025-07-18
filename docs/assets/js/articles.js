@@ -204,8 +204,25 @@ function renderArticlesWithServerPagination(totalCount, itemsPerPage) {
         return;
     }
 
-    // 記事表示
-    container.innerHTML = articles.map(article => createCompactArticleCard(article)).join('');
+    // テーブル形式で記事表示
+    container.innerHTML = `
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 150px;">ステータス</th>
+                        <th>タイトル</th>
+                        <th style="width: 150px;">情報源</th>
+                        <th style="width: 120px;">公開日</th>
+                        <th style="width: 100px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${articles.map(article => createArticleTableRow(article)).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
     
     // ページネーション表示
     renderPagination(totalCount, itemsPerPage, currentPage);
@@ -243,38 +260,44 @@ function filterAndSortArticles() {
     return filtered;
 }
 
-// コンパクトな記事カードを作成
-function createCompactArticleCard(article) {
+// 記事テーブル行を作成
+function createArticleTableRow(article) {
     const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
     const pubDate = article.published_at ? new Date(article.published_at).toLocaleDateString('ja-JP') : '不明';
-    const flaggedClass = article.flagged ? 'flagged' : '';
+    const flaggedClass = article.flagged ? 'table-warning' : '';
     
     return `
-        <div class="compact-article-card ${flaggedClass}" data-id="${article.id}">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="flex-grow-1 me-3">
-                    <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-                        <span class="badge bg-${getStatusColor(article.status)} status-badge">
-                            ${getStatusLabel(article.status)}
-                        </span>
-                        ${article.flagged ? '<span class="badge bg-danger">重要</span>' : ''}
-                        <h6 class="mb-0">
-                            <a href="${article.url}" target="_blank" class="text-decoration-none" onclick="event.stopPropagation();">
-                                ${escapeHtml(article.title || 'タイトルなし')}
-                            </a>
-                        </h6>
-                    </div>
-                    <div class="d-flex align-items-center gap-3 mb-1">
-                        <small class="text-muted"><i class="fas fa-calendar-alt"></i> ${pubDate}</small>
-                        <small class="text-muted"><i class="fas fa-rss"></i> ${sourceName}</small>
-                    </div>
-                    ${article.comments ? `<small class="text-muted d-block"><i class="fas fa-comment"></i> ${escapeHtml(article.comments.substring(0, 150))}${article.comments.length > 150 ? '...' : ''}</small>` : ''}
+        <tr class="${flaggedClass}" data-id="${article.id}">
+            <td>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-${getStatusColor(article.status)} status-badge">
+                        ${getStatusLabel(article.status)}
+                    </span>
+                    ${article.flagged ? '<span class="badge bg-danger">重要</span>' : ''}
                 </div>
-                <div class="text-end">
-                    <button class="btn btn-outline-primary btn-sm edit-article-btn" data-id="${article.id}" onclick="event.stopPropagation();">編集</button>
-                </div>
-            </div>
-        </div>
+            </td>
+            <td>
+                <a href="${article.url}" target="_blank" class="text-decoration-none">
+                    ${escapeHtml(article.title || 'タイトルなし')}
+                </a>
+                ${article.comments ? `<br><small class="text-muted"><i class="fas fa-comment"></i> ${escapeHtml(article.comments.substring(0, 100))}${article.comments.length > 100 ? '...' : ''}</small>` : ''}
+            </td>
+            <td>
+                <small class="text-muted">
+                    <i class="fas fa-rss"></i> ${sourceName}
+                </small>
+            </td>
+            <td>
+                <small class="text-muted">
+                    <i class="fas fa-calendar-alt"></i> ${pubDate}
+                </small>
+            </td>
+            <td>
+                <button class="btn btn-outline-primary btn-sm edit-article-btn" data-id="${article.id}">
+                    <i class="fas fa-edit me-1"></i>編集
+                </button>
+            </td>
+        </tr>
     `;
 }
 
