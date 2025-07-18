@@ -68,3 +68,6 @@ migrate_*.py
 
 # Database schema (sensitive)
 database-schema-complete.md
+
+# Development guidelines (local only)
+CLAUDE.md
