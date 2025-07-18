@@ -8,6 +8,10 @@ from dateutil import parser as dtparser
 from fetcher import fetch_and_parse, slug, DEFAULT_CFG
 import pytz
 import time
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.timezone_utils import safe_date_parse, now_jst_naive_iso
 
 # ── Supabase ─────────────────────────────────────────────
 supabase: Client = create_client(os.getenv("SUPABASE_URL"),
@@ -24,26 +28,10 @@ def save_raw(name: str, data):
         encoding="utf-8"
     )
 
+# 共通ユーティリティ関数を使用
 def safe_date(txt):
-    """安全な日付パース（日本時間）"""
-    try:
-        if not txt:
-            return None
-        
-        # 日付をパース
-        parsed_date = dtparser.parse(txt)
-        
-        # タイムゾーンが設定されていない場合はUTCと仮定
-        if parsed_date.tzinfo is None:
-            parsed_date = pytz.utc.localize(parsed_date)
-        
-        # 日本時間に変換
-        jst = pytz.timezone('Asia/Tokyo')
-        japan_time = parsed_date.astimezone(jst)
-        
-        return japan_time.date().isoformat()
-    except Exception:
-        return None
+    """安全な日付パース（日本時間）- 共通ユーティリティ関数を使用"""
+    return safe_date_parse(txt)
 
 def upsert(row: dict):
     try:
@@ -161,9 +149,8 @@ for src in sources:
                 link = e.get("link") or e.get("id")
                 body = fetch_article_body(link)
 
-            # 日本時間での追加時刻を設定（タイムゾーン情報なしで保存）
-            jst = pytz.timezone('Asia/Tokyo')
-            added_at_jst = datetime.datetime.now(jst).replace(tzinfo=None).isoformat()
+            # 日本時間での追加時刻を設定（共通ユーティリティ関数を使用）
+            added_at_jst = now_jst_naive_iso()
             
             upsert({
                 "src_type": src["category"],

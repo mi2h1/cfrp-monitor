@@ -5,6 +5,9 @@ import urllib.request
 import urllib.parse
 import jwt
 import datetime
+import sys
+sys.path.append('/mnt/f/OneDrive - 株式会社羽生田鉄工所/Git/cfrp-monitor')
+from utils.timezone_utils import now_jst_naive_iso, today_jst_iso
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -404,7 +407,7 @@ class handler(BaseHTTPRequestHandler):
                 'last_edited_by': user_data['user_id'],
                 'src_type': data.get('src_type', 'manual'),
                 'status': 'unread',
-                'published_at': data.get('published_at', datetime.datetime.now().date().isoformat())
+                'published_at': data.get('published_at', today_jst_iso())
             }
             
             print(f"DEBUG: Item data to insert: {item_data}")
@@ -477,7 +480,7 @@ class handler(BaseHTTPRequestHandler):
             
             # 更新者情報を追加
             update_data['last_edited_by'] = user_data['user_id']
-            update_data['reviewed_at'] = datetime.datetime.now().isoformat()
+            update_data['reviewed_at'] = now_jst_naive_iso()
             update_data['reviewer'] = user_data['user_id']
             
             # データベースを更新

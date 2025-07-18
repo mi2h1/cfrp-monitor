@@ -7,6 +7,9 @@ import jwt
 import datetime
 import hashlib
 import secrets
+import sys
+sys.path.append('/mnt/f/OneDrive - 株式会社羽生田鉄工所/Git/cfrp-monitor')
+from utils.timezone_utils import now_jst_naive_iso
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -353,8 +356,8 @@ class handler(BaseHTTPRequestHandler):
                 'password_hash': password_hash,
                 'password_salt': salt,
                 'role': data.get('role', 'viewer'),
-                'created_at': datetime.datetime.now().isoformat(),
-                'last_login': datetime.datetime.now().isoformat()
+                'created_at': now_jst_naive_iso(),
+                'last_login': now_jst_naive_iso()
             }
             
             # データベースに追加

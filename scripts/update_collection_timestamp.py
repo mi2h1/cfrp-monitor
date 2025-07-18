@@ -10,6 +10,10 @@
 import os
 from supabase import create_client, Client
 from datetime import datetime, timezone, timedelta
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.timezone_utils import now_jst_naive_iso
 
 # Supabase設定
 url = "https://nvchsqotmchzpharujap.supabase.co"

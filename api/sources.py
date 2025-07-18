@@ -5,6 +5,9 @@ import urllib.request
 import urllib.parse
 import jwt
 import datetime
+import sys
+sys.path.append('/mnt/f/OneDrive - 株式会社羽生田鉄工所/Git/cfrp-monitor')
+from utils.timezone_utils import now_jst_naive_iso
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -323,7 +326,7 @@ class handler(BaseHTTPRequestHandler):
                 'retry_count': data.get('retry_count', 3),
                 'backoff_factor': data.get('backoff_factor', 1.0),
                 'deleted': False,
-                'updated_at': datetime.datetime.now().isoformat(),
+                'updated_at': now_jst_naive_iso(),
                 'last_edited_by': user_data['user_id']
             }
             
@@ -408,7 +411,7 @@ class handler(BaseHTTPRequestHandler):
             
             # 更新者情報を追加
             update_data['last_edited_by'] = user_data['user_id']
-            update_data['updated_at'] = datetime.datetime.now().isoformat()
+            update_data['updated_at'] = now_jst_naive_iso()
             
             # データベースを更新
             url = f"{supabase_url}/rest/v1/sources?id=eq.{source_id}"
@@ -456,7 +459,7 @@ class handler(BaseHTTPRequestHandler):
             update_data = {
                 'deleted': True,
                 'last_edited_by': user_data['user_id'],
-                'updated_at': datetime.datetime.now().isoformat()
+                'updated_at': now_jst_naive_iso()
             }
             
             url = f"{supabase_url}/rest/v1/sources?id=eq.{source_id}"

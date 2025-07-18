@@ -4,6 +4,9 @@ import os
 import jwt
 import urllib.request
 import datetime
+import sys
+sys.path.append('/mnt/f/OneDrive - 株式会社羽生田鉄工所/Git/cfrp-monitor')
+from utils.timezone_utils import format_jst_display
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -181,11 +184,8 @@ class handler(BaseHTTPRequestHandler):
                         # reviewed_atがあればそれを、なければadded_atを使用
                         article_updated = latest_article.get('reviewed_at') or latest_article.get('added_at')
                         if article_updated:
-                            # ISO形式からyyyy/mm/dd hh:mm形式に変換
-                            dt = datetime.datetime.fromisoformat(article_updated.replace('Z', '+00:00'))
-                            # 日本時間に変換
-                            jst = dt + datetime.timedelta(hours=9)
-                            stats['articles'] = jst.strftime('%Y/%m/%d %H:%M')
+                            # ユーティリティ関数でJST表示形式に変換
+                            stats['articles'] = format_jst_display(article_updated)
                         else:
                             stats['articles'] = None
                     else:
@@ -205,11 +205,8 @@ class handler(BaseHTTPRequestHandler):
                         # last_collected_atがあればそれを、なければupdated_atを使用
                         source_updated = latest_source.get('last_collected_at') or latest_source.get('updated_at')
                         if source_updated:
-                            # ISO形式からyyyy/mm/dd hh:mm形式に変換
-                            dt = datetime.datetime.fromisoformat(source_updated.replace('Z', '+00:00'))
-                            # 日本時間に変換
-                            jst = dt + datetime.timedelta(hours=9)
-                            stats['sources'] = jst.strftime('%Y/%m/%d %H:%M')
+                            # ユーティリティ関数でJST表示形式に変換
+                            stats['sources'] = format_jst_display(source_updated)
                         else:
                             stats['sources'] = None
                     else:

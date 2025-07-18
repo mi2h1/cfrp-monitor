@@ -5,6 +5,9 @@ import urllib.request
 import urllib.parse
 import jwt
 import datetime
+import sys
+sys.path.append('/mnt/f/OneDrive - 株式会社羽生田鉄工所/Git/cfrp-monitor')
+from utils.timezone_utils import now_jst_naive_iso
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -326,7 +329,7 @@ class handler(BaseHTTPRequestHandler):
                 'discovery_method': data.get('discovery_method', 'manual'),
                 'status': data.get('status', 'pending'),
                 'reviewer_notes': data.get('reviewer_notes', ''),
-                'discovered_at': datetime.datetime.now().isoformat(),
+                'discovered_at': now_jst_naive_iso(),
                 'metadata': data.get('metadata', {})
             }
             
@@ -396,7 +399,7 @@ class handler(BaseHTTPRequestHandler):
                 update_data['status'] = data['status']
                 # ステータス変更時にレビュー日時を記録
                 if data['status'] in ['approved', 'rejected']:
-                    update_data['reviewed_at'] = datetime.datetime.now().isoformat()
+                    update_data['reviewed_at'] = now_jst_naive_iso()
             if data.get('reviewer_notes') is not None:
                 update_data['reviewer_notes'] = data['reviewer_notes']
             if data.get('metadata') is not None:
