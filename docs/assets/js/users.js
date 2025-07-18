@@ -94,11 +94,77 @@ function renderUsers() {
         return;
     }
 
-    const userCards = users.map(user => createUserCard(user)).join('');
     container.innerHTML = `
-        <div class="row">
-            ${userCards}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">権限</th>
+                        <th>ユーザーID</th>
+                        <th>表示名</th>
+                        <th style="width: 150px;">作成日</th>
+                        <th style="width: 150px;">最終ログイン</th>
+                        <th style="width: 100px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${users.map(user => createUserTableRow(user)).join('')}
+                </tbody>
+            </table>
         </div>
+    `;
+}
+
+// ユーザーテーブル行を作成
+function createUserTableRow(user) {
+    const isAdminUser = user.user_id === 'admin';
+    const lastLogin = user.last_login ? formatJSTDisplay(user.last_login) : '未ログイン';
+    const createdAt = formatJSTDisplay(user.created_at);
+    const role = user.role || 'viewer';
+    const roleColor = getRoleColor(role);
+    const roleLabel = getRoleLabel(role);
+    
+    const canEdit = !isAdminUser || getCurrentUser()?.userId === 'admin';
+    const canDelete = user.user_id !== 'admin';
+    
+    return `
+        <tr class="${isAdminUser ? 'table-warning' : ''}">
+            <td>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-${roleColor}">${roleLabel}</span>
+                    ${isAdminUser ? '<span class="badge bg-warning text-dark">システム管理者</span>' : ''}
+                </div>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    ${getRoleIcon(role)}
+                    <span class="ms-2 fw-medium">${escapeHtml(user.user_id)}</span>
+                </div>
+            </td>
+            <td>
+                <span>${escapeHtml(user.display_name || user.user_id)}</span>
+            </td>
+            <td>
+                <small class="text-muted">${createdAt}</small>
+            </td>
+            <td>
+                <small class="text-muted">${lastLogin}</small>
+            </td>
+            <td>
+                ${canEdit ? `
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editUser('${user.user_id}')">
+                            <i class="fas fa-edit"></i> 編集
+                        </button>
+                        ${canDelete ? `
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.user_id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                ` : '-'}
+            </td>
+        </tr>
     `;
 }
 

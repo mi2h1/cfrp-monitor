@@ -141,8 +141,73 @@ function renderSources() {
         return;
     }
 
-    container.innerHTML = filteredSources.map(source => createCompactSourceCard(source)).join('');
+    container.innerHTML = `
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">ステータス</th>
+                        <th>名前</th>
+                        <th style="width: 100px;">カテゴリ</th>
+                        <th style="width: 80px;">国</th>
+                        <th style="width: 80px;">関連度</th>
+                        <th style="width: 120px;">最終収集</th>
+                        <th style="width: 100px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredSources.map(source => createSourceTableRow(source)).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
     updateStats();
+}
+
+// 情報源テーブル行を作成
+function createSourceTableRow(source) {
+    const urls = Array.isArray(source.urls) ? source.urls : [];
+    const primaryUrl = urls.length > 0 ? urls[0] : source.domain;
+    const lastCollected = source.last_collected_at ? formatJSTDisplay(source.last_collected_at) : '-';
+    
+    const statusClass = source.deleted ? 'table-secondary' : '';
+    
+    return `
+        <tr class="${statusClass}" data-id="${source.id}" style="cursor: pointer;">
+            <td>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-${getModeColor(source.acquisition_mode)} status-badge">
+                        ${getModeLabel(source.acquisition_mode)}
+                    </span>
+                    ${source.deleted ? '<span class="badge bg-secondary">削除済み</span>' : ''}
+                </div>
+            </td>
+            <td>
+                <div>
+                    <div class="fw-medium">${escapeHtml(source.name || source.domain)}</div>
+                    <div class="small text-muted text-truncate" style="max-width: 300px;" title="${escapeHtml(primaryUrl)}">${escapeHtml(primaryUrl)}</div>
+                    ${source.description ? `<div class="small text-info mt-1">${escapeHtml(source.description)}</div>` : ''}
+                </div>
+            </td>
+            <td>
+                <span class="badge bg-light text-dark">${escapeHtml(source.category || 'その他')}</span>
+            </td>
+            <td>
+                <span class="badge bg-primary">${escapeHtml(source.country_code || '?')}</span>
+            </td>
+            <td>
+                <span class="badge bg-warning text-dark">${source.relevance || 0}</span>
+            </td>
+            <td>
+                <small class="text-muted">${lastCollected}</small>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary edit-source-btn" data-id="${source.id}" onclick="event.stopPropagation(); openEditMode('${source.id}')">
+                    <i class="fas fa-edit"></i> 編集
+                </button>
+            </td>
+        </tr>
+    `;
 }
 
 // フィルタリングとソート
@@ -368,11 +433,16 @@ function setupEventListeners() {
         document.getElementById('refreshBtn').disabled = false;
     });
 
-    // コンパクトカードクリックのイベント委譲
+    // テーブル行クリックのイベント委譲
     document.getElementById('sourcesContainer').addEventListener('click', (e) => {
-        const card = e.target.closest('.compact-card');
-        if (card) {
-            const sourceId = card.dataset.id; // UUID文字列なのでparseIntしない
+        // 編集ボタンのクリックは除外
+        if (e.target.closest('.edit-source-btn')) {
+            return;
+        }
+        
+        const row = e.target.closest('tr[data-id]');
+        if (row) {
+            const sourceId = row.dataset.id;
             openEditMode(sourceId);
         }
     });
