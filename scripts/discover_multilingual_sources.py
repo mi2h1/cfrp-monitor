@@ -11,6 +11,10 @@ import feedparser
 from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 from datetime import datetime
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.timezone_utils import now_jst_naive_iso, now_jst
 from typing import List, Dict, Optional
 from supabase import create_client, Client
 
@@ -275,7 +279,7 @@ class MultilingualSourceDiscoverer:
                         'site_url': site_url,
                         'language': language,
                         'relevance_score': relevance,
-                        'discovered_at': datetime.now().isoformat()
+                        'discovered_at': now_jst_naive_iso()
                     }
                     language_sources.append(source)
                     print(f"  → RSSフィード発見: {feed_url}")
@@ -287,7 +291,7 @@ class MultilingualSourceDiscoverer:
     
     def save_multilingual_candidates(self, sources_by_language: Dict[str, List[Dict]]):
         """多言語候補をDBに保存"""
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        timestamp = now_jst().strftime('%Y%m%d_%H%M%S')
         total_db_saved = 0
         
         for language, sources in sources_by_language.items():

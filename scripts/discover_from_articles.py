@@ -10,6 +10,10 @@ import time
 from collections import Counter
 from urllib.parse import urlparse, urljoin
 from datetime import datetime, timedelta
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.timezone_utils import now_jst_naive_iso
 from typing import List, Dict, Set, Optional
 from supabase import create_client, Client
 import requests
@@ -64,7 +68,7 @@ class ArticleSourceDiscoverer:
         
     def get_recent_articles(self, days: int = 30) -> List[Dict]:
         """最近の記事を取得"""
-        cutoff_date = (datetime.now() - timedelta(days=days)).isoformat()
+        cutoff_date = (datetime.now() - timedelta(days=days)).date().isoformat()
         
         try:
             result = supabase.table('articles')\
@@ -211,7 +215,7 @@ class ArticleSourceDiscoverer:
                         'domain': domain_url,
                         'feed_url': feed_url,
                         'occurrence_count': count,
-                        'discovered_at': datetime.now().isoformat()
+                        'discovered_at': now_jst_naive_iso()
                     })
         
         return candidates
@@ -223,7 +227,8 @@ class ArticleSourceDiscoverer:
             return
             
         # JSONファイルへの保存（バックアップ用）
-        filename = f"article_source_candidates_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        from utils.timezone_utils import now_jst
+        filename = f"article_source_candidates_{now_jst().strftime('%Y%m%d_%H%M%S')}.json"
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(candidates, f, ensure_ascii=False, indent=2)
             
@@ -300,7 +305,7 @@ def main():
         
         # ログデータを更新
         log_data["articles_added"] = len(candidates)
-        log_data["details"]["candidates_file"] = f"article_source_candidates_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        log_data["details"]["candidates_file"] = f"article_source_candidates_{now_jst().strftime('%Y%m%d_%H%M%S')}.json"
         
     except Exception as e:
         log_data["errors_count"] += 1
