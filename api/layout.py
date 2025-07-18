@@ -89,22 +89,13 @@ class handler(BaseHTTPRequestHandler):
         
         # 編集者以上の権限
         if role in ['admin', 'editor']:
-            navigation.extend([
-                {
-                    "id": "sources",
-                    "label": "📡 情報源管理", 
-                    "href": "/sources",
-                    "active": False,
-                    "roles": ["admin", "editor"]
-                },
-                {
-                    "id": "candidates",
-                    "label": "🔍 候補管理",
-                    "href": "/candidates",
-                    "active": False,
-                    "roles": ["admin", "editor"]
-                }
-            ])
+            navigation.append({
+                "id": "sources",
+                "label": "📡 情報源管理", 
+                "href": "/sources",
+                "active": False,
+                "roles": ["admin", "editor"]
+            })
         
         # 管理者のみの権限
         if role == 'admin':

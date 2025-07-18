@@ -472,8 +472,8 @@ class handler(BaseHTTPRequestHandler):
                 update_data['status'] = data['status']
             if data.get('flagged') is not None:
                 update_data['flagged'] = data['flagged']
-            if data.get('comments') is not None:
-                update_data['comments'] = data['comments']
+            if 'comments' in data:
+                update_data['comments'] = data['comments'] if data['comments'] else None
             
             # 更新者情報を追加
             update_data['last_edited_by'] = user_data['user_id']
