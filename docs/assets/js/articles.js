@@ -217,11 +217,12 @@ function renderArticles() {
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th style="width: 150px;">ステータス</th>
+                        <th style="width: 120px;">ステータス</th>
                         <th>タイトル</th>
-                        <th style="width: 150px;">情報源</th>
-                        <th style="width: 120px;">公開日</th>
-                        <th style="width: 100px;">操作</th>
+                        <th style="width: 120px;">情報源</th>
+                        <th style="width: 100px;">公開日</th>
+                        <th style="width: 80px;">コメント</th>
+                        <th style="width: 80px;">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -254,11 +255,12 @@ function renderArticlesWithServerPagination(totalCount, itemsPerPage) {
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th style="width: 150px;">ステータス</th>
+                        <th style="width: 120px;">ステータス</th>
                         <th>タイトル</th>
-                        <th style="width: 150px;">情報源</th>
-                        <th style="width: 120px;">公開日</th>
-                        <th style="width: 100px;">操作</th>
+                        <th style="width: 120px;">情報源</th>
+                        <th style="width: 100px;">公開日</th>
+                        <th style="width: 80px;">コメント</th>
+                        <th style="width: 80px;">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -335,6 +337,11 @@ function createArticleTableRow(article) {
                 <small class="text-muted">
                     <i class="fas fa-calendar-alt"></i> ${pubDate}
                 </small>
+            </td>
+            <td class="text-center">
+                <span class="badge bg-secondary">
+                    <i class="fas fa-comment"></i> ${article.comment_count || 0}
+                </span>
             </td>
             <td>
                 <button class="btn btn-outline-primary btn-sm edit-article-btn" data-id="${article.id}">

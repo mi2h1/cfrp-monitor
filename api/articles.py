@@ -312,6 +312,12 @@ class handler(BaseHTTPRequestHandler):
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req) as response:
                 data = json.loads(response.read().decode('utf-8'))
+                
+                # 各記事のコメント数を取得
+                for article in data:
+                    comment_count = self.get_article_comment_count(article['id'])
+                    article['comment_count'] = comment_count
+                
                 print(f"DEBUG: Articles count: {len(data)}")
                 return data
                 
@@ -323,6 +329,41 @@ class handler(BaseHTTPRequestHandler):
         except Exception as e:
             print(f"Get articles error: {e}")
             return None
+    
+    def get_article_comment_count(self, article_id):
+        """特定の記事のコメント数を取得"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return 0
+            
+            # コメント数を取得（削除されていないもののみ）
+            url = f"{supabase_url}/rest/v1/article_comments?article_id=eq.{article_id}&is_deleted=eq.false&select=id"
+            
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json',
+                'Prefer': 'count=exact'
+            }
+            
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req) as response:
+                # Content-Rangeヘッダーからカウントを取得
+                content_range = response.headers.get('Content-Range', '')
+                if content_range and '/' in content_range:
+                    count = int(content_range.split('/')[-1])
+                    return count
+                else:
+                    # フォールバック: データを取得してカウント
+                    data = json.loads(response.read().decode('utf-8'))
+                    return len(data)
+        
+        except Exception as e:
+            print(f"Get comment count error for article {article_id}: {str(e)}")
+            return 0
     
     def get_articles_count(self, query_params=None):
         """記事の総数を取得（フィルタリング対応）"""
