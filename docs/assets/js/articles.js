@@ -645,44 +645,79 @@ function renderComments(comments) {
     container.innerHTML = commentsHtml;
 }
 
-// コメントの階層構造を構築（1階層のみ）
+// コメントの階層構造を構築（フラット表示）
 function buildCommentTree(comments) {
-    const commentMap = {};
     const rootComments = [];
+    const commentsByRoot = {};
     
-    // まずマップを作成
+    // ルートコメントとその返信をグループ化
     comments.forEach(comment => {
-        commentMap[comment.id] = { ...comment, replies: [] };
-    });
-    
-    // 1階層のみの構造を構築
-    comments.forEach(comment => {
-        if (comment.parent_comment_id && commentMap[comment.parent_comment_id]) {
-            // 親コメントが存在し、かつ親コメント自体がルートコメントの場合のみ階層化
-            const parentComment = commentMap[comment.parent_comment_id];
-            if (!parentComment.parent_comment_id) {
-                // 親がルートコメントの場合、返信として追加
-                parentComment.replies.push(commentMap[comment.id]);
-            } else {
-                // 親が返信コメントの場合、同じ階層（ルートコメント）として扱う
-                rootComments.push(commentMap[comment.id]);
-            }
-        } else {
-            rootComments.push(commentMap[comment.id]);
+        if (!comment.parent_comment_id) {
+            // ルートコメント
+            commentsByRoot[comment.id] = {
+                root: { ...comment },
+                replies: []
+            };
         }
     });
     
-    // 作成日時でソート（新しい順）
-    rootComments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    // 返信コメントを適切なルートに適用
+    comments.forEach(comment => {
+        if (comment.parent_comment_id) {
+            // 直接の親がルートコメントかどうかチェック
+            if (commentsByRoot[comment.parent_comment_id]) {
+                // 直接の親がルートコメントの場合
+                commentsByRoot[comment.parent_comment_id].replies.push({ ...comment });
+            } else {
+                // 親が返信コメントの場合、そのルートコメントを探す
+                const parentComment = comments.find(c => c.id === comment.parent_comment_id);
+                if (parentComment) {
+                    // 親コメントのルートを再帰的に探す
+                    const rootId = findRootCommentId(parentComment, comments);
+                    if (commentsByRoot[rootId]) {
+                        commentsByRoot[rootId].replies.push({ ...comment });
+                    }
+                }
+            }
+        }
+    });
+    
+    // ルートコメントを作成日時でソート
+    const sortedRootIds = Object.keys(commentsByRoot).sort((a, b) => {
+        const dateA = new Date(commentsByRoot[a].root.created_at);
+        const dateB = new Date(commentsByRoot[b].root.created_at);
+        return dateB - dateA; // 新しい順
+    });
+    
+    // 結果を構築
+    sortedRootIds.forEach(rootId => {
+        const group = commentsByRoot[rootId];
+        // 返信を時間順でソート
+        group.replies.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        
+        rootComments.push({
+            ...group.root,
+            replies: group.replies
+        });
+    });
     
     return rootComments;
 }
 
-// コメントカードをレンダリング（1階層のみ）
+// ルートコメントIDを再帰的に探す
+function findRootCommentId(comment, allComments) {
+    if (!comment.parent_comment_id) {
+        return comment.id;
+    }
+    const parent = allComments.find(c => c.id === comment.parent_comment_id);
+    return parent ? findRootCommentId(parent, allComments) : comment.id;
+}
+
+// コメントカードをレンダリング（フラット表示）
 function renderCommentCard(comment, level = 0) {
     const marginLeft = level * 20;
     const isDeleted = comment.is_deleted;
-    const isRootComment = level === 0; // ルートコメントかどうか
+    const isRootComment = level === 0;
     // 改行を<br>タグに変換
     const commentText = isDeleted ? '<em class="text-muted">このコメントは削除されました</em>' : escapeHtml(comment.comment).replace(/\n/g, '<br>');
     
@@ -698,7 +733,7 @@ function renderCommentCard(comment, level = 0) {
                         </div>
                         <div class="comment-text">${commentText}</div>
                     </div>
-                    ${!isDeleted && isRootComment ? `
+                    ${!isDeleted ? `
                         <div class="comment-actions ms-2">
                             <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                                 <i class="fas fa-reply"></i> 返信
@@ -708,8 +743,7 @@ function renderCommentCard(comment, level = 0) {
                 </div>
             </div>
             
-            <!-- 返信フォーム（ルートコメントのみ） -->
-            ${isRootComment ? `
+            <!-- 返信フォーム -->
             <div class="reply-form mt-2" id="replyForm-${comment.id}" style="display: none; margin-left: ${marginLeft + 20}px;">
                 <div class="card card-body py-2 px-3 bg-light">
                     <div class="mb-2">
@@ -728,13 +762,12 @@ function renderCommentCard(comment, level = 0) {
                     </div>
                 </div>
             </div>
-            ` : ''}
         </div>
     `;
     
-    // 返信があれば追加（1階層のみ）
+    // 返信があればフラットに追加（全て同じ階層）
     if (comment.replies && comment.replies.length > 0) {
-        const repliesHtml = comment.replies.map(reply => renderCommentCard(reply, level + 1)).join('');
+        const repliesHtml = comment.replies.map(reply => renderCommentCard(reply, 1)).join('');
         html += repliesHtml;
     }
     
@@ -821,7 +854,7 @@ function hideReplyForm(commentId) {
     }
 }
 
-// 返信を投稿（1階層のみ）
+// 返信を投稿（フラット表示）
 async function submitReply(parentCommentId) {
     const textarea = document.getElementById(`replyText-${parentCommentId}`);
     if (!textarea) return;
@@ -845,8 +878,7 @@ async function submitReply(parentCommentId) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 投稿中...';
     
     try {
-        // 親コメントがルートコメントかどうかを確認
-        // 常にルートコメントに対する返信として扱う（1階層のみ）
+        // 親コメントIDをそのまま送信（APIでルートコメントを探す処理を実施）
         const response = await fetch('/api/article-comments', {
             method: 'POST',
             headers: {
@@ -855,7 +887,7 @@ async function submitReply(parentCommentId) {
             },
             body: JSON.stringify({
                 article_id: articleId,
-                parent_comment_id: parentCommentId, // 常にそのまま使用（APIで調整）
+                parent_comment_id: parentCommentId,
                 comment: replyText
             })
         });
