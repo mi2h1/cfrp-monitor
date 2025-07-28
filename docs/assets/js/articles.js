@@ -1379,30 +1379,32 @@ function renderEditableArticleDetailContent(article, comments) {
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">
                             ${article.flagged ? '<span class="badge bg-danger me-2">重要</span>' : ''}
-                            記事編集
+                            ${escapeHtml(article.title || 'タイトルなし')}
                         </h4>
                         <div class="btn-group">
-                            <button class="btn btn-success btn-sm" onclick="saveArticleDetail('${article.id}')" id="saveBtn">
-                                <i class="fas fa-save"></i> 保存
-                            </button>
                             <button class="btn btn-outline-primary btn-sm" onclick="window.open('${escapeHtml(article.url)}', '_blank')">
                                 <i class="fas fa-external-link-alt"></i> 元記事を開く
                             </button>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h2 class="card-title">${escapeHtml(article.title || 'タイトルなし')}</h2>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <small class="text-muted">
-                                    <i class="fas fa-rss"></i> 情報源: ${sourceName}
+                                    <i class="fas fa-rss me-1"></i>${sourceName}
                                 </small>
                             </div>
                             <div class="col-md-6 text-md-end">
                                 <small class="text-muted">
-                                    <i class="fas fa-calendar-alt"></i> 公開日: ${pubDate}
+                                    <i class="fas fa-calendar-alt me-1"></i>${pubDate}
                                 </small>
                             </div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted d-block">
+                                <i class="fas fa-link me-1"></i>
+                                <a href="${article.url}" target="_blank" class="text-decoration-none">${article.url}</a>
+                            </small>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4">
@@ -1421,14 +1423,6 @@ function renderEditableArticleDetailContent(article, comments) {
                                     <label class="form-check-label" for="editFlagged">重要記事</label>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <small class="text-muted">
-                                    <i class="fas fa-link"></i> 
-                                    <a href="${article.url}" target="_blank" class="text-decoration-none">
-                                        ${article.url}
-                                    </a>
-                                </small>
-                            </div>
                         </div>
                         ${article.body ? `
                             <div class="article-body mb-3">
@@ -1442,12 +1436,15 @@ function renderEditableArticleDetailContent(article, comments) {
                             <label class="form-label"><h5>備考</h5></label>
                             <textarea class="form-control" id="editComments" rows="4" placeholder="備考を入力...">${escapeHtml(article.comments || '')}</textarea>
                         </div>
-                        ${article.reviewed_at ? `
-                            <div class="text-muted small mb-2">
-                                <i class="fas fa-clock"></i> 最終更新: ${formatJSTDisplay(article.reviewed_at)}
-                                ${article.last_edited_by ? ` | <i class="fas fa-user"></i> 編集者: ${article.last_edited_by}` : ''}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted small">
+                                ${article.reviewed_at ? `<i class="fas fa-clock me-1"></i>最終更新: ${formatJSTDisplay(article.reviewed_at)}` : ''}
+                                ${article.last_edited_by ? ` | <i class="fas fa-user me-1"></i>編集者: ${article.last_edited_by}` : ''}
                             </div>
-                        ` : ''}
+                            <button class="btn btn-success btn-sm" onclick="saveArticleDetail('${article.id}')" id="saveBtn">
+                                <i class="fas fa-save"></i> 保存
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
