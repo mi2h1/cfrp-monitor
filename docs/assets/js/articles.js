@@ -671,13 +671,14 @@ function setupEventListeners() {
         }
     });
     
-    // 記事行クリックイベント
+    // 記事行クリックイベント（SPAアプローチに変更）
     document.getElementById('articlesContainer').addEventListener('click', (e) => {
         const row = e.target.closest('tr[data-id]');
         if (row) {
             const articleId = row.dataset.id;
-            // 記事詳細ページに遷移
-            window.location.href = `article-detail.html?id=${articleId}`;
+            console.log('記事詳細を表示:', articleId);
+            // SPAスタイルで記事詳細を表示
+            showArticleDetail(articleId);
         }
     });
 
