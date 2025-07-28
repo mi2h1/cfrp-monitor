@@ -1523,7 +1523,7 @@ async function postDetailComment(articleId) {
         if (data.success) {
             document.getElementById('newDetailComment').value = '';
             // 記事詳細を再読み込み
-            await loadAndRenderArticleDetail(articleId);
+            await loadAndRenderEditableArticleDetail(articleId);
             alert('コメントを投稿しました');
         } else {
             alert('コメントの投稿に失敗しました: ' + data.error);
