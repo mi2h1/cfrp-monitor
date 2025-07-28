@@ -326,8 +326,8 @@ function createArticleTableRow(article) {
                 </span>
             </td>
             <td>
-                <div class="d-flex align-items-start gap-2">
-                    ${article.flagged ? '<span class="badge bg-danger flex-shrink-0">重要</span>' : ''}
+                <div class="d-flex align-items-center gap-2">
+                    ${article.flagged ? '<span class="badge bg-danger flex-shrink-0 align-self-start" style="margin-top: 2px;">重要</span>' : ''}
                     <div class="flex-grow-1">
                         <div class="fw-medium">${escapeHtml(article.title || 'タイトルなし')}</div>
                         <div class="small text-muted text-truncate" style="max-width: 400px;" title="${escapeHtml(article.url)}">${escapeHtml(article.url)}</div>
