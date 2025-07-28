@@ -294,10 +294,7 @@ function renderArticles() {
     container.innerHTML = '';
     container.appendChild(tableContainer);
     
-    // ページネーション表示
-    renderPagination(filteredArticles.length, itemsPerPage, currentPage);
-    document.getElementById('pagination').style.display = 'block';
-    document.getElementById('paginationTop').style.display = 'block';
+    // ページネーション表示は loadArticlesPage で行うため削除
 }
 
 // 記事を表示（サーバーサイドページネーション）
