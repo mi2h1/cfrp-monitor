@@ -287,25 +287,49 @@ class handler(BaseHTTPRequestHandler):
             if article_id:
                 return self.get_single_article(article_id)
             
-            # ベースURLを構築（元の方式に戻す）
-            url = f"{supabase_url}/rest/v1/articles?select=*,sources(name,domain)"
-            
-            # フィルタリングを追加
-            filters = []
-            if status:
-                filters.append(f"status=eq.{status}")
-            if flagged is not None:
-                flag_value = 'true' if flagged.lower() == 'true' else 'false'
-                filters.append(f"flagged=eq.{flag_value}")
-            if source_id:
-                filters.append(f"source_id=eq.{source_id}")
-            
-            if filters:
-                url += "&" + "&".join(filters)
-            
-            # ソートとページネーションを追加
-            order_field = "published_at" if order in ['asc', 'desc'] else "published_at"
-            url += f"&order={order_field}.{order}&limit={limit}&offset={offset}"
+            # コメントフィルタリングがある場合は、コメント数も含めて取得
+            if has_comments:
+                # すべての記事を取得してコメント数を計算し、フィルタリング後にページネーション適用
+                temp_url = f"{supabase_url}/rest/v1/articles?select=*,sources(name,domain)"
+                
+                # 基本フィルターを適用
+                filters = []
+                if status:
+                    filters.append(f"status=eq.{status}")
+                if flagged is not None:
+                    flag_value = 'true' if flagged.lower() == 'true' else 'false'
+                    filters.append(f"flagged=eq.{flag_value}")
+                if source_id:
+                    filters.append(f"source_id=eq.{source_id}")
+                
+                if filters:
+                    temp_url += "&" + "&".join(filters)
+                
+                # ソート順を適用
+                order_field = "published_at" if order in ['asc', 'desc'] else "published_at"
+                temp_url += f"&order={order_field}.{order}"
+                
+                url = temp_url
+            else:
+                # 通常のページネーション処理
+                url = f"{supabase_url}/rest/v1/articles?select=*,sources(name,domain)"
+                
+                # フィルタリングを追加
+                filters = []
+                if status:
+                    filters.append(f"status=eq.{status}")
+                if flagged is not None:
+                    flag_value = 'true' if flagged.lower() == 'true' else 'false'
+                    filters.append(f"flagged=eq.{flag_value}")
+                if source_id:
+                    filters.append(f"source_id=eq.{source_id}")
+                
+                if filters:
+                    url += "&" + "&".join(filters)
+                
+                # ソートとページネーションを追加
+                order_field = "published_at" if order in ['asc', 'desc'] else "published_at"
+                url += f"&order={order_field}.{order}&limit={limit}&offset={offset}"
             
             headers = {
                 'apikey': supabase_key,
@@ -329,12 +353,19 @@ class handler(BaseHTTPRequestHandler):
                     for article in data:
                         article['comment_count'] = comment_counts.get(article['id'], 0)
                 
-                # コメントフィルタリングを適用（フロントエンド側でフィルタリング）
+                # コメントフィルタリングを適用
                 if has_comments:
                     if has_comments == 'with_comments':
-                        data = [article for article in data if article.get('comment_count', 0) > 0]
+                        filtered_data = [article for article in data if article.get('comment_count', 0) > 0]
                     elif has_comments == 'no_comments':
-                        data = [article for article in data if article.get('comment_count', 0) == 0]
+                        filtered_data = [article for article in data if article.get('comment_count', 0) == 0]
+                    else:
+                        filtered_data = data
+                    
+                    # フィルタリング後にページネーションを適用
+                    start_idx = offset
+                    end_idx = offset + limit
+                    data = filtered_data[start_idx:end_idx]
                 
                 print(f"DEBUG: Articles count: {len(data)}")
                 return data

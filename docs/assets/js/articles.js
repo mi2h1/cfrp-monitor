@@ -235,6 +235,11 @@ async function loadArticlesPage(page, totalCount = null) {
             totalCount = await getTotalArticlesCount(statusFilter, flaggedFilter, sourceFilter, commentFilter);
         }
         
+        // コメントフィルターがある場合、全データから総件数を再取得
+        if (commentFilter) {
+            totalCount = await getTotalArticlesCount(statusFilter, flaggedFilter, sourceFilter, commentFilter);
+        }
+        
         // API URLを構築
         let url = `/api/articles?limit=${itemsPerPage}&offset=${offset}&order=${sortOrder}`;
         
