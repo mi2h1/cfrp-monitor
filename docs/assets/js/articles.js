@@ -779,18 +779,7 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
     // });
     
     let html = `
-        <div class="comment-card mb-3 position-relative" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
-            ${level === 0 && comment.replies && comment.replies.length > 0 ? `
-                <!-- ルートコメントから下への縦線 -->
-                <div class="comment-root-line" style="position: absolute; left: 20px; top: 100%; bottom: -20px; width: 1px; background-color: #6c757d; z-index: 1;"></div>
-            ` : ''}
-            ${level > 0 ? `
-                <!-- 縦線（最後の要素でない場合のみ） -->
-                ${!isLast ? `<div class="comment-tree-vertical" style="position: absolute; left: -20px; top: 40px; bottom: -20px; width: 1px; background-color: #6c757d; z-index: 1;"></div>` : ''}
-                <!-- L字型の接続線 -->
-                <div class="comment-tree-horizontal" style="position: absolute; left: -20px; top: 20px; width: 15px; height: 1px; background-color: #6c757d; z-index: 1;"></div>
-                <div class="comment-tree-vertical-branch" style="position: absolute; left: -20px; top: 20px; width: 1px; height: 20px; background-color: #6c757d; z-index: 1;"></div>
-            ` : ''}
+        <div class="comment-card mb-3" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
             <div class="card card-body py-2 px-3">
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="comment-content flex-grow-1">
@@ -851,13 +840,17 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
         </div>
     `;
     
-    // 返信があればフラットに追加（全て同じ階層）
+    // 返信があれば引用スタイルのコンテナで囲む
     if (comment.replies && comment.replies.length > 0) {
         const repliesHtml = comment.replies.map((reply, index, array) => {
             const isLastReply = index === array.length - 1;
             return renderCommentCard(reply, 1, isLastReply);
         }).join('');
-        html += repliesHtml;
+        html += `
+            <div class="replies-container">
+                ${repliesHtml}
+            </div>
+        `;
     }
     
     return html;

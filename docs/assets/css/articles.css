@@ -36,24 +36,20 @@
     margin: 0.5rem 0;
 }
 
-/* コメントツリーの枝線 */
-.comment-root-line,
-.comment-tree-vertical,
-.comment-tree-horizontal, 
-.comment-tree-vertical-branch {
-    z-index: 1;
-    background-color: #6c757d !important;
+/* 返信コンテナの引用スタイル */
+.replies-container {
+    border-left: 3px solid #e9ecef;
+    margin-left: 15px;
+    padding-left: 15px;
+    margin-top: 10px;
 }
 
 /* コメントカードのスタイル調整 */
 .comment-card {
-    position: relative;
-    z-index: 2;
+    margin-bottom: 10px;
 }
 
 .comment-card .card {
-    position: relative;
-    z-index: 3;
     background: white;
     border: 1px solid #dee2e6;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
