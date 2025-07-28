@@ -316,18 +316,18 @@ function createArticleTableRow(article) {
     return `
         <tr class="${flaggedClass}" data-id="${article.id}" style="cursor: pointer;">
             <td>
-                <div class="d-flex flex-column align-items-start gap-1">
-                    <span class="badge bg-${getStatusColor(article.status)} status-badge">
-                        ${getStatusLabel(article.status)}
-                    </span>
-                    ${article.flagged ? '<span class="badge bg-danger">重要</span>' : ''}
-                </div>
+                <span class="badge bg-${getStatusColor(article.status)} status-badge">
+                    ${getStatusLabel(article.status)}
+                </span>
             </td>
             <td>
-                <div>
-                    <div class="fw-medium">${escapeHtml(article.title || 'タイトルなし')}</div>
-                    <div class="small text-muted text-truncate" style="max-width: 400px;" title="${escapeHtml(article.url)}">${escapeHtml(article.url)}</div>
-                    ${article.comments ? `<div class="small text-muted mt-1"><i class="fas fa-sticky-note"></i> ${escapeHtml(article.comments.substring(0, 100))}${article.comments.length > 100 ? '...' : ''}</div>` : ''}
+                <div class="d-flex align-items-start gap-2">
+                    ${article.flagged ? '<span class="badge bg-danger flex-shrink-0">重要</span>' : ''}
+                    <div class="flex-grow-1">
+                        <div class="fw-medium">${escapeHtml(article.title || 'タイトルなし')}</div>
+                        <div class="small text-muted text-truncate" style="max-width: 400px;" title="${escapeHtml(article.url)}">${escapeHtml(article.url)}</div>
+                        ${article.comments ? `<div class="small text-muted mt-1"><i class="fas fa-sticky-note"></i> ${escapeHtml(article.comments.substring(0, 100))}${article.comments.length > 100 ? '...' : ''}</div>` : ''}
+                    </div>
                 </div>
             </td>
             <td>
