@@ -15,6 +15,21 @@ function initializeArticlesPage() {
     });
 }
 
+// 記事詳細ページの初期化
+function initializeArticleDetailPage() {
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            await initializeNavigation('article-detail');
+            // userFeaturesが設定された後でarticle-detail.jsの初期化を実行
+            if (typeof initializeArticleDetailApp === 'function') {
+                await initializeArticleDetailApp();
+            }
+        } catch (error) {
+            console.error('Article detail initialization failed:', error);
+        }
+    });
+}
+
 // 情報源管理ページの初期化
 function initializeSourcesPage() {
     document.addEventListener('DOMContentLoaded', async function() {

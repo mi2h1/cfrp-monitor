@@ -274,12 +274,17 @@ class handler(BaseHTTPRequestHandler):
                 query_params = {}
             
             # パラメータを取得
+            article_id = query_params.get('id', [None])[0]
             limit = int(query_params.get('limit', ['20'])[0])
             offset = int(query_params.get('offset', ['0'])[0])
             order = query_params.get('order', ['desc'])[0]
             status = query_params.get('status', [None])[0]
             flagged = query_params.get('flagged', [None])[0]
             source_id = query_params.get('source_id', [None])[0]
+            
+            # 単一記事取得の場合
+            if article_id:
+                return self.get_single_article(article_id)
             
             # ベースURLを構築（元の方式に戻す）
             url = f"{supabase_url}/rest/v1/articles?select=*,sources(name,domain)"
@@ -333,6 +338,50 @@ class handler(BaseHTTPRequestHandler):
             return None
         except Exception as e:
             print(f"Get articles error: {e}")
+            return None
+
+    def get_single_article(self, article_id):
+        """単一記事を取得"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return None
+            
+            # 単一記事を取得
+            url = f"{supabase_url}/rest/v1/articles?select=*,sources(name,domain)&id=eq.{article_id}"
+            
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json'
+            }
+            
+            print(f"DEBUG: Single article URL: {url}")
+            
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req) as response:
+                data = json.loads(response.read().decode('utf-8'))
+                
+                if data:
+                    # コメント数を取得
+                    comment_counts = self.get_articles_comment_counts([article_id])
+                    data[0]['comment_count'] = comment_counts.get(article_id, 0)
+                    
+                    print(f"DEBUG: Single article found: {data[0].get('title', 'No title')}")
+                    return data
+                else:
+                    print(f"DEBUG: No article found with id: {article_id}")
+                    return []
+                
+        except urllib.error.HTTPError as e:
+            print(f"Get single article HTTP error: {e.code} - {e.reason}")
+            error_body = e.read().decode('utf-8')
+            print(f"Error body: {error_body}")
+            return None
+        except Exception as e:
+            print(f"Get single article error: {e}")
             return None
     
     def get_articles_comment_counts(self, article_ids):
