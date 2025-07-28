@@ -140,7 +140,7 @@ async function loadSources() {
             return;
         }
         
-        const response = await fetch('/api/sources', {
+        const response = await fetch('/api/sources?used_only=true', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${authToken}`,

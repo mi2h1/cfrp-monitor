@@ -27,8 +27,16 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps(response).encode('utf-8'))
                 return
             
-            # 情報源一覧を取得
-            sources = self.get_sources()
+            # クエリパラメータをチェック
+            query_params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            used_only = query_params.get('used_only', ['false'])[0].lower() == 'true'
+            
+            if used_only:
+                # 記事が存在する情報源のみ取得
+                sources = self.get_used_sources()
+            else:
+                # 全ての情報源を取得
+                sources = self.get_sources()
             
             if sources is not None:
                 response = {
@@ -292,6 +300,48 @@ class handler(BaseHTTPRequestHandler):
             return None
         except Exception as e:
             print(f"Get sources error: {e}")
+            return None
+    
+    def get_used_sources(self):
+        """記事が存在する情報源のみを取得"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return None
+            
+            # まず記事に使用されているsource_idを取得
+            articles_url = f"{supabase_url}/rest/v1/articles?select=source_id"
+            
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json'
+            }
+            
+            req = urllib.request.Request(articles_url, headers=headers)
+            with urllib.request.urlopen(req) as response:
+                articles_data = json.loads(response.read().decode('utf-8'))
+                
+                # 使用されているsource_idを抽出（重複除去）
+                used_source_ids = list(set([article['source_id'] for article in articles_data if article.get('source_id')]))
+                
+                if not used_source_ids:
+                    return []
+                
+                # 使用されているsource_idに対応する情報源を取得
+                ids_str = ','.join(f'"{id}"' for id in used_source_ids)
+                sources_url = f"{supabase_url}/rest/v1/sources?select=*&id=in.({ids_str})&order=name.asc"
+                
+                req = urllib.request.Request(sources_url, headers=headers)
+                with urllib.request.urlopen(req) as response:
+                    sources_data = json.loads(response.read().decode('utf-8'))
+                    print(f"DEBUG: Used sources count: {len(sources_data)}")
+                    return sources_data
+                
+        except Exception as e:
+            print(f"Get used sources error: {e}")
             return None
 
     def add_source(self, data, user_data):
