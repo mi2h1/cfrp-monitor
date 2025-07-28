@@ -135,10 +135,88 @@ class handler(BaseHTTPRequestHandler):
             }
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
+    def do_PUT(self):
+        """コメントを編集"""
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        self.end_headers()
+        
+        try:
+            # 認証チェック
+            user_data = self.verify_token()
+            if not user_data:
+                response = {
+                    "success": False,
+                    "error": "認証が必要です"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            # リクエストボディを取得
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+            
+            # 必須フィールドをチェック
+            required_fields = ['comment_id', 'comment']
+            for field in required_fields:
+                if field not in data or not data[field]:
+                    response = {
+                        "success": False,
+                        "error": f"{field}が指定されていません"
+                    }
+                    self.wfile.write(json.dumps(response).encode('utf-8'))
+                    return
+            
+            # コメントの所有者チェック
+            comment = self.get_comment_by_id(data['comment_id'])
+            if not comment:
+                response = {
+                    "success": False,
+                    "error": "コメントが見つかりません"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            if comment['user_id'] != user_data['user_id']:
+                response = {
+                    "success": False,
+                    "error": "自分のコメントのみ編集できます"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            # コメントを更新
+            result = self.update_comment(data['comment_id'], data['comment'])
+            
+            if result:
+                response = {
+                    "success": True,
+                    "message": "コメントを編集しました",
+                    "comment": result
+                }
+            else:
+                response = {
+                    "success": False,
+                    "error": "コメントの編集に失敗しました"
+                }
+            
+            self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+            
+        except Exception as e:
+            response = {
+                "success": False,
+                "error": f"サーバーエラー: {str(e)}"
+            }
+            self.wfile.write(json.dumps(response).encode('utf-8'))
+
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         self.end_headers()
 
@@ -248,4 +326,42 @@ class handler(BaseHTTPRequestHandler):
         
         except Exception as e:
             print(f"Create comment error: {str(e)}")
+            return None
+    
+    def update_comment(self, comment_id, new_comment):
+        """コメントを更新"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return None
+            
+            url = f"{supabase_url}/rest/v1/article_comments?id=eq.{comment_id}"
+            
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            }
+            
+            update_data = {
+                'comment': new_comment,
+                'updated_at': now_jst_naive_iso()
+            }
+            
+            req = urllib.request.Request(
+                url, 
+                data=json.dumps(update_data).encode('utf-8'),
+                headers=headers,
+                method='PATCH'
+            )
+            
+            with urllib.request.urlopen(req) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                return result[0] if result else None
+        
+        except Exception as e:
+            print(f"Update comment error: {str(e)}")
             return None

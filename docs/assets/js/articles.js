@@ -397,10 +397,10 @@ function createDetailArticleCard(article) {
                         </div>
                     </div>
                     <div class="col-md-7">
-                        <label class="form-label small">コメント:</label>
+                        <label class="form-label small">備考:</label>
                         <textarea class="form-control form-control-sm comment-textarea" 
                                  data-id="${article.id}" rows="3" 
-                                 placeholder="コメントを入力...">${escapeHtml(article.comments || '')}</textarea>
+                                 placeholder="備考を入力...">${escapeHtml(article.comments || '')}</textarea>
                     </div>
                 </div>
                 <div class="mt-2">
@@ -410,22 +410,22 @@ function createDetailArticleCard(article) {
                 </div>
             </div>
             
-            <!-- コメントスレッドセクション -->
+            <!-- スレッドセクション -->
             <div class="mt-4 border-top pt-4">
-                <h6 class="mb-3"><i class="fas fa-comments"></i> コメント・スレッド</h6>
+                <h6 class="mb-3"><i class="fas fa-comments"></i> スレッド</h6>
                 
-                <!-- コメント投稿フォーム -->
+                <!-- スレッド投稿フォーム -->
                 <div class="comment-form mb-4">
-                    <textarea class="form-control mb-2" id="newComment" rows="3" placeholder="コメントを投稿..."></textarea>
+                    <textarea class="form-control mb-2" id="newComment" rows="3" placeholder="スレッドに投稿..."></textarea>
                     <button class="btn btn-primary btn-sm" onclick="postComment('${article.id}')">
-                        <i class="fas fa-paper-plane"></i> コメントを投稿
+                        <i class="fas fa-paper-plane"></i> 投稿
                     </button>
                 </div>
                 
-                <!-- コメント一覧 -->
+                <!-- スレッド一覧 -->
                 <div id="commentsContainer" class="comments-container">
                     <div class="text-center text-muted">
-                        <i class="fas fa-spinner fa-spin"></i> コメントを読み込み中...
+                        <i class="fas fa-spinner fa-spin"></i> スレッドを読み込み中...
                     </div>
                 </div>
             </div>
@@ -916,6 +916,105 @@ async function submitReply(parentCommentId) {
         // ボタンを元に戻す
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
+    }
+}
+
+// ===========================================
+// コメント編集機能
+// ===========================================
+
+// コメント編集フォームを表示
+function showCommentEditForm(commentId) {
+    // 他の編集フォームを非表示
+    document.querySelectorAll('.edit-form').forEach(form => {
+        form.style.display = 'none';
+    });
+    
+    // 編集フォームを表示
+    const editForm = document.getElementById(`editForm-${commentId}`);
+    const commentText = document.getElementById(`commentText-${commentId}`);
+    const editBtn = document.querySelector(`[onclick="showCommentEditForm('${commentId}')"]`);
+    
+    if (editForm && commentText && editBtn) {
+        editForm.style.display = 'block';
+        commentText.style.display = 'none';
+        editBtn.style.display = 'none';
+        
+        // テキストエリアにフォーカス
+        const textarea = document.getElementById(`editText-${commentId}`);
+        if (textarea) {
+            textarea.focus();
+        }
+    }
+}
+
+// コメント編集をキャンセル
+function cancelCommentEdit(commentId) {
+    const editForm = document.getElementById(`editForm-${commentId}`);
+    const commentText = document.getElementById(`commentText-${commentId}`);
+    const editBtn = document.querySelector(`[onclick="showCommentEditForm('${commentId}')"]`);
+    
+    if (editForm && commentText && editBtn) {
+        editForm.style.display = 'none';
+        commentText.style.display = 'block';
+        editBtn.style.display = 'inline-block';
+    }
+}
+
+// コメント編集を投稿
+async function submitCommentEdit(commentId) {
+    const textarea = document.getElementById(`editText-${commentId}`);
+    if (!textarea) return;
+    
+    const editedText = textarea.value.trim();
+    if (!editedText) {
+        alert('コメント内容を入力してください');
+        return;
+    }
+    
+    // 現在表示中の記事IDを取得
+    const articleCard = document.querySelector('#editModeContainer .article-card');
+    if (!articleCard) return;
+    
+    const articleId = articleCard.dataset.id;
+    
+    // 保存ボタンを無効化
+    const saveBtn = textarea.parentElement.querySelector('.btn-success');
+    const originalText = saveBtn.textContent;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+    
+    try {
+        const response = await fetch('/api/article-comments', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                comment_id: commentId,
+                comment: editedText
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // 編集フォームを非表示
+            cancelCommentEdit(commentId);
+            
+            // コメントを再読み込み
+            loadArticleComments(articleId);
+        } else {
+            alert('コメントの編集に失敗しました: ' + data.error);
+        }
+    } catch (error) {
+        console.error('コメント編集エラー:', error);
+        alert('コメントの編集中にエラーが発生しました');
+    } finally {
+        // ボタンを元に戻す
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
     }
 }
 
