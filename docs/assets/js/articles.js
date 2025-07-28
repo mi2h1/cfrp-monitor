@@ -222,7 +222,6 @@ function renderArticles() {
                         <th style="width: 120px;">情報源</th>
                         <th style="width: 100px;">公開日</th>
                         <th style="width: 80px;">コメント</th>
-                        <th style="width: 80px;">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -260,7 +259,6 @@ function renderArticlesWithServerPagination(totalCount, itemsPerPage) {
                         <th style="width: 120px;">情報源</th>
                         <th style="width: 100px;">公開日</th>
                         <th style="width: 80px;">コメント</th>
-                        <th style="width: 80px;">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -313,7 +311,7 @@ function createArticleTableRow(article) {
     const flaggedClass = article.flagged ? 'table-warning' : '';
     
     return `
-        <tr class="${flaggedClass}" data-id="${article.id}">
+        <tr class="${flaggedClass}" data-id="${article.id}" style="cursor: pointer;">
             <td>
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge bg-${getStatusColor(article.status)} status-badge">
@@ -323,10 +321,11 @@ function createArticleTableRow(article) {
                 </div>
             </td>
             <td>
-                <a href="${article.url}" target="_blank" class="text-decoration-none">
-                    ${escapeHtml(article.title || 'タイトルなし')}
-                </a>
-                ${article.comments ? `<br><small class="text-muted"><i class="fas fa-comment"></i> ${escapeHtml(article.comments.substring(0, 100))}${article.comments.length > 100 ? '...' : ''}</small>` : ''}
+                <div>
+                    <div class="fw-medium">${escapeHtml(article.title || 'タイトルなし')}</div>
+                    <div class="small text-muted text-truncate" style="max-width: 400px;" title="${escapeHtml(article.url)}">${escapeHtml(article.url)}</div>
+                    ${article.comments ? `<div class="small text-muted mt-1"><i class="fas fa-sticky-note"></i> ${escapeHtml(article.comments.substring(0, 100))}${article.comments.length > 100 ? '...' : ''}</div>` : ''}
+                </div>
             </td>
             <td>
                 <small class="text-muted">
@@ -342,11 +341,6 @@ function createArticleTableRow(article) {
                 <span class="badge bg-secondary">
                     <i class="fas fa-comment"></i> ${article.comment_count || 0}
                 </span>
-            </td>
-            <td>
-                <button class="btn btn-outline-primary btn-sm edit-article-btn" data-id="${article.id}">
-                    <i class="fas fa-edit me-1"></i>編集
-                </button>
             </td>
         </tr>
     `;
@@ -496,19 +490,11 @@ function setupEventListeners() {
         }
     });
 
-    // コンパクトカードクリックのイベント委譲
+    // テーブル行クリックのイベント委譲
     document.getElementById('articlesContainer').addEventListener('click', (e) => {
-        const card = e.target.closest('.compact-article-card');
-        if (card && !e.target.classList.contains('edit-article-btn')) {
-            const articleId = card.dataset.id;
-            openEditMode(articleId);
-        }
-    });
-
-    // 編集ボタンクリックのイベント委譲
-    document.getElementById('articlesContainer').addEventListener('click', (e) => {
-        if (e.target.classList.contains('edit-article-btn')) {
-            const articleId = e.target.dataset.id;
+        const row = e.target.closest('tr[data-id]');
+        if (row) {
+            const articleId = row.dataset.id;
             openEditMode(articleId);
         }
     });
