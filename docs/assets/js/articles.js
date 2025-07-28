@@ -1089,11 +1089,13 @@ async function submitReply(parentCommentId) {
     const articleId = url.searchParams.get('edit');
     if (!articleId) return;
     
-    // 投稿ボタンを無効化
+    // 投稿ボタンを無効化してローディング状態に
     const submitBtn = textarea.parentElement.querySelector('.btn-primary');
-    const originalText = submitBtn.textContent;
+    const originalBtnContent = submitBtn.innerHTML;
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 投稿中...';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>投稿中...';
+    submitBtn.classList.remove('btn-primary');
+    submitBtn.classList.add('btn-secondary');
     
     try {
         // 親コメントIDをそのまま送信（APIでルートコメントを探す処理を実施）
@@ -1113,6 +1115,11 @@ async function submitReply(parentCommentId) {
         const data = await response.json();
         
         if (data.success) {
+            // 投稿成功状態に変更
+            submitBtn.innerHTML = '<i class="fas fa-check me-1"></i>投稿完了';
+            submitBtn.classList.remove('btn-secondary');
+            submitBtn.classList.add('btn-success');
+            
             // 返信フォームを非表示にしてクリア
             hideReplyForm(parentCommentId);
             
@@ -1124,16 +1131,44 @@ async function submitReply(parentCommentId) {
             if (article) {
                 article.comment_count = (article.comment_count || 0) + 1;
             }
+            
+            // 2秒後にボタンを元に戻す
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnContent;
+                submitBtn.classList.remove('btn-success');
+                submitBtn.classList.add('btn-primary');
+            }, 2000);
+            
         } else {
-            alert('返信の投稿に失敗しました: ' + data.error);
+            // エラー状態に変更
+            submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>投稿失敗';
+            submitBtn.classList.remove('btn-secondary');
+            submitBtn.classList.add('btn-danger');
+            
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnContent;
+                submitBtn.classList.remove('btn-danger');
+                submitBtn.classList.add('btn-primary');
+            }, 3000);
+            
+            console.error('返信投稿失敗:', data.error);
         }
     } catch (error) {
         console.error('返信投稿エラー:', error);
-        alert('返信の投稿中にエラーが発生しました');
-    } finally {
-        // ボタンを元に戻す
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
+        
+        // エラー状態に変更
+        submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>投稿失敗';
+        submitBtn.classList.remove('btn-secondary');
+        submitBtn.classList.add('btn-danger');
+        
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnContent;
+            submitBtn.classList.remove('btn-danger');
+            submitBtn.classList.add('btn-primary');
+        }, 3000);
     }
 }
 
@@ -1195,11 +1230,13 @@ async function submitCommentEdit(commentId) {
     const articleId = url.searchParams.get('edit');
     if (!articleId) return;
     
-    // 保存ボタンを無効化
+    // 保存ボタンを無効化してローディング状態に
     const saveBtn = textarea.parentElement.querySelector('.btn-success');
-    const originalText = saveBtn.textContent;
+    const originalBtnContent = saveBtn.innerHTML;
     saveBtn.disabled = true;
-    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>保存中...';
+    saveBtn.classList.remove('btn-success');
+    saveBtn.classList.add('btn-secondary');
     
     try {
         const response = await fetch('/api/article-comments', {
@@ -1217,21 +1254,46 @@ async function submitCommentEdit(commentId) {
         const data = await response.json();
         
         if (data.success) {
+            // 保存成功状態に変更
+            saveBtn.innerHTML = '<i class="fas fa-check me-1"></i>保存完了';
+            saveBtn.classList.remove('btn-secondary');
+            saveBtn.classList.add('btn-success');
+            
             // 編集フォームを非表示
             cancelCommentEdit(commentId);
             
             // コメントを再読み込み（統合モード対応）
             await loadAndRenderEditableArticleDetail(articleId);
+            
         } else {
-            alert('コメントの編集に失敗しました: ' + data.error);
+            // エラー状態に変更
+            saveBtn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>保存失敗';
+            saveBtn.classList.remove('btn-secondary');
+            saveBtn.classList.add('btn-danger');
+            
+            setTimeout(() => {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalBtnContent;
+                saveBtn.classList.remove('btn-danger');
+                saveBtn.classList.add('btn-success');
+            }, 3000);
+            
+            console.error('コメント編集失敗:', data.error);
         }
     } catch (error) {
         console.error('コメント編集エラー:', error);
-        alert('コメントの編集中にエラーが発生しました');
-    } finally {
-        // ボタンを元に戻す
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = originalText;
+        
+        // エラー状態に変更
+        saveBtn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>保存失敗';
+        saveBtn.classList.remove('btn-secondary');
+        saveBtn.classList.add('btn-danger');
+        
+        setTimeout(() => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalBtnContent;
+            saveBtn.classList.remove('btn-danger');
+            saveBtn.classList.add('btn-success');
+        }, 3000);
     }
 }
 
@@ -1496,11 +1558,19 @@ function renderDetailComments(comments) {
 // 詳細画面用のコメント投稿
 async function postDetailComment(articleId) {
     const commentText = document.getElementById('newDetailComment').value.trim();
+    const submitBtn = document.querySelector(`button[onclick="postDetailComment('${articleId}')"]`);
     
     if (!commentText) {
         alert('コメントを入力してください');
         return;
     }
+    
+    // ボタンをローディング状態に変更
+    const originalBtnContent = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>投稿中...';
+    submitBtn.classList.remove('btn-primary');
+    submitBtn.classList.add('btn-secondary');
     
     try {
         const response = await fetch('/api/article-comments', {
@@ -1518,17 +1588,55 @@ async function postDetailComment(articleId) {
         const data = await response.json();
         
         if (data.success) {
+            // 投稿成功状態に変更
+            submitBtn.innerHTML = '<i class="fas fa-check me-1"></i>投稿完了';
+            submitBtn.classList.remove('btn-secondary');
+            submitBtn.classList.add('btn-success');
+            
+            // フォームをクリア
             document.getElementById('newDetailComment').value = '';
-            // 記事詳細を再読み込み
+            
+            // 記事詳細を再読み込み（最新状態に更新）
             await loadAndRenderEditableArticleDetail(articleId);
-            alert('コメントを投稿しました');
+            
+            // 2秒後にボタンを元に戻す
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnContent;
+                submitBtn.classList.remove('btn-success');
+                submitBtn.classList.add('btn-primary');
+            }, 2000);
+            
         } else {
-            alert('コメントの投稿に失敗しました: ' + data.error);
+            // エラー状態に変更
+            submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>投稿失敗';
+            submitBtn.classList.remove('btn-secondary');
+            submitBtn.classList.add('btn-danger');
+            
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnContent;
+                submitBtn.classList.remove('btn-danger');
+                submitBtn.classList.add('btn-primary');
+            }, 3000);
+            
+            console.error('コメント投稿失敗:', data.error);
         }
         
     } catch (error) {
         console.error('コメント投稿エラー:', error);
-        alert('コメントの投稿中にエラーが発生しました');
+        
+        // エラー状態に変更
+        submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>投稿失敗';
+        submitBtn.classList.remove('btn-secondary');
+        submitBtn.classList.add('btn-danger');
+        
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnContent;
+            submitBtn.classList.remove('btn-danger');
+            submitBtn.classList.add('btn-primary');
+        }, 3000);
     }
 }
 
