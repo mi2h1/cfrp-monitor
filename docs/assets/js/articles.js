@@ -745,18 +745,40 @@ function renderCommentCard(comment, level = 0) {
     }
     
     // 現在のユーザーがコメント投稿者かどうか
-    const currentUser = userFeatures ? userFeatures.user_id : null;
-    const isOwnComment = currentUser === comment.user_id;
+    let currentUser = null;
+    
+    // 1. window.currentUserからユーザーIDを取得
+    if (window.currentUser) {
+        currentUser = window.currentUser.user_id || window.currentUser.id || window.currentUser.username;
+    }
+    
+    // 2. フォールバック: userFeaturesから取得
+    if (!currentUser && userFeatures) {
+        currentUser = userFeatures.user_id || userFeatures.userId || userFeatures.current_user || userFeatures.username;
+    }
+    
+    // 3. フォールバック: JWTトークンからユーザーIDを取得
+    if (!currentUser && authToken) {
+        try {
+            const tokenPayload = JSON.parse(atob(authToken.split('.')[1]));
+            currentUser = tokenPayload.user_id || tokenPayload.sub || tokenPayload.username;
+        } catch (e) {
+            console.warn('JWTトークンのパースに失敗:', e);
+        }
+    }
+    
+    const isOwnComment = currentUser && currentUser === comment.user_id;
     
     // デバッグ情報をコンソールに出力
     console.log('Debug - renderCommentCard:', {
         currentUser: currentUser,
         commentUserId: comment.user_id,
         isOwnComment: isOwnComment,
+        windowCurrentUser: window.currentUser,
         userFeatures: userFeatures,
-        windowUserFeatures: window.userFeatures,
-        isDeleted: isDeleted,
-        comment: comment
+        userFeaturesKeys: userFeatures ? Object.keys(userFeatures) : 'null',
+        authToken: authToken ? 'present' : 'missing',
+        isDeleted: isDeleted
     });
     
     let html = `

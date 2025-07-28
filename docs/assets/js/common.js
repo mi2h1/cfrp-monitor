@@ -59,6 +59,7 @@ async function initializeNavigation(activePageId) {
             generateNavigation(data.layout.navigation, activePageId, data.last_updated);
             displayUserInfo(data.user, data.layout.user_menu);
             window.userFeatures = data.layout.features;
+            window.currentUser = data.user; // ユーザー情報をグローバルに保存
             setupUnifiedLogout();
             return data.layout;
         } else {
