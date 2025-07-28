@@ -1322,3 +1322,271 @@ async function submitCommentEdit(commentId) {
     }
 }
 
+// 記事詳細を表示（SPAアプローチ）
+async function showArticleDetail(articleId) {
+    try {
+        // URL更新（ブラウザバック対応）
+        const url = new URL(window.location);
+        url.searchParams.set('detail', articleId);
+        window.history.pushState({detail: articleId}, '', url);
+        
+        // 記事一覧を非表示
+        document.querySelector('.container-fluid .row .col-md-10 .container-fluid').style.display = 'none';
+        
+        // 記事詳細コンテナを作成・表示
+        let detailContainer = document.getElementById('articleDetailView');
+        if (!detailContainer) {
+            detailContainer = document.createElement('div');
+            detailContainer.id = 'articleDetailView';
+            detailContainer.className = 'container-fluid py-3';
+            document.querySelector('.col-md-10').appendChild(detailContainer);
+        }
+        
+        detailContainer.innerHTML = `
+            <div class="mb-3">
+                <button class="btn btn-outline-secondary" onclick="hideArticleDetail()">
+                    <i class="fas fa-arrow-left"></i> 記事一覧に戻る
+                </button>
+            </div>
+            <div id="detailLoading" class="text-center py-5">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">読み込み中...</span>
+                </div>
+                <p class="mt-2">記事を読み込んでいます...</p>
+            </div>
+            <div id="articleDetailContent" style="display: none;">
+                <!-- 記事詳細がここに表示される -->
+            </div>
+        `;
+        
+        detailContainer.style.display = 'block';
+        
+        // 記事詳細を読み込み
+        await loadAndRenderArticleDetail(articleId);
+        
+    } catch (error) {
+        console.error('記事詳細表示エラー:', error);
+        alert('記事詳細の表示に失敗しました');
+    }
+}
+
+// 記事詳細を非表示にして一覧に戻る  
+function hideArticleDetail() {
+    // URL更新
+    const url = new URL(window.location);
+    url.searchParams.delete('detail');
+    window.history.pushState({}, '', url);
+    
+    // 記事詳細を非表示
+    const detailContainer = document.getElementById('articleDetailView');
+    if (detailContainer) {
+        detailContainer.style.display = 'none';
+    }
+    
+    // 記事一覧を表示
+    document.querySelector('.container-fluid .row .col-md-10 .container-fluid').style.display = 'block';
+}
+
+// 記事詳細データを読み込んで表示
+async function loadAndRenderArticleDetail(articleId) {
+    try {
+        // 記事詳細とコメントを並列読み込み
+        const [articleResponse, commentsResponse] = await Promise.all([
+            fetch(`/api/articles?id=${articleId}`, {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            }),
+            fetch(`/api/article-comments?article_id=${articleId}`, {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+        ]);
+        
+        const articleData = await articleResponse.json();
+        const commentsData = await commentsResponse.json();
+        
+        if (!articleData.success || !articleData.articles?.length) {
+            throw new Error('記事が見つかりません');
+        }
+        
+        const article = articleData.articles[0];
+        const comments = commentsData.success ? commentsData.comments || [] : [];
+        
+        // 記事詳細を表示
+        renderArticleDetailContent(article, comments);
+        
+        // ローディングを非表示、コンテンツを表示
+        document.getElementById('detailLoading').style.display = 'none';
+        document.getElementById('articleDetailContent').style.display = 'block';
+        
+    } catch (error) {
+        console.error('記事詳細読み込みエラー:', error);
+        document.getElementById('detailLoading').innerHTML = 
+            '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
+    }
+}
+
+// 記事詳細コンテンツをレンダリング
+function renderArticleDetailContent(article, comments) {
+    const container = document.getElementById('articleDetailContent');
+    const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
+    const pubDate = article.published_at ? formatJSTDisplay(article.published_at) : '不明';
+    
+    container.innerHTML = `
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            ${article.flagged ? '<span class="badge bg-danger me-2">重要</span>' : ''}
+                            記事詳細
+                        </h4>
+                        <button class="btn btn-outline-primary btn-sm" onclick="window.open('${escapeHtml(article.url)}', '_blank')">
+                            <i class="fas fa-external-link-alt"></i> 元記事を開く
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-title">${escapeHtml(article.title || 'タイトルなし')}</h2>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    <i class="fas fa-rss"></i> 情報源: ${sourceName}
+                                </small>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-alt"></i> 公開日: ${pubDate}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <span class="badge bg-${getStatusColor(article.status)}">
+                                    ${getStatusLabel(article.status)}
+                                </span>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <small class="text-muted">
+                                    <i class="fas fa-link"></i> 
+                                    <a href="${article.url}" target="_blank" class="text-decoration-none">
+                                        ${article.url}
+                                    </a>
+                                </small>
+                            </div>
+                        </div>
+                        ${article.body ? `
+                            <div class="article-body mb-3">
+                                <h5>記事内容</h5>
+                                <div class="border rounded p-3 bg-light">
+                                    ${escapeHtml(article.body).replace(/\\n/g, '<br>')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${article.comments ? `
+                            <div class="article-comments mb-3">
+                                <h5>備考</h5>
+                                <div class="border rounded p-3 bg-light">
+                                    ${escapeHtml(article.comments).replace(/\\n/g, '<br>')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments"></i> コメント
+                            <span class="badge bg-secondary ms-2">${comments.length}</span>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h6>コメントを投稿</h6>
+                            <div class="form-group mb-2">
+                                <textarea class="form-control" id="newDetailComment" rows="3" placeholder="コメントを入力してください..."></textarea>
+                            </div>
+                            <button class="btn btn-primary" onclick="postDetailComment('${article.id}')">
+                                <i class="fas fa-paper-plane"></i> コメントを投稿
+                            </button>
+                        </div>
+                        
+                        <div id="detailCommentsContainer">
+                            ${renderDetailComments(comments)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 詳細画面用のコメント表示
+function renderDetailComments(comments) {
+    if (comments.length === 0) {
+        return '<div class="text-muted text-center py-3">まだコメントはありません</div>';
+    }
+    
+    const commentTree = buildCommentTree(comments);
+    return commentTree.map((comment, index, array) => {
+        const isLastRoot = index === array.length - 1;
+        return renderCommentCard(comment, 0, isLastRoot);
+    }).join('');
+}
+
+// 詳細画面用のコメント投稿
+async function postDetailComment(articleId) {
+    const commentText = document.getElementById('newDetailComment').value.trim();
+    
+    if (!commentText) {
+        alert('コメントを入力してください');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/article-comments', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                article_id: articleId,
+                comment: commentText
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('newDetailComment').value = '';
+            // 記事詳細を再読み込み
+            await loadAndRenderArticleDetail(articleId);
+            alert('コメントを投稿しました');
+        } else {
+            alert('コメントの投稿に失敗しました: ' + data.error);
+        }
+        
+    } catch (error) {
+        console.error('コメント投稿エラー:', error);
+        alert('コメントの投稿中にエラーが発生しました');
+    }
+}
+
+// ブラウザバック対応
+window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.detail) {
+        showArticleDetail(e.state.detail);
+    } else {
+        hideArticleDetail();
+    }
+});
+
