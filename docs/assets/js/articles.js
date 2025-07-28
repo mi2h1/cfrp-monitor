@@ -1057,9 +1057,9 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
             return renderCommentCard(reply, 1, isLastReply);
         }).join('');
         
-        // 返信群の最後に1つの返信ボタンを追加
+        // 返信群の最後に1つの返信ボタンを追加（適切な間隔で配置）
         const groupReplyButton = `
-            <div class="group-reply-container mt-2" style="margin-left: 20px;">
+            <div class="group-reply-container mt-3 mb-2" style="margin-left: 20px; padding-top: 10px; border-top: 1px solid #f0f0f0;">
                 <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                     <i class="fas fa-reply"></i> 返信
                 </button>
