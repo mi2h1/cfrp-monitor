@@ -313,10 +313,15 @@ class handler(BaseHTTPRequestHandler):
             with urllib.request.urlopen(req) as response:
                 data = json.loads(response.read().decode('utf-8'))
                 
-                # 各記事のコメント数を取得
-                for article in data:
-                    comment_count = self.get_article_comment_count(article['id'])
-                    article['comment_count'] = comment_count
+                # 記事IDのリストを作成
+                article_ids = [article['id'] for article in data]
+                
+                # 一括でコメント数を取得
+                if article_ids:
+                    comment_counts = self.get_articles_comment_counts(article_ids)
+                    # 各記事にコメント数を追加
+                    for article in data:
+                        article['comment_count'] = comment_counts.get(article['id'], 0)
                 
                 print(f"DEBUG: Articles count: {len(data)}")
                 return data
@@ -330,40 +335,47 @@ class handler(BaseHTTPRequestHandler):
             print(f"Get articles error: {e}")
             return None
     
-    def get_article_comment_count(self, article_id):
-        """特定の記事のコメント数を取得"""
+    def get_articles_comment_counts(self, article_ids):
+        """複数記事のコメント数を一括取得"""
         try:
             supabase_url = os.environ.get('SUPABASE_URL')
             supabase_key = os.environ.get('SUPABASE_KEY')
             
             if not supabase_url or not supabase_key:
-                return 0
+                return {}
             
-            # コメント数を取得（削除されていないもののみ）
-            url = f"{supabase_url}/rest/v1/article_comments?article_id=eq.{article_id}&is_deleted=eq.false&select=id"
+            # 記事IDのリストをカンマ区切りの文字列に変換
+            ids_str = ','.join(f'"{id}"' for id in article_ids)
+            
+            # 一括でコメントデータを取得（削除されていないもののみ）
+            url = f"{supabase_url}/rest/v1/article_comments?article_id=in.({ids_str})&is_deleted=eq.false&select=article_id"
             
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',
-                'Content-Type': 'application/json',
-                'Prefer': 'count=exact'
+                'Content-Type': 'application/json'
             }
             
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req) as response:
-                # Content-Rangeヘッダーからカウントを取得
-                content_range = response.headers.get('Content-Range', '')
-                if content_range and '/' in content_range:
-                    count = int(content_range.split('/')[-1])
-                    return count
-                else:
-                    # フォールバック: データを取得してカウント
-                    data = json.loads(response.read().decode('utf-8'))
-                    return len(data)
+                comments = json.loads(response.read().decode('utf-8'))
+                
+                # 記事IDごとのコメント数を集計
+                comment_counts = {}
+                for comment in comments:
+                    article_id = comment['article_id']
+                    comment_counts[article_id] = comment_counts.get(article_id, 0) + 1
+                
+                # 全ての記事IDに対して結果を返す（コメントがない記事は0）
+                result = {}
+                for article_id in article_ids:
+                    result[article_id] = comment_counts.get(article_id, 0)
+                
+                return result
         
         except Exception as e:
-            print(f"Get comment count error for article {article_id}: {str(e)}")
-            return 0
+            print(f"Get comments count error: {str(e)}")
+            return {}
     
     def get_articles_count(self, query_params=None):
         """記事の総数を取得（フィルタリング対応）"""
