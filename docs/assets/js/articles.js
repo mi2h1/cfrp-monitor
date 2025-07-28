@@ -351,8 +351,8 @@ function renderArticles() {
         <tr>
             <th style="width: 90px;">ステータス</th>
             <th>タイトル</th>
-            <th style="width: 120px;">情報源</th>
-            <th style="width: 100px;">公開日</th>
+            <th style="width: 140px;">情報源</th>
+            <th style="width: 120px;">公開日</th>
             <th style="width: 80px;">コメント</th>
         </tr>
     `;
@@ -394,8 +394,8 @@ function renderArticlesWithServerPagination(totalCount, itemsPerPage) {
                     <tr>
                         <th style="width: 90px;">ステータス</th>
                         <th>タイトル</th>
-                        <th style="width: 120px;">情報源</th>
-                        <th style="width: 100px;">公開日</th>
+                        <th style="width: 140px;">情報源</th>
+                        <th style="width: 120px;">公開日</th>
                         <th style="width: 80px;">コメント</th>
                     </tr>
                 </thead>
@@ -454,7 +454,7 @@ function createArticleTableRowElement(article) {
     
     const urlDiv = document.createElement('div');
     urlDiv.className = 'small text-muted text-truncate';
-    urlDiv.style.maxWidth = '400px';
+    urlDiv.style.maxWidth = '350px';
     urlDiv.title = article.url;
     urlDiv.textContent = article.url;
     titleContent.appendChild(urlDiv);
@@ -478,6 +478,7 @@ function createArticleTableRowElement(article) {
     
     // 情報源セル
     const sourceCell = document.createElement('td');
+    sourceCell.className = 'text-nowrap';
     const sourceSmall = document.createElement('small');
     sourceSmall.className = 'text-muted';
     const sourceIcon = document.createElement('i');
@@ -489,6 +490,7 @@ function createArticleTableRowElement(article) {
     
     // 日付セル
     const dateCell = document.createElement('td');
+    dateCell.className = 'text-nowrap';
     const dateSmall = document.createElement('small');
     dateSmall.className = 'text-muted';
     const dateIcon = document.createElement('i');
@@ -539,17 +541,17 @@ function createArticleTableRow(article) {
                     ${article.flagged ? '<span class="badge bg-danger flex-shrink-0 align-self-start" style="margin-top: 2px;">重要</span>' : ''}
                     <div class="flex-grow-1">
                         <div class="fw-medium">${escapeHtml(article.title || 'タイトルなし')}</div>
-                        <div class="small text-muted text-truncate" style="max-width: 400px;" title="${escapeHtml(article.url)}">${escapeHtml(article.url)}</div>
+                        <div class="small text-muted text-truncate" style="max-width: 350px;" title="${escapeHtml(article.url)}">${escapeHtml(article.url)}</div>
                         ${article.comments ? `<div class="small text-muted mt-1"><i class="fas fa-sticky-note"></i> ${escapeHtml(article.comments.substring(0, 100))}${article.comments.length > 100 ? '...' : ''}</div>` : ''}
                     </div>
                 </div>
             </td>
-            <td>
+            <td class="text-nowrap">
                 <small class="text-muted">
                     <i class="fas fa-rss"></i> ${sourceName}
                 </small>
             </td>
-            <td>
+            <td class="text-nowrap">
                 <small class="text-muted">
                     <i class="fas fa-calendar-alt"></i> ${pubDate}
                 </small>
