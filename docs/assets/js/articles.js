@@ -36,11 +36,8 @@ async function initializeArticlesApp() {
     // userFeaturesを再取得して確実に設定
     userFeatures = window.userFeatures;
     
-    // デバッグ: userFeaturesの内容を確認（簡略化）
-    // console.log('Debug - Articles initializeArticlesApp:', {
-    //     userFeatures: userFeatures,
-    //     windowUserFeatures: window.userFeatures
-    // });
+    // URLパラメータから初期状態を復元
+    restoreStateFromURL();
     
     // 並列処理で初期化を高速化
     const [sourcesResult, articlesResult] = await Promise.allSettled([
@@ -61,6 +58,67 @@ async function initializeArticlesApp() {
     }
     
     setupEventListeners();
+}
+
+// URLパラメータから状態を復元
+function restoreStateFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    
+    // ページ番号
+    const page = params.get('page');
+    if (page) {
+        currentPage = parseInt(page) || 1;
+    }
+    
+    // フィルター状態を復元
+    if (params.get('status')) {
+        const statusFilter = document.getElementById('statusFilter');
+        if (statusFilter) statusFilter.value = params.get('status');
+    }
+    
+    if (params.get('flagged')) {
+        const flaggedFilter = document.getElementById('flaggedFilter');
+        if (flaggedFilter) flaggedFilter.value = params.get('flagged');
+    }
+    
+    if (params.get('source')) {
+        const sourceFilter = document.getElementById('sourceFilter');
+        if (sourceFilter) sourceFilter.value = params.get('source');
+    }
+    
+    if (params.get('order')) {
+        const sortOrder = document.getElementById('sortOrder');
+        if (sortOrder) sortOrder.value = params.get('order');
+    }
+    
+    if (params.get('limit')) {
+        const itemsPerPage = document.getElementById('itemsPerPage');
+        if (itemsPerPage) itemsPerPage.value = params.get('limit');
+    }
+}
+
+// 現在の状態をURLに反映
+function updateURLWithCurrentState() {
+    const params = new URLSearchParams();
+    
+    // 現在のフィルター状態を取得
+    const statusFilter = document.getElementById('statusFilter')?.value;
+    const flaggedFilter = document.getElementById('flaggedFilter')?.value;
+    const sourceFilter = document.getElementById('sourceFilter')?.value;
+    const sortOrder = document.getElementById('sortOrder')?.value;
+    const itemsPerPage = document.getElementById('itemsPerPage')?.value;
+    
+    // パラメータを設定
+    if (currentPage > 1) params.set('page', currentPage);
+    if (statusFilter) params.set('status', statusFilter);
+    if (flaggedFilter) params.set('flagged', flaggedFilter);
+    if (sourceFilter) params.set('source', sourceFilter);
+    if (sortOrder && sortOrder !== 'desc') params.set('order', sortOrder);
+    if (itemsPerPage && itemsPerPage !== '20') params.set('limit', itemsPerPage);
+    
+    // URLを更新（ページリロードなし）
+    const newURL = params.toString() ? `?${params.toString()}` : window.location.pathname;
+    window.history.replaceState({}, '', newURL);
 }
 
 // ソース一覧を読み込み（キャッシング対応）
@@ -199,6 +257,9 @@ async function loadArticlesPage(page, totalCount = null) {
         
         articles = data.articles || [];
         currentPage = page;
+        
+        // URL更新
+        updateURLWithCurrentState();
         
         // ローディング状態を非表示
         hideLoadingState();
@@ -597,6 +658,7 @@ function setupEventListeners() {
     // デバウンス処理付きフィルター処理
     const debouncedFilterHandler = debounce(() => {
         currentPage = 1; // フィルター変更時はページをリセット
+        updateURLWithCurrentState(); // URL更新
         loadArticlesPage(1);
     }, DEBOUNCE_DELAY);
     
@@ -606,6 +668,16 @@ function setupEventListeners() {
         const element = document.getElementById(id);
         if (element) {
             element.addEventListener('change', debouncedFilterHandler);
+        }
+    });
+    
+    // 記事行クリックイベント
+    document.getElementById('articlesContainer').addEventListener('click', (e) => {
+        const row = e.target.closest('tr[data-id]');
+        if (row) {
+            const articleId = row.dataset.id;
+            // 記事詳細ページに遷移
+            window.location.href = `article-detail.html?id=${articleId}`;
         }
     });
 
