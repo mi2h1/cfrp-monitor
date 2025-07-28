@@ -10,10 +10,16 @@ let userFeatures = null;
 async function initializeArticlesApp() {
     // 認証チェックはメインページのスクリプトで実行済み
     authToken = localStorage.getItem('auth_token');
+    
+    // userFeaturesを再取得して確実に設定
     userFeatures = window.userFeatures;
     
     // デバッグ: userFeaturesの内容を確認
-    console.log('Debug - Articles initializeArticlesApp userFeatures:', userFeatures);
+    console.log('Debug - Articles initializeArticlesApp:', {
+        userFeatures: userFeatures,
+        windowUserFeatures: window.userFeatures,
+        authToken: authToken ? 'present' : 'missing'
+    });
     
     await loadSources();
     await loadArticles();
@@ -748,11 +754,17 @@ function renderCommentCard(comment, level = 0) {
         commentUserId: comment.user_id,
         isOwnComment: isOwnComment,
         userFeatures: userFeatures,
+        windowUserFeatures: window.userFeatures,
+        isDeleted: isDeleted,
         comment: comment
     });
     
     let html = `
-        <div class="comment-card mb-3" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
+        <div class="comment-card mb-3 position-relative" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
+            ${level > 0 ? `
+                <div class="comment-tree-line" style="position: absolute; left: -10px; top: 0; bottom: 0; width: 2px; background-color: #dee2e6;"></div>
+                <div class="comment-tree-branch" style="position: absolute; left: -10px; top: 20px; width: 15px; height: 2px; background-color: #dee2e6;"></div>
+            ` : ''}
             <div class="card card-body py-2 px-3">
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="comment-content flex-grow-1">
@@ -761,10 +773,10 @@ function renderCommentCard(comment, level = 0) {
                             <small class="text-muted me-1">${formatJSTDisplay(comment.created_at)}</small>
                             ${isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
                             ${isOwnComment && !isDeleted ? `
-                                <button class="btn btn-link btn-sm p-0 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1;" title="コメントを編集">
-                                    <i class="fas fa-edit text-muted"></i>
+                                <button class="btn btn-link btn-sm p-0 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1; color: #6c757d;" title="コメントを編集">
+                                    <i class="fas fa-edit"></i>
                                 </button>
-                            ` : '<!-- No edit button: isOwnComment=' + isOwnComment + ', isDeleted=' + isDeleted + ' -->'}
+                            ` : '<!-- Debug: No edit button - currentUser: ' + currentUser + ', commentUserId: ' + comment.user_id + ', isOwnComment: ' + isOwnComment + ', isDeleted: ' + isDeleted + ' -->'}
                         </div>
                         <div class="comment-text" id="commentText-${comment.id}">${commentText}</div>
                         

@@ -35,3 +35,27 @@
     border-radius: 4px;
     margin: 0.5rem 0;
 }
+
+/* コメントツリーの枝線 */
+.comment-tree-line {
+    border-left: 2px solid #dee2e6;
+}
+
+.comment-tree-branch {
+    border-top: 2px solid #dee2e6;
+}
+
+/* コメントカードのスタイル調整 */
+.comment-card {
+    position: relative;
+}
+
+/* 編集ボタンのスタイル */
+.edit-meta-btn {
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.edit-meta-btn:hover {
+    opacity: 1;
+}
