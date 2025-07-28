@@ -671,14 +671,14 @@ function setupEventListeners() {
         }
     });
     
-    // 記事行クリックイベント（SPAアプローチに変更）
+    // 記事行クリックイベント（編集可能詳細画面を表示）
     document.getElementById('articlesContainer').addEventListener('click', (e) => {
         const row = e.target.closest('tr[data-id]');
         if (row) {
             const articleId = row.dataset.id;
-            console.log('記事詳細を表示:', articleId);
-            // SPAスタイルで記事詳細を表示
-            showArticleDetail(articleId);
+            console.log('記事編集画面を表示:', articleId);
+            // 編集可能な詳細画面を表示
+            showEditableArticleDetail(articleId);
         }
     });
 
@@ -709,111 +709,26 @@ function setupEventListeners() {
         }
     });
 
-    // テーブル行クリックのイベント委譲
-    document.getElementById('articlesContainer').addEventListener('click', (e) => {
-        const row = e.target.closest('tr[data-id]');
-        if (row) {
-            const articleId = row.dataset.id;
-            openEditMode(articleId);
-        }
-    });
+    // 削除: 重複したイベントリスナー（上で統合済み）
 
-    // 編集モードのイベント委譲
-    document.getElementById('editModeContainer').addEventListener('click', async (e) => {
-        if (e.target.classList.contains('save-btn')) {
-            await saveArticle(e.target.dataset.id);
-        } else if (e.target.classList.contains('btn-close-edit')) {
-            closeEditMode();
-        }
-    });
+    // 削除: 旧編集モードのイベントリスナー（統合モードに変更）
 
     // ページネーションクリック
     setupPagination('#articlesContainer', renderArticles);
 }
 
-// 記事を保存
-async function saveArticle(articleId) {
-    // 編集モードのカードから値を取得
-    const editCard = document.querySelector(`#editModeContainer [data-id="${articleId}"]`);
-    if (!editCard) {
-        console.error('編集カードが見つかりません');
-        return;
-    }
-    
-    const status = editCard.querySelector('.status-select').value;
-    const flagged = editCard.querySelector('.flagged-check').checked;
-    const comments = editCard.querySelector('.comment-textarea').value;
-    
-    try {
-        // TODO: API経由で記事を更新する処理に置き換える
-        const updateData = {
-            status: status,
-            flagged: flagged,
-            comments: comments || null
-        };
-        
-        const response = await fetch(`/api/articles?id=${articleId}`, {
-            method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(updateData)
-        });
-        
-        const data = await response.json();
-        if (!data.success) {
-            throw new Error(data.error || '更新に失敗しました');
-        }
-        
-        // UIを更新
-        const saveBtn = editCard.querySelector('.save-btn');
-        const originalText = saveBtn.textContent;
-        saveBtn.textContent = '保存済み';
-        saveBtn.classList.replace('btn-success', 'btn-outline-success');
-        
-        setTimeout(() => {
-            saveBtn.textContent = originalText;
-            saveBtn.classList.replace('btn-outline-success', 'btn-success');
-        }, 2000);
-        
-        // 記事データを更新
-        const articleIndex = articles.findIndex(a => a.id == articleId);
-        if (articleIndex !== -1) {
-            articles[articleIndex].status = status;
-            articles[articleIndex].flagged = flagged;
-            articles[articleIndex].comments = comments || null;
-            articles[articleIndex].reviewed_at = new Date().toISOString();
-        }
-        
-    } catch (error) {
-        console.error('保存エラー:', error);
-        alert('保存に失敗しました: ' + error.message);
-    }
-}
+// 削除: 旧saveArticle関数（saveArticleDetailに統合済み）
 
-// 編集モードを開く
+// 編集モードを開く（統合モード対応）
 function openEditMode(articleId) {
-    const article = articles.find(a => a.id == articleId);
-    if (!article) return;
-
-    // 編集カード作成
-    document.getElementById('editCard').innerHTML = createDetailArticleCard(article);
-
-    // 表示切り替え
-    document.getElementById('articlesContainer').style.display = 'none';
-    document.getElementById('pagination').style.display = 'none';
-    document.getElementById('editModeContainer').style.display = 'block';
-    
-    // コメントを読み込む
-    loadArticleComments(articleId);
+    // 統合モードに変更されたため、showEditableArticleDetailを使用
+    showEditableArticleDetail(articleId);
 }
 
-// 編集モードを閉じる
+// 編集モードを閉じる（統合モード対応）
 function closeEditMode() {
-    document.getElementById('editModeContainer').style.display = 'none';
-    document.getElementById('articlesContainer').style.display = 'block';
-    document.getElementById('pagination').style.display = 'block';
+    // 統合モードに合わせてhideArticleDetailを使用
+    hideArticleDetail();
 }
 
 // ===========================================
@@ -1107,8 +1022,8 @@ async function postComment(articleId, parentCommentId = null) {
             // 入力欄をクリア
             document.getElementById('newComment').value = '';
             
-            // コメントを再読み込み
-            loadArticleComments(articleId);
+            // コメントを再読み込み（統合モード対応）
+            await loadAndRenderEditableArticleDetail(articleId);
             
             // 記事一覧のコメント数も更新
             const article = articles.find(a => a.id === articleId);
@@ -1169,11 +1084,10 @@ async function submitReply(parentCommentId) {
         return;
     }
     
-    // 現在表示中の記事IDを取得
-    const articleCard = document.querySelector('#editModeContainer .article-card');
-    if (!articleCard) return;
-    
-    const articleId = articleCard.dataset.id;
+    // 現在表示中の記事のIDを取得（統合モード対応）
+    const url = new URL(window.location);
+    const articleId = url.searchParams.get('edit');
+    if (!articleId) return;
     
     // 投稿ボタンを無効化
     const submitBtn = textarea.parentElement.querySelector('.btn-primary');
@@ -1202,8 +1116,8 @@ async function submitReply(parentCommentId) {
             // 返信フォームを非表示にしてクリア
             hideReplyForm(parentCommentId);
             
-            // コメントを再読み込み
-            loadArticleComments(articleId);
+            // コメントを再読み込み（統合モード対応）
+            await loadAndRenderEditableArticleDetail(articleId);
             
             // 記事一覧のコメント数も更新
             const article = articles.find(a => a.id === articleId);
@@ -1276,11 +1190,10 @@ async function submitCommentEdit(commentId) {
         return;
     }
     
-    // 現在表示中の記事IDを取得
-    const articleCard = document.querySelector('#editModeContainer .article-card');
-    if (!articleCard) return;
-    
-    const articleId = articleCard.dataset.id;
+    // 現在表示中の記事のIDを取得（統合モード対応）
+    const url = new URL(window.location);
+    const articleId = url.searchParams.get('edit');
+    if (!articleId) return;
     
     // 保存ボタンを無効化
     const saveBtn = textarea.parentElement.querySelector('.btn-success');
@@ -1307,8 +1220,8 @@ async function submitCommentEdit(commentId) {
             // 編集フォームを非表示
             cancelCommentEdit(commentId);
             
-            // コメントを再読み込み
-            loadArticleComments(articleId);
+            // コメントを再読み込み（統合モード対応）
+            await loadAndRenderEditableArticleDetail(articleId);
         } else {
             alert('コメントの編集に失敗しました: ' + data.error);
         }
@@ -1322,13 +1235,13 @@ async function submitCommentEdit(commentId) {
     }
 }
 
-// 記事詳細を表示（SPAアプローチ）
-async function showArticleDetail(articleId) {
+// 編集可能な記事詳細を表示
+async function showEditableArticleDetail(articleId) {
     try {
         // URL更新（ブラウザバック対応）
         const url = new URL(window.location);
-        url.searchParams.set('detail', articleId);
-        window.history.pushState({detail: articleId}, '', url);
+        url.searchParams.set('edit', articleId);
+        window.history.pushState({edit: articleId}, '', url);
         
         // 記事一覧コンテナを特定して非表示
         const mainContainer = document.querySelector('.main-content .container-fluid') || 
@@ -1377,12 +1290,10 @@ async function showArticleDetail(articleId) {
         detailContainer.style.display = 'block';
         
         // 記事詳細を読み込み
-        await loadAndRenderArticleDetail(articleId);
+        await loadAndRenderEditableArticleDetail(articleId);
         
     } catch (error) {
         console.error('記事詳細表示エラー:', error);
-        // エラーが発生した場合はアラート表示せずに記事詳細読み込みを継続
-        // alert('記事詳細の表示に失敗しました');
     }
 }
 
@@ -1412,8 +1323,8 @@ function hideArticleDetail() {
     }
 }
 
-// 記事詳細データを読み込んで表示
-async function loadAndRenderArticleDetail(articleId) {
+// 編集可能な記事詳細データを読み込んで表示
+async function loadAndRenderEditableArticleDetail(articleId) {
     try {
         // 記事詳細とコメントを並列読み込み
         const [articleResponse, commentsResponse] = await Promise.all([
@@ -1441,8 +1352,8 @@ async function loadAndRenderArticleDetail(articleId) {
         const article = articleData.articles[0];
         const comments = commentsData.success ? commentsData.comments || [] : [];
         
-        // 記事詳細を表示
-        renderArticleDetailContent(article, comments);
+        // 編集可能な記事詳細を表示
+        renderEditableArticleDetailContent(article, comments);
         
         // ローディングを非表示、コンテンツを表示
         document.getElementById('detailLoading').style.display = 'none';
@@ -1455,8 +1366,8 @@ async function loadAndRenderArticleDetail(articleId) {
     }
 }
 
-// 記事詳細コンテンツをレンダリング
-function renderArticleDetailContent(article, comments) {
+// 記事詳細コンテンツをレンダリング（編集可能）
+function renderEditableArticleDetailContent(article, comments) {
     const container = document.getElementById('articleDetailContent');
     const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
     const pubDate = article.published_at ? formatJSTDisplay(article.published_at) : '不明';
@@ -1468,11 +1379,16 @@ function renderArticleDetailContent(article, comments) {
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">
                             ${article.flagged ? '<span class="badge bg-danger me-2">重要</span>' : ''}
-                            記事詳細
+                            記事編集
                         </h4>
-                        <button class="btn btn-outline-primary btn-sm" onclick="window.open('${escapeHtml(article.url)}', '_blank')">
-                            <i class="fas fa-external-link-alt"></i> 元記事を開く
-                        </button>
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm" onclick="saveArticleDetail('${article.id}')" id="saveBtn">
+                                <i class="fas fa-save"></i> 保存
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="window.open('${escapeHtml(article.url)}', '_blank')">
+                                <i class="fas fa-external-link-alt"></i> 元記事を開く
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <h2 class="card-title">${escapeHtml(article.title || 'タイトルなし')}</h2>
@@ -1489,12 +1405,23 @@ function renderArticleDetailContent(article, comments) {
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <span class="badge bg-${getStatusColor(article.status)}">
-                                    ${getStatusLabel(article.status)}
-                                </span>
+                            <div class="col-md-4">
+                                <label class="form-label small">ステータス</label>
+                                <select class="form-select form-select-sm" id="editStatus">
+                                    <option value="unread" ${article.status === 'unread' ? 'selected' : ''}>未読</option>
+                                    <option value="reviewed" ${article.status === 'reviewed' ? 'selected' : ''}>確認済み</option>
+                                    <option value="flagged" ${article.status === 'flagged' ? 'selected' : ''}>フラグ付き</option>
+                                    <option value="archived" ${article.status === 'archived' ? 'selected' : ''}>アーカイブ</option>
+                                </select>
                             </div>
-                            <div class="col-md-6 text-md-end">
+                            <div class="col-md-4">
+                                <label class="form-label small">重要フラグ</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editFlagged" ${article.flagged ? 'checked' : ''}>
+                                    <label class="form-check-label" for="editFlagged">重要記事</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <small class="text-muted">
                                     <i class="fas fa-link"></i> 
                                     <a href="${article.url}" target="_blank" class="text-decoration-none">
@@ -1511,12 +1438,14 @@ function renderArticleDetailContent(article, comments) {
                                 </div>
                             </div>
                         ` : ''}
-                        ${article.comments ? `
-                            <div class="article-comments mb-3">
-                                <h5>備考</h5>
-                                <div class="border rounded p-3 bg-light">
-                                    ${escapeHtml(article.comments).replace(/\\n/g, '<br>')}
-                                </div>
+                        <div class="article-comments mb-3">
+                            <label class="form-label"><h5>備考</h5></label>
+                            <textarea class="form-control" id="editComments" rows="4" placeholder="備考を入力...">${escapeHtml(article.comments || '')}</textarea>
+                        </div>
+                        ${article.reviewed_at ? `
+                            <div class="text-muted small mb-2">
+                                <i class="fas fa-clock"></i> 最終更新: ${formatJSTDisplay(article.reviewed_at)}
+                                ${article.last_edited_by ? ` | <i class="fas fa-user"></i> 編集者: ${article.last_edited_by}` : ''}
                             </div>
                         ` : ''}
                     </div>
@@ -1608,10 +1537,63 @@ async function postDetailComment(articleId) {
 
 // ブラウザバック対応
 window.addEventListener('popstate', (e) => {
-    if (e.state && e.state.detail) {
-        showArticleDetail(e.state.detail);
+    if (e.state && e.state.edit) {
+        showEditableArticleDetail(e.state.edit);
     } else {
         hideArticleDetail();
     }
 });
+
+// 記事詳細の保存
+async function saveArticleDetail(articleId) {
+    const status = document.getElementById('editStatus').value;
+    const flagged = document.getElementById('editFlagged').checked;
+    const comments = document.getElementById('editComments').value.trim();
+    
+    try {
+        const updateData = {
+            status: status,
+            flagged: flagged,
+            comments: comments || null
+        };
+        
+        const response = await fetch(`/api/articles?id=${articleId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateData)
+        });
+        
+        const data = await response.json();
+        if (!data.success) {
+            throw new Error(data.error || '更新に失敗しました');
+        }
+        
+        // 保存成功のフィードバック
+        const saveBtn = document.getElementById('saveBtn');
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-check"></i> 保存済み';
+        saveBtn.classList.replace('btn-success', 'btn-outline-success');
+        
+        setTimeout(() => {
+            saveBtn.innerHTML = originalText;
+            saveBtn.classList.replace('btn-outline-success', 'btn-success');
+        }, 2000);
+        
+        // 記事一覧のデータも更新
+        const articleIndex = articles.findIndex(a => a.id == articleId);
+        if (articleIndex !== -1) {
+            articles[articleIndex].status = status;
+            articles[articleIndex].flagged = flagged;
+            articles[articleIndex].comments = comments || null;
+            articles[articleIndex].reviewed_at = new Date().toISOString();
+        }
+        
+    } catch (error) {
+        console.error('保存エラー:', error);
+        alert('保存に失敗しました: ' + error.message);
+    }
+}
 
