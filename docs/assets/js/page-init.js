@@ -5,6 +5,10 @@ function initializeArticlesPage() {
     document.addEventListener('DOMContentLoaded', async function() {
         try {
             await initializeNavigation('articles');
+            // userFeaturesが設定された後でarticles.jsの初期化を実行
+            if (typeof initializeArticlesApp === 'function') {
+                await initializeArticlesApp();
+            }
         } catch (error) {
             console.error('Navigation initialization failed:', error);
         }

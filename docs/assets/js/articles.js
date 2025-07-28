@@ -6,19 +6,19 @@ let currentPage = 1;
 let authToken = null;
 let userFeatures = null;
 
-// 初期化
-document.addEventListener('DOMContentLoaded', async () => {
+// articles.jsの初期化関数（page-init.jsから呼び出される）
+async function initializeArticlesApp() {
     // 認証チェックはメインページのスクリプトで実行済み
     authToken = localStorage.getItem('auth_token');
     userFeatures = window.userFeatures;
     
     // デバッグ: userFeaturesの内容を確認
-    console.log('Debug - Initial userFeatures:', userFeatures);
+    console.log('Debug - Articles initializeArticlesApp userFeatures:', userFeatures);
     
     await loadSources();
     await loadArticles();
     setupEventListeners();
-});
+}
 
 // ソース一覧を読み込み
 async function loadSources() {
