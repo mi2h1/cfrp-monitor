@@ -674,7 +674,8 @@ function buildCommentTree(comments) {
 function renderCommentCard(comment, level = 0) {
     const marginLeft = level * 20;
     const isDeleted = comment.is_deleted;
-    const commentText = isDeleted ? '<em class="text-muted">このコメントは削除されました</em>' : escapeHtml(comment.comment);
+    // 改行を<br>タグに変換
+    const commentText = isDeleted ? '<em class="text-muted">このコメントは削除されました</em>' : escapeHtml(comment.comment).replace(/\n/g, '<br>');
     
     let html = `
         <div class="comment-card mb-3" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
@@ -690,11 +691,31 @@ function renderCommentCard(comment, level = 0) {
                     </div>
                     ${!isDeleted ? `
                         <div class="comment-actions ms-2">
-                            <button class="btn btn-outline-primary btn-sm" onclick="replyToComment('${comment.id}')">
+                            <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                                 <i class="fas fa-reply"></i> 返信
                             </button>
                         </div>
                     ` : ''}
+                </div>
+            </div>
+            
+            <!-- 返信フォーム（初期は非表示） -->
+            <div class="reply-form mt-2" id="replyForm-${comment.id}" style="display: none; margin-left: ${marginLeft + 20}px;">
+                <div class="card card-body py-2 px-3 bg-light">
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-reply"></i> <strong>${escapeHtml(comment.user_id)}</strong> への返信
+                        </small>
+                    </div>
+                    <textarea class="form-control mb-2" id="replyText-${comment.id}" rows="2" placeholder="返信を入力..."></textarea>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary btn-sm" onclick="submitReply('${comment.id}')">
+                            <i class="fas fa-paper-plane"></i> 返信を投稿
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="hideReplyForm('${comment.id}')">
+                            キャンセル
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -755,12 +776,48 @@ async function postComment(articleId, parentCommentId = null) {
     }
 }
 
-// コメントに返信
-function replyToComment(parentCommentId) {
-    // 簡単な実装：プロンプトで返信内容を取得
-    const replyText = prompt('返信内容を入力してください:');
+// 返信フォームを表示
+function showReplyForm(commentId) {
+    // 他の返信フォームを非表示にする
+    document.querySelectorAll('.reply-form').forEach(form => {
+        form.style.display = 'none';
+    });
     
-    if (!replyText || !replyText.trim()) {
+    // 指定されたコメントの返信フォームを表示
+    const replyForm = document.getElementById(`replyForm-${commentId}`);
+    if (replyForm) {
+        replyForm.style.display = 'block';
+        
+        // テキストエリアにフォーカス
+        const textarea = document.getElementById(`replyText-${commentId}`);
+        if (textarea) {
+            textarea.focus();
+        }
+    }
+}
+
+// 返信フォームを非表示
+function hideReplyForm(commentId) {
+    const replyForm = document.getElementById(`replyForm-${commentId}`);
+    if (replyForm) {
+        replyForm.style.display = 'none';
+        
+        // テキストエリアをクリア
+        const textarea = document.getElementById(`replyText-${commentId}`);
+        if (textarea) {
+            textarea.value = '';
+        }
+    }
+}
+
+// 返信を投稿
+async function submitReply(parentCommentId) {
+    const textarea = document.getElementById(`replyText-${parentCommentId}`);
+    if (!textarea) return;
+    
+    const replyText = textarea.value.trim();
+    if (!replyText) {
+        alert('返信内容を入力してください');
         return;
     }
     
@@ -770,12 +827,12 @@ function replyToComment(parentCommentId) {
     
     const articleId = articleCard.dataset.id;
     
-    // 返信を投稿
-    postReply(articleId, parentCommentId, replyText.trim());
-}
-
-// 返信を投稿
-async function postReply(articleId, parentCommentId, commentText) {
+    // 投稿ボタンを無効化
+    const submitBtn = textarea.parentElement.querySelector('.btn-primary');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 投稿中...';
+    
     try {
         const response = await fetch('/api/article-comments', {
             method: 'POST',
@@ -786,13 +843,16 @@ async function postReply(articleId, parentCommentId, commentText) {
             body: JSON.stringify({
                 article_id: articleId,
                 parent_comment_id: parentCommentId,
-                comment: commentText
+                comment: replyText
             })
         });
         
         const data = await response.json();
         
         if (data.success) {
+            // 返信フォームを非表示にしてクリア
+            hideReplyForm(parentCommentId);
+            
             // コメントを再読み込み
             loadArticleComments(articleId);
             
@@ -807,5 +867,10 @@ async function postReply(articleId, parentCommentId, commentText) {
     } catch (error) {
         console.error('返信投稿エラー:', error);
         alert('返信の投稿中にエラーが発生しました');
+    } finally {
+        // ボタンを元に戻す
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
     }
 }
+
