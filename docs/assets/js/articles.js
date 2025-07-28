@@ -910,7 +910,7 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="comment-content flex-grow-1">
                         <div class="comment-meta mb-1 d-flex align-items-center">
-                            <strong class="me-2">${escapeHtml(comment.user_id)}</strong>
+                            <strong class="me-2">${escapeHtml(comment.users?.display_name || comment.user_id)}</strong>
                             <small class="text-muted me-1">${formatJSTDisplay(comment.created_at)}</small>
                             ${isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
                             ${isOwnComment && !isDeleted ? `
@@ -949,7 +949,7 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
                 <div class="card card-body py-2 px-3 bg-light">
                     <div class="mb-2">
                         <small class="text-muted">
-                            <i class="fas fa-reply"></i> <strong>${escapeHtml(comment.user_id)}</strong> への返信
+                            <i class="fas fa-reply"></i> <strong>${escapeHtml(comment.users?.display_name || comment.user_id)}</strong> への返信
                         </small>
                     </div>
                     <textarea class="form-control mb-2" id="replyText-${comment.id}" rows="2" placeholder="返信を入力..."></textarea>

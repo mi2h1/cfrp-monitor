@@ -251,8 +251,8 @@ class handler(BaseHTTPRequestHandler):
             if not supabase_url or not supabase_key:
                 return []
             
-            # コメント一覧を取得（削除されていないもののみ、作成日時順）
-            url = f"{supabase_url}/rest/v1/article_comments?article_id=eq.{article_id}&is_deleted=eq.false&order=created_at.asc"
+            # コメント一覧を取得（ユーザーの表示名も含めて取得、削除されていないもののみ、作成日時順）
+            url = f"{supabase_url}/rest/v1/article_comments?select=*,users(display_name)&article_id=eq.{article_id}&is_deleted=eq.false&order=created_at.asc"
             
             headers = {
                 'apikey': supabase_key,
