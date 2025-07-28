@@ -410,22 +410,22 @@ function createDetailArticleCard(article) {
                 </div>
             </div>
             
-            <!-- スレッドセクション -->
+            <!-- コメントセクション -->
             <div class="mt-4 border-top pt-4">
-                <h6 class="mb-3"><i class="fas fa-comments"></i> スレッド</h6>
+                <h6 class="mb-3"><i class="fas fa-comments"></i> コメント</h6>
                 
-                <!-- スレッド投稿フォーム -->
+                <!-- コメント投稿フォーム -->
                 <div class="comment-form mb-4">
-                    <textarea class="form-control mb-2" id="newComment" rows="3" placeholder="スレッドに投稿..."></textarea>
+                    <textarea class="form-control mb-2" id="newComment" rows="3" placeholder="コメントを投稿..."></textarea>
                     <button class="btn btn-primary btn-sm" onclick="postComment('${article.id}')">
-                        <i class="fas fa-paper-plane"></i> 投稿
+                        <i class="fas fa-paper-plane"></i> コメントを投稿
                     </button>
                 </div>
                 
-                <!-- スレッド一覧 -->
+                <!-- コメント一覧 -->
                 <div id="commentsContainer" class="comments-container">
                     <div class="text-center text-muted">
-                        <i class="fas fa-spinner fa-spin"></i> スレッドを読み込み中...
+                        <i class="fas fa-spinner fa-spin"></i> コメントを読み込み中...
                     </div>
                 </div>
             </div>
@@ -721,17 +721,47 @@ function renderCommentCard(comment, level = 0) {
     // 改行を<br>タグに変換
     const commentText = isDeleted ? '<em class="text-muted">このコメントは削除されました</em>' : escapeHtml(comment.comment).replace(/\n/g, '<br>');
     
+    // 編集済み判定を改善（時刻比較を正確に）
+    let isEdited = false;
+    if (comment.created_at && comment.updated_at) {
+        const createdTime = new Date(comment.created_at).getTime();
+        const updatedTime = new Date(comment.updated_at).getTime();
+        isEdited = Math.abs(updatedTime - createdTime) > 2000; // 2秒以上の差があれば編集済み
+    }
+    
+    // 現在のユーザーがコメント投稿者かどうか
+    const currentUser = userFeatures ? userFeatures.user_id : null;
+    const isOwnComment = currentUser === comment.user_id;
+    
     let html = `
         <div class="comment-card mb-3" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
             <div class="card card-body py-2 px-3">
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="comment-content flex-grow-1">
-                        <div class="comment-meta mb-1">
+                        <div class="comment-meta mb-1 d-flex align-items-center">
                             <strong class="me-2">${escapeHtml(comment.user_id)}</strong>
-                            <small class="text-muted">${formatJSTDisplay(comment.created_at)}</small>
-                            ${comment.updated_at !== comment.created_at ? '<small class="text-info ms-1">(編集済み)</small>' : ''}
+                            <small class="text-muted me-1">${formatJSTDisplay(comment.created_at)}</small>
+                            ${isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
+                            ${isOwnComment && !isDeleted ? `
+                                <button class="btn btn-link btn-sm p-0 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1;">
+                                    <i class="fas fa-edit text-muted"></i>
+                                </button>
+                            ` : ''}
                         </div>
-                        <div class="comment-text">${commentText}</div>
+                        <div class="comment-text" id="commentText-${comment.id}">${commentText}</div>
+                        
+                        <!-- 編集フォーム（初期非表示） -->
+                        <div class="edit-form mt-2" id="editForm-${comment.id}" style="display: none;">
+                            <textarea class="form-control mb-2" id="editText-${comment.id}" rows="3">${escapeHtml(comment.comment)}</textarea>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success btn-sm" onclick="submitCommentEdit('${comment.id}')">
+                                    <i class="fas fa-save"></i> 保存
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="cancelCommentEdit('${comment.id}')">
+                                    キャンセル
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     ${!isDeleted ? `
                         <div class="comment-actions ms-2">
