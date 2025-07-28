@@ -37,17 +37,29 @@
 }
 
 /* コメントツリーの枝線 */
-.comment-tree-line {
-    border-left: 2px solid #dee2e6;
+.comment-root-line {
+    z-index: 1;
 }
 
-.comment-tree-branch {
-    border-top: 2px solid #dee2e6;
+.comment-tree-vertical {
+    z-index: 1;
+}
+
+.comment-tree-connector {
+    z-index: 1;
 }
 
 /* コメントカードのスタイル調整 */
 .comment-card {
     position: relative;
+    z-index: 2;
+}
+
+.comment-card .card {
+    position: relative;
+    z-index: 3;
+    background: white;
+    border: 1px solid #dee2e6;
 }
 
 /* 編集ボタンのスタイル */
@@ -58,4 +70,9 @@
 
 .edit-meta-btn:hover {
     opacity: 1;
+}
+
+/* コメントコンテナの間隔調整 */
+.comments-container {
+    padding-left: 20px;
 }

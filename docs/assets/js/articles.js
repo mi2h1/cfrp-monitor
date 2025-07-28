@@ -14,12 +14,11 @@ async function initializeArticlesApp() {
     // userFeaturesを再取得して確実に設定
     userFeatures = window.userFeatures;
     
-    // デバッグ: userFeaturesの内容を確認
-    console.log('Debug - Articles initializeArticlesApp:', {
-        userFeatures: userFeatures,
-        windowUserFeatures: window.userFeatures,
-        authToken: authToken ? 'present' : 'missing'
-    });
+    // デバッグ: userFeaturesの内容を確認（簡略化）
+    // console.log('Debug - Articles initializeArticlesApp:', {
+    //     userFeatures: userFeatures,
+    //     windowUserFeatures: window.userFeatures
+    // });
     
     await loadSources();
     await loadArticles();
@@ -641,11 +640,11 @@ async function loadArticleComments(articleId) {
 function renderComments(comments) {
     const container = document.getElementById('commentsContainer');
     
-    // デバッグ: コメントデータを確認
-    console.log('Debug - renderComments:', {
-        comments: comments,
-        userFeatures: userFeatures
-    });
+    // デバッグ: コメントデータを確認（簡略化）
+    // console.log('Debug - renderComments:', {
+    //     comments: comments,
+    //     userFeatures: userFeatures
+    // });
     
     if (comments.length === 0) {
         container.innerHTML = '<div class="text-muted text-center">まだコメントがありません</div>';
@@ -656,7 +655,10 @@ function renderComments(comments) {
     const commentTree = buildCommentTree(comments);
     
     // HTML生成
-    const commentsHtml = commentTree.map(comment => renderCommentCard(comment)).join('');
+    const commentsHtml = commentTree.map((comment, index, array) => {
+        const isLastRoot = index === array.length - 1;
+        return renderCommentCard(comment, 0, isLastRoot);
+    }).join('');
     container.innerHTML = commentsHtml;
 }
 
@@ -729,7 +731,7 @@ function findRootCommentId(comment, allComments) {
 }
 
 // コメントカードをレンダリング（フラット表示）
-function renderCommentCard(comment, level = 0) {
+function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSiblings = false) {
     const marginLeft = level * 20;
     const isDeleted = comment.is_deleted;
     const isRootComment = level === 0;
@@ -769,23 +771,24 @@ function renderCommentCard(comment, level = 0) {
     
     const isOwnComment = currentUser && currentUser === comment.user_id;
     
-    // デバッグ情報をコンソールに出力
-    console.log('Debug - renderCommentCard:', {
-        currentUser: currentUser,
-        commentUserId: comment.user_id,
-        isOwnComment: isOwnComment,
-        windowCurrentUser: window.currentUser,
-        userFeatures: userFeatures,
-        userFeaturesKeys: userFeatures ? Object.keys(userFeatures) : 'null',
-        authToken: authToken ? 'present' : 'missing',
-        isDeleted: isDeleted
-    });
+    // デバッグ情報をコンソールに出力（編集機能が動作しているので簡略化）
+    // console.log('Debug - renderCommentCard:', {
+    //     currentUser: currentUser,
+    //     commentUserId: comment.user_id,
+    //     isOwnComment: isOwnComment
+    // });
     
     let html = `
         <div class="comment-card mb-3 position-relative" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
+            ${level === 0 && comment.replies && comment.replies.length > 0 ? `
+                <!-- ルートコメントから下への縦線 -->
+                <div class="comment-root-line" style="position: absolute; left: 15px; top: 100%; width: 2px; height: 20px; background-color: #dee2e6;"></div>
+            ` : ''}
             ${level > 0 ? `
-                <div class="comment-tree-line" style="position: absolute; left: -10px; top: 0; bottom: 0; width: 2px; background-color: #dee2e6;"></div>
-                <div class="comment-tree-branch" style="position: absolute; left: -10px; top: 20px; width: 15px; height: 2px; background-color: #dee2e6;"></div>
+                <!-- 縦線（最後の要素でない場合のみ） -->
+                ${!isLast ? `<div class="comment-tree-vertical" style="position: absolute; left: -15px; top: 50px; bottom: -15px; width: 2px; background-color: #dee2e6;"></div>` : ''}
+                <!-- L字型の接続線 -->
+                <div class="comment-tree-connector" style="position: absolute; left: -15px; top: 25px; width: 18px; height: 25px; border-left: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6; border-bottom-left-radius: 6px;"></div>
             ` : ''}
             <div class="card card-body py-2 px-3">
                 <div class="d-flex justify-content-between align-items-start">
@@ -795,8 +798,8 @@ function renderCommentCard(comment, level = 0) {
                             <small class="text-muted me-1">${formatJSTDisplay(comment.created_at)}</small>
                             ${isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
                             ${isOwnComment && !isDeleted ? `
-                                <button class="btn btn-link btn-sm p-0 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1; color: #6c757d;" title="コメントを編集">
-                                    <i class="fas fa-edit"></i>
+                                <button class="btn btn-link btn-sm p-1 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1; color: #6c757d;" title="コメントを編集">
+                                    <i class="fas fa-edit me-1"></i>編集
                                 </button>
                             ` : '<!-- Debug: No edit button - currentUser: ' + currentUser + ', commentUserId: ' + comment.user_id + ', isOwnComment: ' + isOwnComment + ', isDeleted: ' + isDeleted + ' -->'}
                         </div>
@@ -849,7 +852,10 @@ function renderCommentCard(comment, level = 0) {
     
     // 返信があればフラットに追加（全て同じ階層）
     if (comment.replies && comment.replies.length > 0) {
-        const repliesHtml = comment.replies.map(reply => renderCommentCard(reply, 1)).join('');
+        const repliesHtml = comment.replies.map((reply, index, array) => {
+            const isLastReply = index === array.length - 1;
+            return renderCommentCard(reply, 1, isLastReply);
+        }).join('');
         html += repliesHtml;
     }
     
