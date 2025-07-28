@@ -281,6 +281,7 @@ class handler(BaseHTTPRequestHandler):
             status = query_params.get('status', [None])[0]
             flagged = query_params.get('flagged', [None])[0]
             source_id = query_params.get('source_id', [None])[0]
+            has_comments = query_params.get('has_comments', [None])[0]
             
             # 単一記事取得の場合
             if article_id:
@@ -327,6 +328,13 @@ class handler(BaseHTTPRequestHandler):
                     # 各記事にコメント数を追加
                     for article in data:
                         article['comment_count'] = comment_counts.get(article['id'], 0)
+                
+                # コメントフィルタリングを適用（フロントエンド側でフィルタリング）
+                if has_comments:
+                    if has_comments == 'with_comments':
+                        data = [article for article in data if article.get('comment_count', 0) > 0]
+                    elif has_comments == 'no_comments':
+                        data = [article for article in data if article.get('comment_count', 0) == 0]
                 
                 print(f"DEBUG: Articles count: {len(data)}")
                 return data
@@ -442,6 +450,7 @@ class handler(BaseHTTPRequestHandler):
             status = query_params.get('status', [None])[0]
             flagged = query_params.get('flagged', [None])[0]
             source_id = query_params.get('source_id', [None])[0]
+            has_comments = query_params.get('has_comments', [None])[0]
             
             # ベースURLを構築（カウントのみ）
             url = f"{supabase_url}/rest/v1/articles?select=id"
@@ -468,15 +477,34 @@ class handler(BaseHTTPRequestHandler):
             
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req) as response:
-                # Content-Rangeヘッダーからカウントを取得
-                content_range = response.headers.get('Content-Range', '')
-                if content_range and '/' in content_range:
-                    count = int(content_range.split('/')[-1])
-                    return count
+                # コメントフィルタリングがある場合は、データを取得してフィルタリング後にカウント
+                if has_comments:
+                    # 記事とコメント数を取得
+                    articles_data = json.loads(response.read().decode('utf-8'))
+                    article_ids = [article['id'] for article in articles_data]
+                    
+                    if article_ids:
+                        comment_counts = self.get_articles_comment_counts(article_ids)
+                        # フィルタリング適用
+                        if has_comments == 'with_comments':
+                            filtered_count = sum(1 for article_id in article_ids if comment_counts.get(article_id, 0) > 0)
+                        elif has_comments == 'no_comments':
+                            filtered_count = sum(1 for article_id in article_ids if comment_counts.get(article_id, 0) == 0)
+                        else:
+                            filtered_count = len(articles_data)
+                        return filtered_count
+                    else:
+                        return 0
                 else:
-                    # フォールバック: データを取得してカウント
-                    data = json.loads(response.read().decode('utf-8'))
-                    return len(data)
+                    # Content-Rangeヘッダーからカウントを取得
+                    content_range = response.headers.get('Content-Range', '')
+                    if content_range and '/' in content_range:
+                        count = int(content_range.split('/')[-1])
+                        return count
+                    else:
+                        # フォールバック: データを取得してカウント
+                        data = json.loads(response.read().decode('utf-8'))
+                        return len(data)
                 
         except Exception as e:
             print(f"Get articles count error: {e}")

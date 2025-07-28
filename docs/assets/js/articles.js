@@ -86,6 +86,11 @@ function restoreStateFromURL() {
         if (sourceFilter) sourceFilter.value = params.get('source');
     }
     
+    if (params.get('comments')) {
+        const commentFilter = document.getElementById('commentFilter');
+        if (commentFilter) commentFilter.value = params.get('comments');
+    }
+    
     if (params.get('order')) {
         const sortOrder = document.getElementById('sortOrder');
         if (sortOrder) sortOrder.value = params.get('order');
@@ -105,6 +110,7 @@ function updateURLWithCurrentState() {
     const statusFilter = document.getElementById('statusFilter')?.value;
     const flaggedFilter = document.getElementById('flaggedFilter')?.value;
     const sourceFilter = document.getElementById('sourceFilter')?.value;
+    const commentFilter = document.getElementById('commentFilter')?.value;
     const sortOrder = document.getElementById('sortOrder')?.value;
     const itemsPerPage = document.getElementById('itemsPerPage')?.value;
     
@@ -113,6 +119,7 @@ function updateURLWithCurrentState() {
     if (statusFilter) params.set('status', statusFilter);
     if (flaggedFilter) params.set('flagged', flaggedFilter);
     if (sourceFilter) params.set('source', sourceFilter);
+    if (commentFilter) params.set('comments', commentFilter);
     if (sortOrder && sortOrder !== 'desc') params.set('order', sortOrder);
     if (itemsPerPage && itemsPerPage !== '20') params.set('limit', itemsPerPage);
     
@@ -159,7 +166,7 @@ async function loadSources() {
 }
 
 // 記事の総件数を取得（API経由）
-async function getTotalArticlesCount(statusFilter = '', flaggedFilter = '', sourceFilter = '') {
+async function getTotalArticlesCount(statusFilter = '', flaggedFilter = '', sourceFilter = '', commentFilter = '') {
     try {
         let url = '/api/articles?count_only=true';
         
@@ -167,6 +174,7 @@ async function getTotalArticlesCount(statusFilter = '', flaggedFilter = '', sour
         if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
         if (flaggedFilter) url += `&flagged=${encodeURIComponent(flaggedFilter)}`;
         if (sourceFilter) url += `&source_id=${encodeURIComponent(sourceFilter)}`;
+        if (commentFilter) url += `&has_comments=${encodeURIComponent(commentFilter)}`;
         
         const response = await fetch(url, {
             method: 'GET',
@@ -219,11 +227,12 @@ async function loadArticlesPage(page, totalCount = null) {
         const statusFilter = document.getElementById('statusFilter').value;
         const flaggedFilter = document.getElementById('flaggedFilter').value;
         const sourceFilter = document.getElementById('sourceFilter').value;
+        const commentFilter = document.getElementById('commentFilter').value;
         const sortOrder = document.getElementById('sortOrder').value;
         
         // 総件数が未取得の場合は取得（フィルタリング条件付き）
         if (totalCount === null) {
-            totalCount = await getTotalArticlesCount(statusFilter, flaggedFilter, sourceFilter);
+            totalCount = await getTotalArticlesCount(statusFilter, flaggedFilter, sourceFilter, commentFilter);
         }
         
         // API URLを構築
@@ -238,6 +247,9 @@ async function loadArticlesPage(page, totalCount = null) {
         }
         if (sourceFilter) {
             url += `&source_id=${encodeURIComponent(sourceFilter)}`;
+        }
+        if (commentFilter) {
+            url += `&has_comments=${encodeURIComponent(commentFilter)}`;
         }
         
         const response = await fetch(url, {
@@ -663,7 +675,7 @@ function setupEventListeners() {
     }, DEBOUNCE_DELAY);
     
     // フィルター・ソート・表示件数変更時（デバウンス版）
-    const filterIds = ['statusFilter', 'flaggedFilter', 'sourceFilter', 'sortOrder', 'itemsPerPage'];
+    const filterIds = ['statusFilter', 'flaggedFilter', 'sourceFilter', 'commentFilter', 'sortOrder', 'itemsPerPage'];
     filterIds.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
