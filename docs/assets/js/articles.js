@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     authToken = localStorage.getItem('auth_token');
     userFeatures = window.userFeatures;
     
+    // デバッグ: userFeaturesの内容を確認
+    console.log('Debug - Initial userFeatures:', userFeatures);
+    
     await loadSources();
     await loadArticles();
     setupEventListeners();
@@ -217,7 +220,7 @@ function renderArticles() {
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th style="width: 120px;">ステータス</th>
+                        <th style="width: 90px;">ステータス</th>
                         <th>タイトル</th>
                         <th style="width: 120px;">情報源</th>
                         <th style="width: 100px;">公開日</th>
@@ -254,7 +257,7 @@ function renderArticlesWithServerPagination(totalCount, itemsPerPage) {
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th style="width: 120px;">ステータス</th>
+                        <th style="width: 90px;">ステータス</th>
                         <th>タイトル</th>
                         <th style="width: 120px;">情報源</th>
                         <th style="width: 100px;">公開日</th>
@@ -313,7 +316,7 @@ function createArticleTableRow(article) {
     return `
         <tr class="${flaggedClass}" data-id="${article.id}" style="cursor: pointer;">
             <td>
-                <div class="d-flex align-items-center gap-2">
+                <div class="d-flex flex-column align-items-start gap-1">
                     <span class="badge bg-${getStatusColor(article.status)} status-badge">
                         ${getStatusLabel(article.status)}
                     </span>
@@ -632,6 +635,12 @@ async function loadArticleComments(articleId) {
 function renderComments(comments) {
     const container = document.getElementById('commentsContainer');
     
+    // デバッグ: コメントデータを確認
+    console.log('Debug - renderComments:', {
+        comments: comments,
+        userFeatures: userFeatures
+    });
+    
     if (comments.length === 0) {
         container.innerHTML = '<div class="text-muted text-center">まだコメントがありません</div>';
         return;
@@ -733,6 +742,15 @@ function renderCommentCard(comment, level = 0) {
     const currentUser = userFeatures ? userFeatures.user_id : null;
     const isOwnComment = currentUser === comment.user_id;
     
+    // デバッグ情報をコンソールに出力
+    console.log('Debug - renderCommentCard:', {
+        currentUser: currentUser,
+        commentUserId: comment.user_id,
+        isOwnComment: isOwnComment,
+        userFeatures: userFeatures,
+        comment: comment
+    });
+    
     let html = `
         <div class="comment-card mb-3" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
             <div class="card card-body py-2 px-3">
@@ -743,10 +761,10 @@ function renderCommentCard(comment, level = 0) {
                             <small class="text-muted me-1">${formatJSTDisplay(comment.created_at)}</small>
                             ${isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
                             ${isOwnComment && !isDeleted ? `
-                                <button class="btn btn-link btn-sm p-0 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1;">
+                                <button class="btn btn-link btn-sm p-0 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1;" title="コメントを編集">
                                     <i class="fas fa-edit text-muted"></i>
                                 </button>
-                            ` : ''}
+                            ` : '<!-- No edit button: isOwnComment=' + isOwnComment + ', isDeleted=' + isDeleted + ' -->'}
                         </div>
                         <div class="comment-text" id="commentText-${comment.id}">${commentText}</div>
                         
