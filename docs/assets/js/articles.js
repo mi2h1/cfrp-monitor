@@ -415,6 +415,26 @@ function createDetailArticleCard(article) {
                     ${article.last_edited_by ? `<small class="text-info ms-2">編集者: ${article.last_edited_by}</small>` : ''}
                 </div>
             </div>
+            
+            <!-- コメントスレッドセクション -->
+            <div class="mt-4 border-top pt-4">
+                <h6 class="mb-3"><i class="fas fa-comments"></i> コメント・スレッド</h6>
+                
+                <!-- コメント投稿フォーム -->
+                <div class="comment-form mb-4">
+                    <textarea class="form-control mb-2" id="newComment" rows="3" placeholder="コメントを投稿..."></textarea>
+                    <button class="btn btn-primary btn-sm" onclick="postComment('${article.id}')">
+                        <i class="fas fa-paper-plane"></i> コメントを投稿
+                    </button>
+                </div>
+                
+                <!-- コメント一覧 -->
+                <div id="commentsContainer" class="comments-container">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-spinner fa-spin"></i> コメントを読み込み中...
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 }
@@ -579,6 +599,9 @@ function openEditMode(articleId) {
     document.getElementById('articlesContainer').style.display = 'none';
     document.getElementById('pagination').style.display = 'none';
     document.getElementById('editModeContainer').style.display = 'block';
+    
+    // コメントを読み込む
+    loadArticleComments(articleId);
 }
 
 // 編集モードを閉じる
@@ -586,4 +609,217 @@ function closeEditMode() {
     document.getElementById('editModeContainer').style.display = 'none';
     document.getElementById('articlesContainer').style.display = 'block';
     document.getElementById('pagination').style.display = 'block';
+}
+
+// ===========================================
+// コメント機能
+// ===========================================
+
+// 記事のコメントを読み込み
+async function loadArticleComments(articleId) {
+    try {
+        const response = await fetch(`/api/article-comments?article_id=${articleId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            renderComments(data.comments || []);
+        } else {
+            console.error('コメント読み込みエラー:', data.error);
+            document.getElementById('commentsContainer').innerHTML = 
+                '<div class="alert alert-warning">コメントの読み込みに失敗しました</div>';
+        }
+    } catch (error) {
+        console.error('コメント読み込みエラー:', error);
+        document.getElementById('commentsContainer').innerHTML = 
+            '<div class="alert alert-danger">コメントの読み込み中にエラーが発生しました</div>';
+    }
+}
+
+// コメントを表示
+function renderComments(comments) {
+    const container = document.getElementById('commentsContainer');
+    
+    if (comments.length === 0) {
+        container.innerHTML = '<div class="text-muted text-center">まだコメントがありません</div>';
+        return;
+    }
+    
+    // コメントを階層構造に変換
+    const commentTree = buildCommentTree(comments);
+    
+    // HTML生成
+    const commentsHtml = commentTree.map(comment => renderCommentCard(comment)).join('');
+    container.innerHTML = commentsHtml;
+}
+
+// コメントの階層構造を構築
+function buildCommentTree(comments) {
+    const commentMap = {};
+    const rootComments = [];
+    
+    // まずマップを作成
+    comments.forEach(comment => {
+        commentMap[comment.id] = { ...comment, replies: [] };
+    });
+    
+    // 階層構造を構築
+    comments.forEach(comment => {
+        if (comment.parent_comment_id && commentMap[comment.parent_comment_id]) {
+            commentMap[comment.parent_comment_id].replies.push(commentMap[comment.id]);
+        } else {
+            rootComments.push(commentMap[comment.id]);
+        }
+    });
+    
+    // 作成日時でソート（新しい順）
+    rootComments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    
+    return rootComments;
+}
+
+// コメントカードをレンダリング
+function renderCommentCard(comment, level = 0) {
+    const marginLeft = level * 20;
+    const isDeleted = comment.is_deleted;
+    const commentText = isDeleted ? '<em class="text-muted">このコメントは削除されました</em>' : escapeHtml(comment.comment);
+    
+    let html = `
+        <div class="comment-card mb-3" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
+            <div class="card card-body py-2 px-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="comment-content flex-grow-1">
+                        <div class="comment-meta mb-1">
+                            <strong class="me-2">${escapeHtml(comment.user_id)}</strong>
+                            <small class="text-muted">${formatJSTDisplay(comment.created_at)}</small>
+                            ${comment.updated_at !== comment.created_at ? '<small class="text-info ms-1">(編集済み)</small>' : ''}
+                        </div>
+                        <div class="comment-text">${commentText}</div>
+                    </div>
+                    ${!isDeleted ? `
+                        <div class="comment-actions ms-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="replyToComment('${comment.id}')">
+                                <i class="fas fa-reply"></i> 返信
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 返信があれば追加
+    if (comment.replies && comment.replies.length > 0) {
+        const repliesHtml = comment.replies.map(reply => renderCommentCard(reply, level + 1)).join('');
+        html += repliesHtml;
+    }
+    
+    return html;
+}
+
+// コメントを投稿
+async function postComment(articleId, parentCommentId = null) {
+    const commentText = document.getElementById('newComment').value.trim();
+    
+    if (!commentText) {
+        alert('コメントを入力してください');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/article-comments', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                article_id: articleId,
+                parent_comment_id: parentCommentId,
+                comment: commentText
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // 入力欄をクリア
+            document.getElementById('newComment').value = '';
+            
+            // コメントを再読み込み
+            loadArticleComments(articleId);
+            
+            // 記事一覧のコメント数も更新
+            const article = articles.find(a => a.id === articleId);
+            if (article) {
+                article.comment_count = (article.comment_count || 0) + 1;
+            }
+        } else {
+            alert('コメントの投稿に失敗しました: ' + data.error);
+        }
+    } catch (error) {
+        console.error('コメント投稿エラー:', error);
+        alert('コメントの投稿中にエラーが発生しました');
+    }
+}
+
+// コメントに返信
+function replyToComment(parentCommentId) {
+    // 簡単な実装：プロンプトで返信内容を取得
+    const replyText = prompt('返信内容を入力してください:');
+    
+    if (!replyText || !replyText.trim()) {
+        return;
+    }
+    
+    // 現在表示中の記事IDを取得
+    const articleCard = document.querySelector('#editModeContainer .article-card');
+    if (!articleCard) return;
+    
+    const articleId = articleCard.dataset.id;
+    
+    // 返信を投稿
+    postReply(articleId, parentCommentId, replyText.trim());
+}
+
+// 返信を投稿
+async function postReply(articleId, parentCommentId, commentText) {
+    try {
+        const response = await fetch('/api/article-comments', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                article_id: articleId,
+                parent_comment_id: parentCommentId,
+                comment: commentText
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // コメントを再読み込み
+            loadArticleComments(articleId);
+            
+            // 記事一覧のコメント数も更新
+            const article = articles.find(a => a.id === articleId);
+            if (article) {
+                article.comment_count = (article.comment_count || 0) + 1;
+            }
+        } else {
+            alert('返信の投稿に失敗しました: ' + data.error);
+        }
+    } catch (error) {
+        console.error('返信投稿エラー:', error);
+        alert('返信の投稿中にエラーが発生しました');
+    }
 }
