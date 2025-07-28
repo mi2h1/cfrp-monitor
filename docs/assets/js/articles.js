@@ -782,13 +782,14 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
         <div class="comment-card mb-3 position-relative" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
             ${level === 0 && comment.replies && comment.replies.length > 0 ? `
                 <!-- ルートコメントから下への縦線 -->
-                <div class="comment-root-line" style="position: absolute; left: 15px; top: 100%; width: 2px; height: 20px; background-color: #dee2e6;"></div>
+                <div class="comment-root-line" style="position: absolute; left: 20px; top: 100%; bottom: -20px; width: 1px; background-color: #6c757d; z-index: 1;"></div>
             ` : ''}
             ${level > 0 ? `
                 <!-- 縦線（最後の要素でない場合のみ） -->
-                ${!isLast ? `<div class="comment-tree-vertical" style="position: absolute; left: -15px; top: 50px; bottom: -15px; width: 2px; background-color: #dee2e6;"></div>` : ''}
+                ${!isLast ? `<div class="comment-tree-vertical" style="position: absolute; left: -20px; top: 40px; bottom: -20px; width: 1px; background-color: #6c757d; z-index: 1;"></div>` : ''}
                 <!-- L字型の接続線 -->
-                <div class="comment-tree-connector" style="position: absolute; left: -15px; top: 25px; width: 18px; height: 25px; border-left: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6; border-bottom-left-radius: 6px;"></div>
+                <div class="comment-tree-horizontal" style="position: absolute; left: -20px; top: 20px; width: 15px; height: 1px; background-color: #6c757d; z-index: 1;"></div>
+                <div class="comment-tree-vertical-branch" style="position: absolute; left: -20px; top: 20px; width: 1px; height: 20px; background-color: #6c757d; z-index: 1;"></div>
             ` : ''}
             <div class="card card-body py-2 px-3">
                 <div class="d-flex justify-content-between align-items-start">
