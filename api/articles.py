@@ -281,8 +281,8 @@ class handler(BaseHTTPRequestHandler):
             flagged = query_params.get('flagged', [None])[0]
             source_id = query_params.get('source_id', [None])[0]
             
-            # ベースURLを構築
-            url = f"{supabase_url}/rest/v1/articles?select=*,sources(name,domain)"
+            # JOIN句でコメント数も同時取得するベースURLを構築
+            url = f"{supabase_url}/rest/v1/articles?select=*,sources(name,domain),comment_count:article_comments(count).and(is_deleted.eq.false)"
             
             # フィルタリングを追加
             filters = []
@@ -307,21 +307,16 @@ class handler(BaseHTTPRequestHandler):
                 'Content-Type': 'application/json'
             }
             
-            print(f"DEBUG: Supabase URL: {url}")
+            print(f"DEBUG: Optimized Supabase URL: {url}")
             
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req) as response:
                 data = json.loads(response.read().decode('utf-8'))
                 
-                # 記事IDのリストを作成
-                article_ids = [article['id'] for article in data]
-                
-                # 一括でコメント数を取得
-                if article_ids:
-                    comment_counts = self.get_articles_comment_counts(article_ids)
-                    # 各記事にコメント数を追加
-                    for article in data:
-                        article['comment_count'] = comment_counts.get(article['id'], 0)
+                # コメント数の配列を数値に変換
+                for article in data:
+                    comment_count_array = article.get('comment_count', [])
+                    article['comment_count'] = len(comment_count_array) if comment_count_array else 0
                 
                 print(f"DEBUG: Articles count: {len(data)}")
                 return data

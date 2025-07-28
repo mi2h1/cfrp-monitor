@@ -14,12 +14,14 @@
     margin-bottom: 0.5rem;
     padding: 0.75rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     background: white;
+    will-change: transform; /* GPU加速を有効化 */
 }
 
 .compact-article-card:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px); /* transformを使用してリフロー回避 */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .article-meta {
@@ -68,4 +70,23 @@
 /* コメントコンテナの間隔調整 */
 .comments-container {
     padding-left: 25px;
+}
+
+/* パフォーマンス最適化用CSS */
+.table-hover tbody tr {
+    transition: background-color 0.15s ease-in-out;
+}
+
+/* 記事一覧コンテナの最適化 */
+.articles-container {
+    contain: layout style paint; /* containmentでレンダリング最適化 */
+}
+
+/* ローディング状態の最適化 */
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    contain: layout;
 }

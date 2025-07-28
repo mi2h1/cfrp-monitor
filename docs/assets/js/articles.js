@@ -6,6 +6,28 @@ let currentPage = 1;
 let authToken = null;
 let userFeatures = null;
 
+// ソースデータキャッシュ
+let sourcesCache = null;
+let sourcesCacheTime = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5分間
+
+// デバウンス用変数
+let filterDebounceTimer = null;
+const DEBOUNCE_DELAY = 300; // 300ms
+
+// デバウンス関数
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 // articles.jsの初期化関数（page-init.jsから呼び出される）
 async function initializeArticlesApp() {
     // 認証チェックはメインページのスクリプトで実行済み
@@ -20,14 +42,39 @@ async function initializeArticlesApp() {
     //     windowUserFeatures: window.userFeatures
     // });
     
-    await loadSources();
-    await loadArticles();
+    // 並列処理で初期化を高速化
+    const [sourcesResult, articlesResult] = await Promise.allSettled([
+        loadSources(),
+        loadArticles()
+    ]);
+    
+    // エラーハンドリング
+    if (sourcesResult.status === 'rejected') {
+        console.error('ソース読み込みエラー:', sourcesResult.reason);
+    }
+    
+    if (articlesResult.status === 'rejected') {
+        console.error('記事読み込みエラー:', articlesResult.reason);
+        document.getElementById('loading').innerHTML = 
+            '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
+        return;
+    }
+    
     setupEventListeners();
 }
 
-// ソース一覧を読み込み
+// ソース一覧を読み込み（キャッシング対応）
 async function loadSources() {
     try {
+        // キャッシュチェック
+        if (sourcesCache && sourcesCacheTime && 
+            (Date.now() - sourcesCacheTime) < CACHE_DURATION) {
+            console.log('ソースデータをキャッシュから取得');
+            sources = sourcesCache;
+            populateSourceFilter();
+            return;
+        }
+        
         const response = await fetch('/api/sources', {
             method: 'GET',
             headers: {
@@ -39,8 +86,12 @@ async function loadSources() {
         const data = await response.json();
         
         if (data.success) {
-            sources = data.sources || [];
+            // キャッシュに保存
+            sourcesCache = data.sources || [];
+            sourcesCacheTime = Date.now();
+            sources = sourcesCache;
             populateSourceFilter();
+            console.log('ソースデータを新規取得してキャッシュに保存');
         } else {
             console.error('ソース読み込みエラー:', data.error);
         }
@@ -194,50 +245,54 @@ function populateSourceFilter() {
     });
 }
 
-// 記事を表示（従来のクライアントサイドページネーション）
+// 記事を表示（サーバーサイドページネーション使用）
 function renderArticles() {
     const container = document.getElementById('articlesContainer');
-    const filteredArticles = filterAndSortArticles();
-    const itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
     
-    if (filteredArticles.length === 0) {
+    if (articles.length === 0) {
         container.innerHTML = '<div class="alert alert-info">該当する記事がありません</div>';
         document.getElementById('pagination').style.display = 'none';
         document.getElementById('paginationTop').style.display = 'none';
         return;
     }
 
-    // ページネーション計算
-    const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
-    
-    // 現在のページが総ページ数を超えている場合は1ページ目に戻す
-    if (currentPage > totalPages && totalPages > 0) {
-        currentPage = 1;
-    }
-    
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedArticles = filteredArticles.slice(startIndex, endIndex);
+    // サーバーサイドで既にページネーション・フィルタリング済みの記事を使用
+    const paginatedArticles = articles;
 
-    // テーブル形式で記事表示
-    container.innerHTML = `
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th style="width: 90px;">ステータス</th>
-                        <th>タイトル</th>
-                        <th style="width: 120px;">情報源</th>
-                        <th style="width: 100px;">公開日</th>
-                        <th style="width: 80px;">コメント</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${paginatedArticles.map(article => createArticleTableRow(article)).join('')}
-                </tbody>
-            </table>
-        </div>
+    // DocumentFragmentを使用した効率的なDOM操作
+    const fragment = document.createDocumentFragment();
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'table-responsive';
+    
+    const table = document.createElement('table');
+    table.className = 'table table-hover';
+    
+    // ヘッダー作成
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+        <tr>
+            <th style="width: 90px;">ステータス</th>
+            <th>タイトル</th>
+            <th style="width: 120px;">情報源</th>
+            <th style="width: 100px;">公開日</th>
+            <th style="width: 80px;">コメント</th>
+        </tr>
     `;
+    
+    // ボディ作成
+    const tbody = document.createElement('tbody');
+    paginatedArticles.forEach(article => {
+        const row = createArticleTableRowElement(article);
+        tbody.appendChild(row);
+    });
+    
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+    
+    // 一度のDOM操作で更新
+    container.innerHTML = '';
+    container.appendChild(tableContainer);
     
     // ページネーション表示
     renderPagination(filteredArticles.length, itemsPerPage, currentPage);
@@ -282,37 +337,114 @@ function renderArticlesWithServerPagination(totalCount, itemsPerPage) {
     document.getElementById('paginationTop').style.display = 'block';
 }
 
-// フィルタリングとソート
-function filterAndSortArticles() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const flaggedFilter = document.getElementById('flaggedFilter').value;
-    const sourceFilter = document.getElementById('sourceFilter').value;
-    const sortOrder = document.getElementById('sortOrder').value;
+// 削除: 不要なクライアントサイドフィルタリング（サーバーサイドで処理済み）
+// filterAndSortArticles関数を削除 - パフォーマンス最適化のため
 
-    // フィルタリング
-    let filtered = articles.filter(article => {
-        if (statusFilter && article.status !== statusFilter) return false;
-        if (flaggedFilter && String(article.flagged) !== flaggedFilter) return false;
-        if (sourceFilter && article.source_id !== sourceFilter) return false;
-        return true;
-    });
-
-    // ソート
-    filtered.sort((a, b) => {
-        const dateA = new Date(a.published_at || a.added_at || 0);
-        const dateB = new Date(b.published_at || b.added_at || 0);
-        
-        if (sortOrder === 'asc') {
-            return dateA - dateB; // 古い順
-        } else {
-            return dateB - dateA; // 新しい順
-        }
-    });
-
-    return filtered;
+// DOM要素を直接作成する高速化関数
+function createArticleTableRowElement(article) {
+    const row = document.createElement('tr');
+    row.className = article.flagged ? 'table-warning' : '';
+    row.dataset.id = article.id;
+    row.style.cursor = 'pointer';
+    
+    // ステータスセル
+    const statusCell = document.createElement('td');
+    const statusBadge = document.createElement('span');
+    statusBadge.className = `badge bg-${getStatusColor(article.status)} status-badge`;
+    statusBadge.textContent = getStatusLabel(article.status);
+    statusCell.appendChild(statusBadge);
+    
+    // タイトルセル
+    const titleCell = document.createElement('td');
+    const titleContainer = document.createElement('div');
+    titleContainer.className = 'd-flex align-items-center gap-2';
+    
+    // 重要フラグ
+    if (article.flagged) {
+        const importantBadge = document.createElement('span');
+        importantBadge.className = 'badge bg-danger flex-shrink-0 align-self-start';
+        importantBadge.style.marginTop = '2px';
+        importantBadge.textContent = '重要';
+        titleContainer.appendChild(importantBadge);
+    }
+    
+    // タイトル部分
+    const titleContent = document.createElement('div');
+    titleContent.className = 'flex-grow-1';
+    
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'fw-medium';
+    titleDiv.textContent = article.title || 'タイトルなし';
+    titleContent.appendChild(titleDiv);
+    
+    const urlDiv = document.createElement('div');
+    urlDiv.className = 'small text-muted text-truncate';
+    urlDiv.style.maxWidth = '400px';
+    urlDiv.title = article.url;
+    urlDiv.textContent = article.url;
+    titleContent.appendChild(urlDiv);
+    
+    // コメント表示
+    if (article.comments) {
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'small text-muted mt-1';
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-sticky-note';
+        commentDiv.appendChild(icon);
+        const text = article.comments.length > 100 ? 
+            article.comments.substring(0, 100) + '...' : 
+            article.comments;
+        commentDiv.appendChild(document.createTextNode(' ' + text));
+        titleContent.appendChild(commentDiv);
+    }
+    
+    titleContainer.appendChild(titleContent);
+    titleCell.appendChild(titleContainer);
+    
+    // 情報源セル
+    const sourceCell = document.createElement('td');
+    const sourceSmall = document.createElement('small');
+    sourceSmall.className = 'text-muted';
+    const sourceIcon = document.createElement('i');
+    sourceIcon.className = 'fas fa-rss';
+    sourceSmall.appendChild(sourceIcon);
+    const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
+    sourceSmall.appendChild(document.createTextNode(' ' + sourceName));
+    sourceCell.appendChild(sourceSmall);
+    
+    // 日付セル
+    const dateCell = document.createElement('td');
+    const dateSmall = document.createElement('small');
+    dateSmall.className = 'text-muted';
+    const dateIcon = document.createElement('i');
+    dateIcon.className = 'fas fa-calendar-alt';
+    dateSmall.appendChild(dateIcon);
+    const pubDate = article.published_at ? formatJSTDate(article.published_at) : '不明';
+    dateSmall.appendChild(document.createTextNode(' ' + pubDate));
+    dateCell.appendChild(dateSmall);
+    
+    // コメント数セル
+    const commentCell = document.createElement('td');
+    commentCell.className = 'text-center';
+    const commentBadge = document.createElement('span');
+    commentBadge.className = 'badge bg-secondary';
+    const commentIcon = document.createElement('i');
+    commentIcon.className = 'fas fa-comment';
+    commentBadge.appendChild(commentIcon);
+    commentBadge.appendChild(document.createTextNode(' ' + (article.comment_count || 0)));
+    commentCell.appendChild(commentBadge);
+    
+    // セルを行に追加
+    row.appendChild(statusCell);
+    row.appendChild(titleCell);
+    row.appendChild(sourceCell);
+    row.appendChild(dateCell);
+    row.appendChild(commentCell);
+    
+    return row;
 }
 
-// 記事テーブル行を作成
+// 記事テーブル行を作成（文字列版・後方互換性のため残す）
 function createArticleTableRow(article) {
     const sourceName = article.sources?.name || article.sources?.domain || 'Unknown';
     const pubDate = article.published_at ? formatJSTDate(article.published_at) : '不明';
@@ -465,10 +597,19 @@ function getStatusLabel(status) {
 
 // イベントリスナーを設定
 function setupEventListeners() {
-    // フィルター・ソート・表示件数変更時
-    setupFilterListeners(['statusFilter', 'flaggedFilter', 'sourceFilter', 'sortOrder', 'itemsPerPage'], () => {
+    // デバウンス処理付きフィルター処理
+    const debouncedFilterHandler = debounce(() => {
         currentPage = 1; // フィルター変更時はページをリセット
         loadArticlesPage(1);
+    }, DEBOUNCE_DELAY);
+    
+    // フィルター・ソート・表示件数変更時（デバウンス版）
+    const filterIds = ['statusFilter', 'flaggedFilter', 'sourceFilter', 'sortOrder', 'itemsPerPage'];
+    filterIds.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('change', debouncedFilterHandler);
+        }
     });
 
     // 更新ボタン
@@ -808,7 +949,7 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
                             </div>
                         </div>
                     </div>
-                    ${!isDeleted ? `
+                    ${!isDeleted && level === 0 && (!comment.replies || comment.replies.length === 0) ? `
                         <div class="comment-actions ms-2">
                             <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                                 <i class="fas fa-reply"></i> 返信
@@ -846,9 +987,20 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
             const isLastReply = index === array.length - 1;
             return renderCommentCard(reply, 1, isLastReply);
         }).join('');
+        
+        // 返信群の最後に1つの返信ボタンを追加
+        const groupReplyButton = `
+            <div class="group-reply-container mt-2" style="margin-left: 20px;">
+                <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
+                    <i class="fas fa-reply"></i> 返信
+                </button>
+            </div>
+        `;
+        
         html += `
             <div class="replies-container">
                 ${repliesHtml}
+                ${groupReplyButton}
             </div>
         `;
     }
