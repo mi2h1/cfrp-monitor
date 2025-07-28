@@ -92,10 +92,19 @@ class handler(BaseHTTPRequestHandler):
                     self.wfile.write(json.dumps(response).encode('utf-8'))
                     return
             
+            # 1階層のみの制限を適用
+            parent_comment_id = data.get('parent_comment_id')
+            if parent_comment_id:
+                # 親コメントを取得して、それがルートコメントかチェック
+                parent_comment = self.get_comment_by_id(parent_comment_id)
+                if parent_comment and parent_comment.get('parent_comment_id'):
+                    # 親コメントが既に返信の場合、その親（ルートコメント）を参照する
+                    parent_comment_id = parent_comment['parent_comment_id']
+            
             # コメントを保存
             comment_data = {
                 'article_id': data['article_id'],
-                'parent_comment_id': data.get('parent_comment_id'),
+                'parent_comment_id': parent_comment_id,
                 'user_id': user_data['user_id'],
                 'comment': data['comment'],
                 'created_at': now_jst_naive_iso(),
@@ -182,6 +191,32 @@ class handler(BaseHTTPRequestHandler):
             print(f"Get comments error: {str(e)}")
             return []
 
+    def get_comment_by_id(self, comment_id):
+        """コメントIDでコメントを取得"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return None
+            
+            url = f"{supabase_url}/rest/v1/article_comments?id=eq.{comment_id}&limit=1"
+            
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json'
+            }
+            
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req) as response:
+                data = json.loads(response.read().decode('utf-8'))
+                return data[0] if data else None
+        
+        except Exception as e:
+            print(f"Get comment by ID error: {str(e)}")
+            return None
+    
     def create_comment(self, comment_data):
         """コメントを作成"""
         try:

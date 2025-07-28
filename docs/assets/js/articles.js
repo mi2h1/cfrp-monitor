@@ -645,7 +645,7 @@ function renderComments(comments) {
     container.innerHTML = commentsHtml;
 }
 
-// コメントの階層構造を構築
+// コメントの階層構造を構築（1階層のみ）
 function buildCommentTree(comments) {
     const commentMap = {};
     const rootComments = [];
@@ -655,10 +655,18 @@ function buildCommentTree(comments) {
         commentMap[comment.id] = { ...comment, replies: [] };
     });
     
-    // 階層構造を構築
+    // 1階層のみの構造を構築
     comments.forEach(comment => {
         if (comment.parent_comment_id && commentMap[comment.parent_comment_id]) {
-            commentMap[comment.parent_comment_id].replies.push(commentMap[comment.id]);
+            // 親コメントが存在し、かつ親コメント自体がルートコメントの場合のみ階層化
+            const parentComment = commentMap[comment.parent_comment_id];
+            if (!parentComment.parent_comment_id) {
+                // 親がルートコメントの場合、返信として追加
+                parentComment.replies.push(commentMap[comment.id]);
+            } else {
+                // 親が返信コメントの場合、同じ階層（ルートコメント）として扱う
+                rootComments.push(commentMap[comment.id]);
+            }
         } else {
             rootComments.push(commentMap[comment.id]);
         }
@@ -670,10 +678,11 @@ function buildCommentTree(comments) {
     return rootComments;
 }
 
-// コメントカードをレンダリング
+// コメントカードをレンダリング（1階層のみ）
 function renderCommentCard(comment, level = 0) {
     const marginLeft = level * 20;
     const isDeleted = comment.is_deleted;
+    const isRootComment = level === 0; // ルートコメントかどうか
     // 改行を<br>タグに変換
     const commentText = isDeleted ? '<em class="text-muted">このコメントは削除されました</em>' : escapeHtml(comment.comment).replace(/\n/g, '<br>');
     
@@ -689,7 +698,7 @@ function renderCommentCard(comment, level = 0) {
                         </div>
                         <div class="comment-text">${commentText}</div>
                     </div>
-                    ${!isDeleted ? `
+                    ${!isDeleted && isRootComment ? `
                         <div class="comment-actions ms-2">
                             <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                                 <i class="fas fa-reply"></i> 返信
@@ -699,7 +708,8 @@ function renderCommentCard(comment, level = 0) {
                 </div>
             </div>
             
-            <!-- 返信フォーム（初期は非表示） -->
+            <!-- 返信フォーム（ルートコメントのみ） -->
+            ${isRootComment ? `
             <div class="reply-form mt-2" id="replyForm-${comment.id}" style="display: none; margin-left: ${marginLeft + 20}px;">
                 <div class="card card-body py-2 px-3 bg-light">
                     <div class="mb-2">
@@ -718,10 +728,11 @@ function renderCommentCard(comment, level = 0) {
                     </div>
                 </div>
             </div>
+            ` : ''}
         </div>
     `;
     
-    // 返信があれば追加
+    // 返信があれば追加（1階層のみ）
     if (comment.replies && comment.replies.length > 0) {
         const repliesHtml = comment.replies.map(reply => renderCommentCard(reply, level + 1)).join('');
         html += repliesHtml;
@@ -810,7 +821,7 @@ function hideReplyForm(commentId) {
     }
 }
 
-// 返信を投稿
+// 返信を投稿（1階層のみ）
 async function submitReply(parentCommentId) {
     const textarea = document.getElementById(`replyText-${parentCommentId}`);
     if (!textarea) return;
@@ -834,6 +845,8 @@ async function submitReply(parentCommentId) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 投稿中...';
     
     try {
+        // 親コメントがルートコメントかどうかを確認
+        // 常にルートコメントに対する返信として扱う（1階層のみ）
         const response = await fetch('/api/article-comments', {
             method: 'POST',
             headers: {
@@ -842,7 +855,7 @@ async function submitReply(parentCommentId) {
             },
             body: JSON.stringify({
                 article_id: articleId,
-                parent_comment_id: parentCommentId,
+                parent_comment_id: parentCommentId, // 常にそのまま使用（APIで調整）
                 comment: replyText
             })
         });
