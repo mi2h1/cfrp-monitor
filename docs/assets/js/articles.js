@@ -1331,7 +1331,7 @@ async function showArticleDetail(articleId) {
         window.history.pushState({detail: articleId}, '', url);
         
         // 記事一覧コンテナを特定して非表示
-        const mainContainer = document.querySelector('.col-md-10 > .container-fluid') || 
+        const mainContainer = document.querySelector('.main-content .container-fluid') || 
                              document.querySelector('#articlesContainer').closest('.container-fluid');
         
         if (mainContainer) {
@@ -1345,7 +1345,10 @@ async function showArticleDetail(articleId) {
             detailContainer.id = 'articleDetailView';
             detailContainer.className = 'container-fluid py-3';
             
-            const parentContainer = document.querySelector('.col-md-10');
+            const parentContainer = document.querySelector('.main-content') || 
+                                   document.querySelector('main') || 
+                                   document.body;
+            
             if (parentContainer) {
                 parentContainer.appendChild(detailContainer);
             } else {
@@ -1397,7 +1400,7 @@ function hideArticleDetail() {
     }
     
     // 記事一覧を表示
-    const mainContainer = document.querySelector('.col-md-10 > .container-fluid') || 
+    const mainContainer = document.querySelector('.main-content .container-fluid') || 
                          document.querySelector('#articlesContainer').closest('.container-fluid');
     
     if (mainContainer) {
