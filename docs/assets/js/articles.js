@@ -1058,9 +1058,9 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
             return renderCommentCard(reply, 1, isLastReply);
         }).join('');
         
-        // 返信群の最後に1つの返信ボタンを追加（適切な間隔で配置）
+        // 返信群の最後に1つの返信ボタンを追加（スタイル調整）
         const groupReplyButton = `
-            <div class="group-reply-container mt-3 mb-2" style="margin-left: 20px; padding-top: 10px; border-top: 1px solid #f0f0f0;">
+            <div class="group-reply-container mt-2 mb-4" style="margin-left: 15px; padding-top: 8px;">
                 <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                     <i class="fas fa-reply"></i> 返信
                 </button>
@@ -1330,8 +1330,13 @@ async function showArticleDetail(articleId) {
         url.searchParams.set('detail', articleId);
         window.history.pushState({detail: articleId}, '', url);
         
-        // 記事一覧を非表示
-        document.querySelector('.container-fluid .row .col-md-10 .container-fluid').style.display = 'none';
+        // 記事一覧コンテナを特定して非表示
+        const mainContainer = document.querySelector('.col-md-10 > .container-fluid') || 
+                             document.querySelector('#articlesContainer').closest('.container-fluid');
+        
+        if (mainContainer) {
+            mainContainer.style.display = 'none';
+        }
         
         // 記事詳細コンテナを作成・表示
         let detailContainer = document.getElementById('articleDetailView');
@@ -1339,7 +1344,14 @@ async function showArticleDetail(articleId) {
             detailContainer = document.createElement('div');
             detailContainer.id = 'articleDetailView';
             detailContainer.className = 'container-fluid py-3';
-            document.querySelector('.col-md-10').appendChild(detailContainer);
+            
+            const parentContainer = document.querySelector('.col-md-10');
+            if (parentContainer) {
+                parentContainer.appendChild(detailContainer);
+            } else {
+                console.error('親コンテナが見つかりません');
+                return;
+            }
         }
         
         detailContainer.innerHTML = `
@@ -1366,7 +1378,8 @@ async function showArticleDetail(articleId) {
         
     } catch (error) {
         console.error('記事詳細表示エラー:', error);
-        alert('記事詳細の表示に失敗しました');
+        // エラーが発生した場合はアラート表示せずに記事詳細読み込みを継続
+        // alert('記事詳細の表示に失敗しました');
     }
 }
 
@@ -1384,7 +1397,16 @@ function hideArticleDetail() {
     }
     
     // 記事一覧を表示
-    document.querySelector('.container-fluid .row .col-md-10 .container-fluid').style.display = 'block';
+    const mainContainer = document.querySelector('.col-md-10 > .container-fluid') || 
+                         document.querySelector('#articlesContainer').closest('.container-fluid');
+    
+    if (mainContainer) {
+        mainContainer.style.display = 'block';
+    } else {
+        console.error('記事一覧コンテナが見つかりません');
+        // フォールバック: ページリロード
+        window.location.reload();
+    }
 }
 
 // 記事詳細データを読み込んで表示
