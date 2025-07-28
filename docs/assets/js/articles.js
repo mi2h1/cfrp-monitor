@@ -497,11 +497,13 @@ function createArticleTableRowElement(article) {
     const commentCell = document.createElement('td');
     commentCell.className = 'text-center';
     const commentBadge = document.createElement('span');
-    commentBadge.className = 'badge bg-secondary';
+    const commentCount = article.comment_count || 0;
+    // コメント数に応じて色を変更
+    commentBadge.className = commentCount > 0 ? 'badge bg-primary' : 'badge bg-secondary';
     const commentIcon = document.createElement('i');
     commentIcon.className = 'fas fa-comment';
     commentBadge.appendChild(commentIcon);
-    commentBadge.appendChild(document.createTextNode(' ' + (article.comment_count || 0)));
+    commentBadge.appendChild(document.createTextNode(' ' + commentCount));
     commentCell.appendChild(commentBadge);
     
     // セルを行に追加
@@ -548,7 +550,7 @@ function createArticleTableRow(article) {
                 </small>
             </td>
             <td class="text-center">
-                <span class="badge bg-secondary">
+                <span class="badge ${(article.comment_count || 0) > 0 ? 'bg-primary' : 'bg-secondary'}">
                     <i class="fas fa-comment"></i> ${article.comment_count || 0}
                 </span>
             </td>
