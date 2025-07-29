@@ -139,6 +139,14 @@ body {
     align-items: center;
 }
 
+.user-name > span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
 .user-settings-btn {
     background: none;
     border: none;

@@ -133,12 +133,26 @@ function displayUserInfo(user, userMenu) {
     
     if (userNameElement) {
         // ユーザー名と設定アイコンを表示
-        userNameElement.innerHTML = `
-            <span>${userMenu.display_name || '（表示名未設定）'}</span>
-            <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
-                <i class="fas fa-cog"></i>
-            </button>
-        `;
+        if (userMenu.display_name) {
+            // 表示名が設定されている場合：表示名 + 小さなID表示
+            userNameElement.innerHTML = `
+                <span>
+                    ${userMenu.display_name}
+                    <small class="text-muted ms-1" style="font-style: italic; font-size: 0.7rem;">ID: ${user.user_id}</small>
+                </span>
+                <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
+                    <i class="fas fa-cog"></i>
+                </button>
+            `;
+        } else {
+            // 表示名が設定されていない場合：IDのみ表示
+            userNameElement.innerHTML = `
+                <span>${user.user_id}</span>
+                <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
+                    <i class="fas fa-cog"></i>
+                </button>
+            `;
+        }
         
         // 設定ボタンのイベントハンドラを設定
         const settingsBtn = document.getElementById('userSettingsBtn');
@@ -382,13 +396,36 @@ async function saveUserSettings() {
             // サイドバーの表示名を更新
             const userNameElement = document.getElementById('userName');
             if (userNameElement) {
-                const settingsBtn = userNameElement.querySelector('.user-settings-btn');
-                userNameElement.innerHTML = `
-                    <span>${displayName || '（表示名未設定）'}</span>
-                    <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                `;
+                // 現在のユーザーIDを取得（JWTトークンから）
+                const authToken = localStorage.getItem('auth_token');
+                let currentUserId = 'unknown';
+                try {
+                    const payload = JSON.parse(atob(authToken.split('.')[1]));
+                    currentUserId = payload.user_id;
+                } catch (e) {
+                    console.error('Failed to decode user ID from token');
+                }
+                
+                if (displayName) {
+                    // 表示名が設定されている場合：表示名 + 小さなID表示
+                    userNameElement.innerHTML = `
+                        <span>
+                            ${displayName}
+                            <small class="text-muted ms-1" style="font-style: italic; font-size: 0.7rem;">ID: ${currentUserId}</small>
+                        </span>
+                        <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    `;
+                } else {
+                    // 表示名が設定されていない場合：IDのみ表示
+                    userNameElement.innerHTML = `
+                        <span>${currentUserId}</span>
+                        <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    `;
+                }
                 
                 // イベントハンドラを再設定
                 const newSettingsBtn = document.getElementById('userSettingsBtn');
