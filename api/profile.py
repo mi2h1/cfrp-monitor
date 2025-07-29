@@ -167,7 +167,7 @@ class handler(BaseHTTPRequestHandler):
             update_data = {}
             
             # 表示名更新
-            if 'display_name' in data:
+            if 'display_name' in data and data['display_name']:
                 update_data['display_name'] = data['display_name']
             
             # パスワード更新
@@ -176,18 +176,16 @@ class handler(BaseHTTPRequestHandler):
                 if len(data['password']) < 4:
                     return None
                 
-                # パスワードハッシュ化
+                # パスワードハッシュ化（既存のusers.pyと同じ方法）
                 import hashlib
                 import secrets
                 
                 salt = secrets.token_hex(16)
-                password_hash = hashlib.sha256((data['password'] + salt).encode()).hexdigest()
+                salted_password = data['password'] + salt
+                password_hash = hashlib.sha256(salted_password.encode('utf-8')).hexdigest()
                 
                 update_data['password_hash'] = password_hash
                 update_data['password_salt'] = salt
-            
-            # 更新日時を追加
-            update_data['updated_at'] = now_jst_naive_iso()
             
             if not update_data:
                 return None
@@ -217,6 +215,11 @@ class handler(BaseHTTPRequestHandler):
                     safe_result.pop('password_salt', None)
                 return safe_result
                 
+        except urllib.error.HTTPError as e:
+            print(f"Update profile HTTP error: {e.code} - {e.reason}")
+            error_body = e.read().decode('utf-8')
+            print(f"Error body: {error_body}")
+            return None
         except Exception as e:
             print(f"Update profile error: {str(e)}")
             return None
