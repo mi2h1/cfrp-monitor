@@ -341,6 +341,7 @@ async function loadArticlesPage(page, totalCount = null) {
             
             // ローディング状態を非表示して記事一覧を表示
             hideLoadingState();
+            document.getElementById('loading').style.display = 'none'; // 明示的にローディング要素を非表示
             document.getElementById('articlesContainer').style.display = 'block';
             
             renderArticles();
@@ -411,6 +412,7 @@ async function loadArticlesPage(page, totalCount = null) {
         
         // ローディング状態を非表示して記事一覧を表示
         hideLoadingState();
+        document.getElementById('loading').style.display = 'none'; // 明示的にローディング要素を非表示
         document.getElementById('articlesContainer').style.display = 'block';
         
         renderArticles();
@@ -426,6 +428,7 @@ async function loadArticlesPage(page, totalCount = null) {
     } catch (error) {
         console.error('記事ページ読み込みエラー:', error);
         hideLoadingState();
+        document.getElementById('loading').style.display = 'none'; // 明示的にローディング要素を非表示
         const articlesContainer = document.getElementById('articlesContainer');
         if (articlesContainer) {
             articlesContainer.style.display = 'block';
@@ -2108,8 +2111,14 @@ async function handlePaginationClick(page) {
             // 成功時はページネーションボタンを再有効化（loadArticlesPageで処理される）
         } catch (error) {
             console.error('ページ読み込みエラー:', error);
+            // ローディング要素を非表示にして記事一覧を表示
             if (loadingElement) {
-                loadingElement.innerHTML = '<div class="alert alert-danger">ページの読み込みに失敗しました</div>';
+                loadingElement.style.display = 'none';
+            }
+            const articlesContainer = document.getElementById('articlesContainer');
+            if (articlesContainer) {
+                articlesContainer.style.display = 'block';
+                articlesContainer.innerHTML = '<div class="alert alert-danger">ページの読み込みに失敗しました</div>';
             }
             // エラー時もページネーションボタンを再有効化
             enablePaginationButtons();
