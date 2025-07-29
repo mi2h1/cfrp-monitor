@@ -99,13 +99,7 @@ class handler(BaseHTTPRequestHandler):
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req) as response:
                 data = json.loads(response.read().decode('utf-8'))
-                print(f"Supabase user data response: {data}")  # デバッグログ
-                if data:
-                    user_data = data[0]
-                    print(f"User data returned: {user_data}")  # デバッグログ
-                    return user_data
-                else:
-                    return None
+                return data[0] if data else None
                 
         except Exception as e:
             print(f"Supabase error: {e}")

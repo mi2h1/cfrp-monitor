@@ -75,7 +75,6 @@ async function initializeNavigation(activePageId) {
         
         const data = await response.json();
         
-        console.log('Layout API response:', data); // デバッグ用ログ
         
         if (data.success) {
             generateNavigation(data.layout.navigation, activePageId, data.last_updated);
@@ -133,8 +132,6 @@ function displayUserInfo(user, userMenu) {
     const userNameElement = document.getElementById('userName');
     const userRoleElement = document.getElementById('userRole');
     
-    // デバッグ用ログ
-    console.log('displayUserInfo called with:', { user, userMenu });
     
     if (userNameElement) {
         // ユーザー名と設定アイコンを表示
