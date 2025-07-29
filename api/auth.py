@@ -88,8 +88,8 @@ class handler(BaseHTTPRequestHandler):
             if not supabase_url or not supabase_key:
                 return None
             
-            # Supabase API呼び出し
-            url = f"{supabase_url}/rest/v1/users?user_id=eq.{user_id}"
+            # Supabase API呼び出し（必要なフィールドを明示的に選択）
+            url = f"{supabase_url}/rest/v1/users?user_id=eq.{user_id}&select=user_id,display_name,role,password_hash,password_salt"
             headers = {
                 'apikey': supabase_key,
                 'Authorization': f'Bearer {supabase_key}',
@@ -99,7 +99,13 @@ class handler(BaseHTTPRequestHandler):
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req) as response:
                 data = json.loads(response.read().decode('utf-8'))
-                return data[0] if data else None
+                print(f"Supabase user data response: {data}")  # デバッグログ
+                if data:
+                    user_data = data[0]
+                    print(f"User data returned: {user_data}")  # デバッグログ
+                    return user_data
+                else:
+                    return None
                 
         except Exception as e:
             print(f"Supabase error: {e}")
