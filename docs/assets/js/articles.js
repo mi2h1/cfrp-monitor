@@ -1470,23 +1470,21 @@ function renderEditableArticleDetailContent(article, comments) {
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <small class="text-muted">
-                                    <i class="fas fa-rss me-1"></i>${sourceName}
-                                </small>
-                            </div>
-                            <div class="col-md-6 text-md-end">
-                                <small class="text-muted">
-                                    <i class="fas fa-calendar-alt me-1"></i>${pubDate}
-                                </small>
-                            </div>
-                        </div>
                         <div class="mb-3">
-                            <small class="text-muted d-block">
-                                <i class="fas fa-link me-1"></i>
-                                <a href="${article.url}" target="_blank" class="text-decoration-none">${article.url}</a>
-                            </small>
+                            <div class="d-flex flex-wrap align-items-center gap-3 small text-muted">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-rss me-1"></i>
+                                    <span>${sourceName}</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    <span>${pubDate}</span>
+                                </div>
+                                <div class="d-flex align-items-center flex-grow-1" style="min-width: 0;">
+                                    <i class="fas fa-link me-1"></i>
+                                    <a href="${article.url}" target="_blank" class="text-decoration-none text-truncate" title="${escapeHtml(article.url)}" style="max-width: 300px;">${article.url}</a>
+                                </div>
+                            </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4">
