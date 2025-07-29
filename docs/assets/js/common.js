@@ -132,7 +132,19 @@ function displayUserInfo(user, userMenu) {
     const userRoleElement = document.getElementById('userRole');
     
     if (userNameElement) {
-        userNameElement.textContent = userMenu.display_name;
+        // ユーザー名と設定アイコンを表示
+        userNameElement.innerHTML = `
+            <span>${userMenu.display_name}</span>
+            <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
+                <i class="fas fa-cog"></i>
+            </button>
+        `;
+        
+        // 設定ボタンのイベントハンドラを設定
+        const settingsBtn = document.getElementById('userSettingsBtn');
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', openUserSettingsModal);
+        }
     }
     if (userRoleElement) {
         userRoleElement.textContent = userMenu.role_display;
@@ -235,6 +247,181 @@ function logout() {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_info');
     window.location.href = '/login';
+}
+
+// ユーザー設定モーダルを開く
+function openUserSettingsModal() {
+    // モーダルが既に存在する場合は削除
+    const existingModal = document.getElementById('userSettingsModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // モーダルHTML生成
+    const modalHTML = `
+        <div class="modal fade" id="userSettingsModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-user-cog me-2"></i>ユーザー設定
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="userSettingsForm">
+                            <div class="mb-3">
+                                <label for="displayName" class="form-label">表示名</label>
+                                <input type="text" class="form-control" id="displayName" placeholder="表示名を入力">
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">新しいパスワード</label>
+                                <input type="password" class="form-control" id="newPassword" placeholder="新しいパスワード（4文字以上）">
+                                <div class="form-text">パスワードを変更しない場合は空のままにしてください</div>
+                            </div>
+                            <div id="settingsError" class="alert alert-danger d-none"></div>
+                            <div id="settingsSuccess" class="alert alert-success d-none"></div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                        <button type="button" class="btn btn-primary" id="saveSettingsBtn">
+                            <i class="fas fa-save me-1"></i>保存
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // モーダルをDOMに追加
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Bootstrapモーダルを初期化して表示
+    const modal = new bootstrap.Modal(document.getElementById('userSettingsModal'));
+    modal.show();
+    
+    // 現在のユーザー情報を取得してフォームに設定
+    loadCurrentUserSettings();
+    
+    // 保存ボタンのイベントハンドラを設定
+    document.getElementById('saveSettingsBtn').addEventListener('click', saveUserSettings);
+}
+
+// 現在のユーザー設定を読み込む
+async function loadCurrentUserSettings() {
+    try {
+        const authToken = localStorage.getItem('auth_token');
+        const response = await fetch('/api/profile', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.user) {
+            document.getElementById('displayName').value = data.user.display_name || '';
+        }
+    } catch (error) {
+        console.error('ユーザー設定の読み込みエラー:', error);
+    }
+}
+
+// ユーザー設定を保存
+async function saveUserSettings() {
+    const saveBtn = document.getElementById('saveSettingsBtn');
+    const errorDiv = document.getElementById('settingsError');
+    const successDiv = document.getElementById('settingsSuccess');
+    const displayName = document.getElementById('displayName').value.trim();
+    const newPassword = document.getElementById('newPassword').value;
+    
+    // エラー・成功メッセージをクリア
+    errorDiv.classList.add('d-none');
+    successDiv.classList.add('d-none');
+    
+    // バリデーション
+    if (!displayName) {
+        errorDiv.textContent = '表示名を入力してください';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    if (newPassword && newPassword.length < 4) {
+        errorDiv.textContent = 'パスワードは4文字以上で入力してください';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    // 保存中の状態に変更
+    const originalBtnContent = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>保存中...';
+    saveBtn.disabled = true;
+    
+    try {
+        const authToken = localStorage.getItem('auth_token');
+        const updateData = { display_name: displayName };
+        
+        if (newPassword) {
+            updateData.password = newPassword;
+        }
+        
+        const response = await fetch('/api/profile', {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // 成功メッセージを表示
+            successDiv.textContent = 'ユーザー設定を更新しました';
+            successDiv.classList.remove('d-none');
+            
+            // サイドバーの表示名を更新
+            const userNameElement = document.getElementById('userName');
+            if (userNameElement) {
+                const settingsBtn = userNameElement.querySelector('.user-settings-btn');
+                userNameElement.innerHTML = `
+                    <span>${displayName}</span>
+                    <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                `;
+                
+                // イベントハンドラを再設定
+                const newSettingsBtn = document.getElementById('userSettingsBtn');
+                if (newSettingsBtn) {
+                    newSettingsBtn.addEventListener('click', openUserSettingsModal);
+                }
+            }
+            
+            // 1秒後にモーダルを閉じる
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('userSettingsModal'));
+                if (modal) {
+                    modal.hide();
+                }
+            }, 1000);
+        } else {
+            errorDiv.textContent = data.error || '設定の更新に失敗しました';
+            errorDiv.classList.remove('d-none');
+        }
+    } catch (error) {
+        console.error('設定保存エラー:', error);
+        errorDiv.textContent = '設定の保存中にエラーが発生しました';
+        errorDiv.classList.remove('d-none');
+    } finally {
+        // ボタンを元の状態に戻す
+        saveBtn.innerHTML = originalBtnContent;
+        saveBtn.disabled = false;
+    }
 }
 
 // ログイン状態の表示とログアウト機能を設定

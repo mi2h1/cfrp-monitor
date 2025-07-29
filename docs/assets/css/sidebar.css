@@ -134,6 +134,25 @@ body {
     font-weight: 500;
     color: white;
     margin-bottom: 0.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-settings-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.user-settings-btn:hover {
+    color: white;
+    background-color: #444;
 }
 
 .user-role {
