@@ -42,8 +42,9 @@ async function initializeArticlesApp() {
     // URLパラメータから初期状態を復元
     restoreStateFromURL();
     
-    // ローディング体験改善: スケルトン表示
-    showProgressiveLoading();
+    // 初期ローディング: テーブル形式スケルトン表示
+    showLoadingState();
+    document.getElementById('articlesContainer').style.display = 'block';
     
     // 並列処理で初期化を高速化
     const [sourcesResult, articlesResult] = await Promise.allSettled([
@@ -58,7 +59,7 @@ async function initializeArticlesApp() {
     
     if (articlesResult.status === 'rejected') {
         console.error('記事読み込みエラー:', articlesResult.reason);
-        document.getElementById('loading').innerHTML = 
+        document.getElementById('articlesContainer').innerHTML = 
             '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
         return;
     }
@@ -238,13 +239,12 @@ async function loadArticles() {
             await loadArticlesPage(1, totalCount);
         }
         
-        // ローディング・スケルトンを隠してコンテンツを表示
+        // ローディング状態を解除してコンテンツを表示（スケルトンはrenderArticles()で自動置換）
         document.getElementById('loading').style.display = 'none';
-        hideSkeletonLoader();
         document.getElementById('articlesContainer').style.display = 'block';
     } catch (error) {
         console.error('記事読み込みエラー:', error);
-        document.getElementById('loading').innerHTML = '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
+        document.getElementById('articlesContainer').innerHTML = '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
     }
 }
 
@@ -2215,27 +2215,9 @@ async function saveArticleDetail(articleId) {
 
 
 
-// 段階的ローディング表示
-function showProgressiveLoading() {
-    // 200ms後にスケルトンローダーを表示（体感速度向上）
-    setTimeout(() => {
-        const loading = document.getElementById("loading");
-        const skeleton = document.getElementById("skeletonLoader");
-        
-        if (loading && skeleton) {
-            loading.style.display = "none";
-            skeleton.style.display = "block";
-        }
-    }, 200);
-}
+// 段階的ローディング表示（廃止 - showLoadingState()に統一）
 
-// スケルトンローダーを隠す
-function hideSkeletonLoader() {
-    const skeleton = document.getElementById("skeletonLoader");
-    if (skeleton) {
-        skeleton.style.display = "none";
-    }
-}
+// スケルトンローダーを隠す（廃止 - renderArticles()で自動置換）
 
 // キャッシング戦略: キャッシュキー生成
 function generateCacheKey(page, filters) {
