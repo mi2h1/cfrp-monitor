@@ -6,10 +6,13 @@ let currentPage = 1;
 let authToken = null;
 let userFeatures = null;
 
-// ソースデータキャッシュ
+// キャッシング戦略
 let sourcesCache = null;
 let sourcesCacheTime = null;
+let articlesCache = new Map(); // フィルター条件別のキャッシュ
+let articlesCacheTime = new Map();
 const CACHE_DURATION = 5 * 60 * 1000; // 5分間
+const ARTICLES_CACHE_DURATION = 2 * 60 * 1000; // 記事は2分間（より頻繁に更新される可能性があるため）
 
 // デバウンス用変数
 let filterDebounceTimer = null;
@@ -38,6 +41,9 @@ async function initializeArticlesApp() {
     
     // URLパラメータから初期状態を復元
     restoreStateFromURL();
+    
+    // ローディング体験改善: スケルトン表示
+    showProgressiveLoading();
     
     // 並列処理で初期化を高速化
     const [sourcesResult, articlesResult] = await Promise.allSettled([
@@ -200,18 +206,104 @@ async function getTotalArticlesCount(statusFilter = '', flaggedFilter = '', sour
 // 記事一覧を読み込み（サーバーサイドページネーション）
 async function loadArticles() {
     try {
-        // 総件数を取得
-        const totalCount = await getTotalArticlesCount();
+        // パフォーマンス最適化: 総件数とページデータを並列取得
+        const [totalCountResult, pageDataResult] = await Promise.allSettled([
+            getTotalArticlesCount(),
+            loadArticlesPageData(1) // 新しい関数で記事データのみ取得
+        ]);
         
-        // 初期表示用に最初のページを取得
-        await loadArticlesPage(1, totalCount);
+        if (totalCountResult.status === 'fulfilled' && pageDataResult.status === 'fulfilled') {
+            const totalCount = totalCountResult.value;
+            const { articles: pageArticles, page } = pageDataResult.value;
+            
+            // データを設定
+            articles = pageArticles;
+            currentPage = page;
+            
+            // URL更新
+            updateURLWithCurrentState();
+            
+            // UI更新
+            renderArticles();
+            renderPagination(totalCount, parseInt(document.getElementById('itemsPerPage').value), page);
+        } else {
+            // エラーハンドリング - フォールバック処理
+            const totalCount = await getTotalArticlesCount();
+            await loadArticlesPage(1, totalCount);
+        }
         
+        // ローディング・スケルトンを隠してコンテンツを表示
         document.getElementById('loading').style.display = 'none';
+        hideSkeletonLoader();
         document.getElementById('articlesContainer').style.display = 'block';
     } catch (error) {
         console.error('記事読み込みエラー:', error);
         document.getElementById('loading').innerHTML = '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
     }
+}
+
+// パフォーマンス最適化: 記事データのみを取得（UI更新なし）
+async function loadArticlesPageData(page) {
+    const itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
+    
+    // フィルタリング条件を取得
+    const statusFilter = document.getElementById('statusFilter').value;
+    const flaggedFilter = document.getElementById('flaggedFilter').value;
+    const sourceFilter = document.getElementById('sourceFilter').value;
+    const commentFilter = document.getElementById('commentFilter').value;
+    const sortOrder = document.getElementById('sortOrder').value;
+    
+    // キャッシング戦略: キャッシュキーを生成
+    const filters = { statusFilter, flaggedFilter, sourceFilter, commentFilter, sortOrder, itemsPerPage };
+    const cacheKey = generateCacheKey(page, filters);
+    
+    // キャッシュから取得を試行
+    const cachedData = getArticlesFromCache(cacheKey);
+    if (cachedData) {
+        return cachedData;
+    }
+    
+    // キャッシュにない場合はAPIから取得
+    const offset = (page - 1) * itemsPerPage;
+    let url = `/api/articles?limit=${itemsPerPage}&offset=${offset}&sort=${sortOrder}`;
+    
+    // フィルタリング条件を適用
+    if (statusFilter) {
+        url += `&status=${encodeURIComponent(statusFilter)}`;
+    }
+    if (flaggedFilter) {
+        url += `&flagged=${encodeURIComponent(flaggedFilter)}`;
+    }
+    if (sourceFilter) {
+        url += `&source_id=${encodeURIComponent(sourceFilter)}`;
+    }
+    if (commentFilter) {
+        url += `&has_comments=${encodeURIComponent(commentFilter)}`;
+    }
+    
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+        }
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+        throw new Error(data.error || '記事の読み込みに失敗しました');
+    }
+    
+    const result = {
+        articles: data.articles || [],
+        page: page
+    };
+    
+    // キャッシュに保存
+    setArticlesCache(cacheKey, result);
+    
+    return result;
 }
 
 // 指定されたページの記事を取得
@@ -221,7 +313,6 @@ async function loadArticlesPage(page, totalCount = null) {
         showLoadingState();
         
         const itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
-        const offset = (page - 1) * itemsPerPage;
         
         // フィルタリング条件を取得
         const statusFilter = document.getElementById('statusFilter').value;
@@ -229,6 +320,28 @@ async function loadArticlesPage(page, totalCount = null) {
         const sourceFilter = document.getElementById('sourceFilter').value;
         const commentFilter = document.getElementById('commentFilter').value;
         const sortOrder = document.getElementById('sortOrder').value;
+        
+        // キャッシング戦略: キャッシュからの取得を試行
+        const filters = { statusFilter, flaggedFilter, sourceFilter, commentFilter, sortOrder, itemsPerPage };
+        const cacheKey = generateCacheKey(page, filters);
+        const cachedData = getArticlesFromCache(cacheKey);
+        
+        if (cachedData) {
+            articles = cachedData.articles;
+            currentPage = cachedData.page;
+            
+            // URL更新
+            updateURLWithCurrentState();
+            
+            // ローディング状態を非表示
+            hideLoadingState();
+            
+            renderArticles();
+            renderPagination(totalCount || articles.length, itemsPerPage, page);
+            return;
+        }
+        
+        const offset = (page - 1) * itemsPerPage;
         
         // 総件数が未取得の場合は取得（フィルタリング条件付き）
         if (totalCount === null) {
@@ -274,6 +387,10 @@ async function loadArticlesPage(page, totalCount = null) {
         
         articles = data.articles || [];
         currentPage = page;
+        
+        // キャッシュに保存
+        const cacheData = { articles: articles, page: page };
+        setArticlesCache(cacheKey, cacheData);
         
         // URL更新
         updateURLWithCurrentState();
@@ -703,8 +820,19 @@ function setupEventListeners() {
         }
     });
 
-    // 更新ボタン
-    setupRefreshButton(loadArticles);
+    // 更新ボタン（キャッシュクリア機能付き）
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', async () => {
+            refreshBtn.disabled = true;
+            // キャッシュをクリアして強制更新
+            clearArticlesCache();
+            sourcesCache = null;
+            sourcesCacheTime = null;
+            await loadArticles();
+            refreshBtn.disabled = false;
+        });
+    }
     
     // ページネーションクリック（下部）
     document.getElementById('paginationList').addEventListener('click', (e) => {
@@ -1080,14 +1208,17 @@ async function postComment(articleId, parentCommentId = null) {
             // 入力欄をクリア
             document.getElementById('newComment').value = '';
             
-            // コメントを再読み込み（統合モード対応）
-            await loadAndRenderEditableArticleDetail(articleId);
+            // パフォーマンス最適化: コメントのみ再読み込み（記事データは既に読み込み済み）
+            await refreshCommentsOnly(articleId);
             
             // 記事一覧のコメント数も更新
             const article = articles.find(a => a.id === articleId);
             if (article) {
                 article.comment_count = (article.comment_count || 0) + 1;
             }
+            
+            // キャッシュをクリア（コメント数が変更されたため）
+            clearArticlesCache();
         } else {
             alert('コメントの投稿に失敗しました: ' + data.error);
         }
@@ -1181,14 +1312,17 @@ async function submitReply(parentCommentId) {
             // 返信フォームを非表示にしてクリア
             hideReplyForm(parentCommentId);
             
-            // コメントを再読み込み（統合モード対応）
-            await loadAndRenderEditableArticleDetail(articleId);
+            // パフォーマンス最適化: コメントのみ再読み込み（記事データは既に読み込み済み）
+            await refreshCommentsOnly(articleId);
             
             // 記事一覧のコメント数も更新
             const article = articles.find(a => a.id === articleId);
             if (article) {
                 article.comment_count = (article.comment_count || 0) + 1;
             }
+            
+            // キャッシュをクリア（コメント数が変更されたため）
+            clearArticlesCache();
             
             // 2秒後にボタンを元に戻す
             setTimeout(() => {
@@ -1762,6 +1896,9 @@ async function deleteComment(commentId) {
                     }
                 }
             }
+            
+            // キャッシュをクリア（コメント数が変更されたため）
+            clearArticlesCache();
         } else {
             alert('削除に失敗しました: ' + (data.error || '不明なエラー'));
         }
@@ -1827,9 +1964,117 @@ async function saveArticleDetail(articleId) {
             articles[articleIndex].reviewed_at = new Date().toISOString();
         }
         
+        // キャッシュをクリア（記事データが変更されたため）
+        clearArticlesCache();
+        
     } catch (error) {
         console.error('保存エラー:', error);
         alert('保存に失敗しました: ' + error.message);
     }
 }
 
+
+
+// 段階的ローディング表示
+function showProgressiveLoading() {
+    // 200ms後にスケルトンローダーを表示（体感速度向上）
+    setTimeout(() => {
+        const loading = document.getElementById("loading");
+        const skeleton = document.getElementById("skeletonLoader");
+        
+        if (loading && skeleton) {
+            loading.style.display = "none";
+            skeleton.style.display = "block";
+        }
+    }, 200);
+}
+
+// スケルトンローダーを隠す
+function hideSkeletonLoader() {
+    const skeleton = document.getElementById("skeletonLoader");
+    if (skeleton) {
+        skeleton.style.display = "none";
+    }
+}
+
+// キャッシング戦略: キャッシュキー生成
+function generateCacheKey(page, filters) {
+    const { statusFilter, flaggedFilter, sourceFilter, commentFilter, sortOrder, itemsPerPage } = filters || {};
+    return `page_${page}_status_${statusFilter || ''}_flagged_${flaggedFilter || ''}_source_${sourceFilter || ''}_comment_${commentFilter || ''}_sort_${sortOrder || 'desc'}_limit_${itemsPerPage || 20}`;
+}
+
+// キャッシング戦略: 記事データをキャッシュから取得
+function getArticlesFromCache(cacheKey) {
+    const cached = articlesCache.get(cacheKey);
+    const cacheTime = articlesCacheTime.get(cacheKey);
+    
+    if (cached && cacheTime && (Date.now() - cacheTime) < ARTICLES_CACHE_DURATION) {
+        console.log('記事データをキャッシュから取得:', cacheKey);
+        return cached;
+    }
+    
+    return null;
+}
+
+// キャッシング戦略: 記事データをキャッシュに保存
+function setArticlesCache(cacheKey, data) {
+    articlesCache.set(cacheKey, data);
+    articlesCacheTime.set(cacheKey, Date.now());
+    console.log('記事データをキャッシュに保存:', cacheKey);
+    
+    // キャッシュサイズ制限（メモリ管理）
+    if (articlesCache.size > 20) {
+        const oldestKey = Array.from(articlesCacheTime.entries())
+            .sort((a, b) => a[1] - b[1])[0][0];
+        articlesCache.delete(oldestKey);
+        articlesCacheTime.delete(oldestKey);
+    }
+}
+
+// キャッシング戦略: キャッシュをクリア（データ更新時）
+function clearArticlesCache() {
+    articlesCache.clear();
+    articlesCacheTime.clear();
+    console.log('記事キャッシュをクリア');
+}
+
+// パフォーマンス最適化: コメントのみ再読み込み
+async function refreshCommentsOnly(articleId) {
+    try {
+        const response = await fetch(`/api/article-comments?article_id=${articleId}`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const commentsData = await response.json();
+        
+        if (commentsData.success) {
+            const comments = commentsData.comments || [];
+            const commentsContainer = document.getElementById('commentsContainer');
+            
+            if (commentsContainer) {
+                // コメント数を更新
+                const commentsCount = document.getElementById('commentsCount');
+                if (commentsCount) {
+                    commentsCount.textContent = `${comments.length}件`;
+                }
+                
+                // コメント一覧を再描画
+                if (comments.length === 0) {
+                    commentsContainer.innerHTML = '<p class="text-muted">まだコメントはありません</p>';
+                } else {
+                    const commentsTree = buildCommentTree(comments);
+                    commentsContainer.innerHTML = Object.values(commentsTree)
+                        .map(commentGroup => renderCommentCard(commentGroup.root, 0, false, commentGroup.replies))
+                        .join('');
+                }
+            }
+        }
+    } catch (error) {
+        console.error('コメント再読み込みエラー:', error);
+        // エラー時は従来の方法にフォールバック
+        await loadAndRenderEditableArticleDetail(articleId);
+    }
+}
