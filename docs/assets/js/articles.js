@@ -809,15 +809,16 @@ function renderComments(comments) {
     container.innerHTML = commentsHtml;
 }
 
-// コメントの階層構造を構築（フラット表示）
+// コメントの階層構造を構築（削除されたコメントも考慮）
 function buildCommentTree(comments) {
     const rootComments = [];
     const commentsByRoot = {};
+    const orphanedReplies = [];
     
-    // ルートコメントとその返信をグループ化
+    // まず、全てのコメントからルートコメントを識別
     comments.forEach(comment => {
         if (!comment.parent_comment_id) {
-            // ルートコメント
+            // ルートコメント（削除されたものも含む）
             commentsByRoot[comment.id] = {
                 root: { ...comment },
                 replies: []
@@ -825,7 +826,7 @@ function buildCommentTree(comments) {
         }
     });
     
-    // 返信コメントを適切なルートに適用
+    // 返信コメントを処理
     comments.forEach(comment => {
         if (comment.parent_comment_id) {
             // 直接の親がルートコメントかどうかチェック
@@ -834,16 +835,33 @@ function buildCommentTree(comments) {
                 commentsByRoot[comment.parent_comment_id].replies.push({ ...comment });
             } else {
                 // 親が返信コメントの場合、そのルートコメントを探す
-                const parentComment = comments.find(c => c.id === comment.parent_comment_id);
-                if (parentComment) {
-                    // 親コメントのルートを再帰的に探す
-                    const rootId = findRootCommentId(parentComment, comments);
-                    if (commentsByRoot[rootId]) {
-                        commentsByRoot[rootId].replies.push({ ...comment });
-                    }
+                const rootId = findRootCommentId(comment, comments);
+                if (rootId && commentsByRoot[rootId]) {
+                    commentsByRoot[rootId].replies.push({ ...comment });
+                } else {
+                    // 孤立した返信（親が完全に削除されている場合）
+                    orphanedReplies.push(comment);
                 }
             }
         }
+    });
+    
+    // 孤立した返信のために削除された親コメントを作成
+    orphanedReplies.forEach(orphan => {
+        const virtualParentId = orphan.parent_comment_id;
+        if (!commentsByRoot[virtualParentId]) {
+            // 削除された親コメントの仮想エントリを作成
+            commentsByRoot[virtualParentId] = {
+                root: {
+                    id: virtualParentId,
+                    is_deleted: true,
+                    created_at: orphan.created_at, // 子コメントの日時を使用
+                    virtual_parent: true // 仮想親フラグ
+                },
+                replies: []
+            };
+        }
+        commentsByRoot[virtualParentId].replies.push({ ...orphan });
     });
     
     // ルートコメントを作成日時でソート
@@ -853,16 +871,20 @@ function buildCommentTree(comments) {
         return dateB - dateA; // 新しい順
     });
     
-    // 結果を構築
+    // 結果を構築（削除された親でも子がいる場合は表示）
     sortedRootIds.forEach(rootId => {
         const group = commentsByRoot[rootId];
-        // 返信を時間順でソート
-        group.replies.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
         
-        rootComments.push({
-            ...group.root,
-            replies: group.replies
-        });
+        // 削除されたコメントでも子コメントがある場合は表示
+        if (!group.root.is_deleted || group.replies.length > 0) {
+            // 返信を時間順でソート
+            group.replies.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            
+            rootComments.push({
+                ...group.root,
+                replies: group.replies
+            });
+        }
     });
     
     return rootComments;
@@ -881,9 +903,20 @@ function findRootCommentId(comment, allComments) {
 function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSiblings = false) {
     const marginLeft = level * 20;
     const isDeleted = comment.is_deleted;
+    const isVirtualParent = comment.virtual_parent;
     const isRootComment = level === 0;
-    // 改行を<br>タグに変換
-    const commentText = isDeleted ? '<em class="text-muted">このコメントは削除されました</em>' : escapeHtml(comment.comment).replace(/\n/g, '<br>');
+    
+    // 削除されたコメントか仮想親コメントの場合の表示
+    let commentText, displayName, displayDate;
+    if (isDeleted || isVirtualParent) {
+        commentText = '<em class="text-muted">このコメントは削除されました</em>';
+        displayName = '<em class="text-muted">削除されたユーザー</em>';
+        displayDate = comment.created_at ? formatJSTDisplay(comment.created_at) : '';
+    } else {
+        commentText = escapeHtml(comment.comment).replace(/\n/g, '<br>');
+        displayName = escapeHtml(comment.users?.display_name || comment.user_id);
+        displayDate = formatJSTDisplay(comment.created_at);
+    }
     
     // 編集済み判定を改善（時刻比較を正確に）
     let isEdited = false;
@@ -925,35 +958,37 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
                     <div class="comment-content flex-grow-1">
                         <div class="comment-meta mb-1 d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
-                                <strong class="me-2">${escapeHtml(comment.users?.display_name || comment.user_id)}</strong>
-                                <small class="text-muted me-1">${formatJSTDisplay(comment.created_at)}</small>
-                                ${isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
-                                ${isOwnComment && !isDeleted ? `
+                                <strong class="me-2">${displayName}</strong>
+                                <small class="text-muted me-1">${displayDate}</small>
+                                ${!isDeleted && !isVirtualParent && isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
+                                ${isOwnComment && !isDeleted && !isVirtualParent ? `
                                     <button class="btn btn-link btn-sm p-1 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1; color: #6c757d;" title="コメントを編集">
                                         <i class="fas fa-edit me-1"></i>編集
                                     </button>
                                 ` : ''}
                             </div>
-                            ${isOwnComment && !isDeleted ? `
+                            ${isOwnComment && !isDeleted && !isVirtualParent ? `
                                 <a href="#" class="text-danger small text-decoration-none" onclick="deleteComment('${comment.id}'); return false;" style="font-size: 0.75rem;">削除</a>
                             ` : ''}
                         </div>
                         <div class="comment-text" id="commentText-${comment.id}">${commentText}</div>
                         
                         <!-- 編集フォーム（初期非表示） -->
-                        <div class="edit-form mt-2" id="editForm-${comment.id}" style="display: none;">
-                            <textarea class="form-control mb-2" id="editText-${comment.id}" rows="3">${escapeHtml(comment.comment)}</textarea>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-success btn-sm" onclick="submitCommentEdit('${comment.id}')">
-                                    <i class="fas fa-save"></i> 保存
-                                </button>
-                                <button class="btn btn-outline-secondary btn-sm" onclick="cancelCommentEdit('${comment.id}')">
-                                    キャンセル
-                                </button>
+                        ${!isDeleted && !isVirtualParent ? `
+                            <div class="edit-form mt-2" id="editForm-${comment.id}" style="display: none;">
+                                <textarea class="form-control mb-2" id="editText-${comment.id}" rows="3">${escapeHtml(comment.comment || '')}</textarea>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success btn-sm" onclick="submitCommentEdit('${comment.id}')">
+                                        <i class="fas fa-save"></i> 保存
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="cancelCommentEdit('${comment.id}')">
+                                        キャンセル
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        ` : ''}
                     </div>
-                    ${!isDeleted && level === 0 && (!comment.replies || comment.replies.length === 0) ? `
+                    ${!isDeleted && !isVirtualParent && level === 0 && (!comment.replies || comment.replies.length === 0) ? `
                         <div class="comment-actions ms-2">
                             <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                                 <i class="fas fa-reply"></i> 返信
@@ -964,24 +999,26 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
             </div>
             
             <!-- 返信フォーム -->
-            <div class="reply-form mt-2" id="replyForm-${comment.id}" style="display: none; margin-left: ${marginLeft + 20}px;">
-                <div class="card card-body py-2 px-3 bg-light">
-                    <div class="mb-2">
-                        <small class="text-muted">
-                            <i class="fas fa-reply"></i> <strong>${escapeHtml(comment.users?.display_name || comment.user_id)}</strong> への返信
-                        </small>
-                    </div>
-                    <textarea class="form-control mb-2" id="replyText-${comment.id}" rows="2" placeholder="返信を入力..."></textarea>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary btn-sm" onclick="submitReply('${comment.id}')">
-                            <i class="fas fa-paper-plane"></i> 返信を投稿
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="hideReplyForm('${comment.id}')">
-                            キャンセル
-                        </button>
+            ${!isDeleted && !isVirtualParent ? `
+                <div class="reply-form mt-2" id="replyForm-${comment.id}" style="display: none; margin-left: ${marginLeft + 20}px;">
+                    <div class="card card-body py-2 px-3 bg-light">
+                        <div class="mb-2">
+                            <small class="text-muted">
+                                <i class="fas fa-reply"></i> <strong>${displayName}</strong> への返信
+                            </small>
+                        </div>
+                        <textarea class="form-control mb-2" id="replyText-${comment.id}" rows="2" placeholder="返信を入力..."></textarea>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary btn-sm" onclick="submitReply('${comment.id}')">
+                                <i class="fas fa-paper-plane"></i> 返信を投稿
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="hideReplyForm('${comment.id}')">
+                                キャンセル
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            ` : ''}
         </div>
     `;
     
@@ -992,14 +1029,14 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
             return renderCommentCard(reply, 1, isLastReply);
         }).join('');
         
-        // 返信群の最後に1つの返信ボタンを追加（スタイル調整）
-        const groupReplyButton = `
+        // 返信群の最後に1つの返信ボタンを追加（削除されたコメントには表示しない）
+        const groupReplyButton = !isDeleted && !isVirtualParent ? `
             <div class="group-reply-container mt-2 mb-4" style="margin-left: 15px; padding-top: 8px;">
                 <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                     <i class="fas fa-reply"></i> 返信
                 </button>
             </div>
-        `;
+        ` : '<div class="mb-4"></div>'; // 削除されたコメントの場合はスペースのみ
         
         html += `
             <div class="replies-container">
