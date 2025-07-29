@@ -386,7 +386,7 @@ class handler(BaseHTTPRequestHandler):
             if not supabase_url or not supabase_key:
                 return None
             
-            # 単一記事を取得
+            # 単一記事を取得（ai_summaryフィールドも含める）
             url = f"{supabase_url}/rest/v1/articles?select=*,sources(name,domain)&id=eq.{article_id}"
             
             headers = {
@@ -708,4 +708,52 @@ class handler(BaseHTTPRequestHandler):
             return None
         except Exception as e:
             print(f"Delete article error: {e}")
+            return None
+    
+    def update_ai_summary(self, article_id, ai_summary, user_data):
+        """記事のAI要約を更新"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return None
+            
+            # AI要約データを準備
+            update_data = {
+                'ai_summary': ai_summary,
+                'last_edited_by': user_data['user_id'],
+                'reviewed_at': now_jst_naive_iso()
+            }
+            
+            # データベースを更新
+            url = f"{supabase_url}/rest/v1/articles?id=eq.{article_id}"
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            }
+            
+            data = json.dumps(update_data).encode('utf-8')
+            
+            req = urllib.request.Request(
+                url,
+                data=data,
+                headers=headers,
+                method='PATCH'
+            )
+            
+            with urllib.request.urlopen(req) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                print(f"DEBUG: AI summary updated for article {article_id}")
+                return result[0] if isinstance(result, list) and result else result
+                    
+        except urllib.error.HTTPError as e:
+            print(f"Update AI summary HTTP error: {e.code} - {e.reason}")
+            error_body = e.read().decode('utf-8')
+            print(f"Error body: {error_body}")
+            return None
+        except Exception as e:
+            print(f"Update AI summary error: {e}")
             return None

@@ -1734,6 +1734,38 @@ function renderEditableArticleDetailContent(article, comments) {
                                         </div>
                                     </div>
                                 `}
+                                
+                                <!-- AI要約セクション -->
+                                <div class="ai-summary-section mt-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-robot me-1"></i> AI要約
+                                        </h6>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="generateAISummary('${article.id}')" id="generateSummaryBtn">
+                                            <i class="fas fa-magic"></i> ${article.ai_summary ? '要約再生成' : '要約生成'}
+                                        </button>
+                                    </div>
+                                    <div id="summaryContainer" class="small">
+                                        ${article.ai_summary ? `
+                                            <div class="alert alert-info mb-0">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div style="line-height: 1.4;">
+                                                        <i class="fas fa-lightbulb me-1"></i>
+                                                        ${escapeHtml(article.ai_summary)}
+                                                    </div>
+                                                    <button class="btn btn-outline-secondary btn-sm ms-2" onclick="generateAISummary('${article.id}')" title="再生成">
+                                                        <i class="fas fa-redo"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="text-muted small mt-2">
+                                                    <i class="fas fa-robot me-1"></i>Google Gemini APIによる要約
+                                                </div>
+                                            </div>
+                                        ` : `
+                                            <div class="text-muted">「要約生成」ボタンをクリックして記事の要約を生成できます</div>
+                                        `}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="article-comments mb-3">
@@ -2182,5 +2214,120 @@ async function refreshCommentsOnly(articleId) {
         console.error('コメント再読み込みエラー:', error);
         // エラー時は従来の方法にフォールバック
         await loadAndRenderEditableArticleDetail(articleId);
+    }
+}
+
+// AI要約生成機能
+async function generateAISummary(articleId) {
+    const generateBtn = document.getElementById('generateSummaryBtn');
+    const summaryContainer = document.getElementById('summaryContainer');
+    
+    // ボタンをローディング状態に変更
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
+    
+    // ローディング表示
+    summaryContainer.innerHTML = `
+        <div class="d-flex align-items-center text-muted">
+            <div class="spinner-border spinner-border-sm me-2" role="status">
+                <span class="visually-hidden">生成中...</span>
+            </div>
+            AI要約を生成しています...
+        </div>
+    `;
+    
+    try {
+        // 記事データを取得
+        const articleResponse = await fetch(`/api/articles?id=${articleId}`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const articleData = await articleResponse.json();
+        if (!articleData.success || !articleData.articles?.length) {
+            throw new Error('記事データの取得に失敗しました');
+        }
+        
+        const article = articleData.articles[0];
+        
+        // 記事本文をチェック
+        if (!article.body || article.body.trim().length === 0) {
+            throw new Error('記事本文が存在しないため要約を生成できません');
+        }
+        
+        // AI要約APIを呼び出し
+        const summaryResponse = await fetch('/api/article-summary', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                article_id: articleId,
+                article_text: article.body
+            })
+        });
+        
+        const summaryData = await summaryResponse.json();
+        
+        if (summaryData.success) {
+            // 成功時の表示
+            summaryContainer.innerHTML = `
+                <div class="alert alert-info mb-0">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div style="line-height: 1.4;">
+                            <i class="fas fa-lightbulb me-1"></i>
+                            ${escapeHtml(summaryData.summary)}
+                        </div>
+                        <button class="btn btn-outline-secondary btn-sm ms-2" onclick="generateAISummary('${articleId}')" title="再生成">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                    <div class="text-muted small mt-2">
+                        <i class="fas fa-robot me-1"></i>Google Gemini APIによる要約
+                    </div>
+                </div>
+            `;
+            
+            // ボタンのテキストを更新（既存要約がある場合は「再生成完了」）
+            const hasExistingSummary = generateBtn.innerHTML.includes('再生成');
+            generateBtn.innerHTML = `<i class="fas fa-check"></i> ${hasExistingSummary ? '再生成完了' : '生成完了'}`;
+            generateBtn.classList.remove('btn-outline-primary');
+            generateBtn.classList.add('btn-success');
+            
+            // 2秒後にボタンを元の状態に戻す
+            setTimeout(() => {
+                generateBtn.innerHTML = '<i class="fas fa-magic"></i> 要約再生成';
+                generateBtn.classList.remove('btn-success');
+                generateBtn.classList.add('btn-outline-primary');
+            }, 2000);
+            
+        } else {
+            throw new Error(summaryData.error || '要約の生成に失敗しました');
+        }
+        
+    } catch (error) {
+        console.error('AI要約生成エラー:', error);
+        
+        // エラー表示
+        summaryContainer.innerHTML = `
+            <div class="alert alert-warning mb-0">
+                <i class="fas fa-exclamation-triangle me-1"></i>
+                要約の生成に失敗しました: ${escapeHtml(error.message)}
+                <button class="btn btn-outline-warning btn-sm ms-2" onclick="generateAISummary('${articleId}')">
+                    <i class="fas fa-retry"></i> 再試行
+                </button>
+            </div>
+        `;
+        
+        // ボタンを元に戻す
+        generateBtn.innerHTML = '<i class="fas fa-magic"></i> 要約生成';
+        generateBtn.classList.remove('btn-success');
+        generateBtn.classList.add('btn-outline-primary');
+    } finally {
+        // ボタンを有効化
+        generateBtn.disabled = false;
     }
 }

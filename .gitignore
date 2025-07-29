@@ -71,3 +71,6 @@ database-schema-complete.md
 
 # Development guidelines (local only)
 CLAUDE.md
+
+# System documentation (contains sensitive information)
+SYSTEM_TECHNICAL_SPECIFICATION.md
