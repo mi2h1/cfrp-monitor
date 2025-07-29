@@ -11,10 +11,13 @@
     <script>
         async function testCommentAPI() {
             const articleId = 'ba410f40-5d6c-470c-afc4-671be711b6c0';
-            const authToken = localStorage.getItem('authToken');
+            const authToken = localStorage.getItem('auth_token');
+            
+            console.log('Auth token:', authToken ? 'Found' : 'Not found');
+            console.log('LocalStorage keys:', Object.keys(localStorage));
             
             if (!authToken) {
-                document.getElementById('result').textContent = 'Auth token not found';
+                document.getElementById('result').textContent = 'Auth token not found. Check console for localStorage keys.';
                 return;
             }
             
