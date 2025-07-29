@@ -251,9 +251,9 @@ class handler(BaseHTTPRequestHandler):
             if not supabase_url or not supabase_key:
                 return []
             
-            # コメント一覧を取得（ユーザーの表示名も含めて取得、削除されていないもののみ、作成日時順）
-            # UUIDの場合は引用符なしでクエリ
-            url = f'{supabase_url}/rest/v1/article_comments?select=*,users(display_name)&article_id=eq.{article_id}&is_deleted=eq.false&order=created_at.asc'
+            # コメント一覧を取得（削除されていないもののみ、作成日時順）
+            # JOINは300エラーになるため、まずはJOINなしで取得
+            url = f'{supabase_url}/rest/v1/article_comments?select=*&article_id=eq.{article_id}&is_deleted=eq.false&order=created_at.asc'
             
             headers = {
                 'apikey': supabase_key,
@@ -263,8 +263,34 @@ class handler(BaseHTTPRequestHandler):
             
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req) as response:
-                data = json.loads(response.read().decode('utf-8'))
-                return data
+                comments = json.loads(response.read().decode('utf-8'))
+                
+                # ユーザーIDのリストを作成
+                user_ids = list(set([comment['user_id'] for comment in comments if comment.get('user_id')]))
+                
+                if user_ids:
+                    # ユーザー情報を一括取得
+                    user_ids_str = ','.join(user_ids)
+                    users_url = f'{supabase_url}/rest/v1/users?select=user_id,display_name&user_id=in.({user_ids_str})'
+                    
+                    try:
+                        users_req = urllib.request.Request(users_url, headers=headers)
+                        with urllib.request.urlopen(users_req) as users_response:
+                            users_data = json.loads(users_response.read().decode('utf-8'))
+                            
+                            # ユーザーIDをキーとした辞書を作成
+                            users_dict = {user['user_id']: user for user in users_data}
+                            
+                            # コメントにユーザー情報を追加
+                            for comment in comments:
+                                user_id = comment.get('user_id')
+                                if user_id and user_id in users_dict:
+                                    comment['users'] = {'display_name': users_dict[user_id].get('display_name')}
+                    except Exception as e:
+                        print(f"Failed to fetch user info: {e}")
+                        # ユーザー情報取得に失敗してもコメントは返す
+                
+                return comments
         
         except Exception as e:
             print(f"Get comments error: {str(e)}")
