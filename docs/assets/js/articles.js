@@ -1731,6 +1731,12 @@ async function showEditableArticleDetail(articleId) {
         
         detailContainer.style.display = 'block';
         
+        // ページトップにスクロール
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        
         // スケルトンローダーを表示
         const detailLoading = document.getElementById('detailLoading');
         detailLoading.innerHTML = createArticleDetailSkeleton();
