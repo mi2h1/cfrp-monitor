@@ -1511,7 +1511,7 @@ function renderEditableArticleDetailContent(article, comments) {
                     <div class="card-body">
                         <div class="row mb-3">
                             <!-- 左側: 情報源・URL・ステータス -->
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <!-- 情報源・取得日時 -->
                                 <div class="mb-2">
                                     <div class="d-flex align-items-center gap-3 small text-muted">
@@ -1530,7 +1530,7 @@ function renderEditableArticleDetailContent(article, comments) {
                                 <div class="mb-3">
                                     <div class="small text-muted">
                                         <i class="fas fa-link me-1"></i>
-                                        <a href="${article.url}" target="_blank" class="text-decoration-none text-truncate d-inline-block" title="${escapeHtml(article.url)}" style="max-width: 280px;">${article.url}</a>
+                                        <a href="${article.url}" target="_blank" class="text-decoration-none text-truncate d-inline-block" title="${escapeHtml(article.url)}" style="max-width: 250px;">${article.url}</a>
                                     </div>
                                 </div>
                                 
@@ -1556,18 +1556,18 @@ function renderEditableArticleDetailContent(article, comments) {
                             </div>
                             
                             <!-- 右側: 記事内容 -->
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 ${article.body ? `
                                     <div class="article-body">
                                         <h6 class="mb-2">記事内容</h6>
-                                        <div class="border rounded p-2 bg-light small" style="height: 120px; overflow: hidden;">
-                                            ${escapeHtml(article.body.substring(0, 150)).replace(/\n/g, '<br>')}${article.body.length > 150 ? '...' : ''}
+                                        <div class="small text-dark" style="line-height: 1.4;">
+                                            ${escapeHtml(article.body.substring(0, 200)).replace(/\n/g, '<br>')}${article.body.length > 200 ? '...' : ''}
                                         </div>
                                     </div>
                                 ` : `
                                     <div class="article-body">
                                         <h6 class="mb-2">記事内容</h6>
-                                        <div class="border rounded p-2 bg-light small text-muted" style="height: 120px;">
+                                        <div class="small text-muted" style="line-height: 1.4;">
                                             記事内容がありません
                                         </div>
                                     </div>
