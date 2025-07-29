@@ -5,8 +5,27 @@ import urllib.request
 import urllib.parse
 import jwt
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from articles import ArticlesHandler
+import importlib.util
+
+# Vercelでのインポート処理
+try:
+    # パスを設定
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, current_dir)
+    
+    # timezone_utilsをインポート
+    utils_dir = os.path.join(current_dir, 'utils')
+    if os.path.exists(utils_dir):
+        sys.path.insert(0, utils_dir)
+    
+    # articles.pyをインポート
+    from articles import ArticlesHandler
+    
+    print("ArticlesHandler imported successfully")
+except Exception as import_error:
+    print(f"Import error: {import_error}")
+    # フォールバック: ArticlesHandlerなしで動作
+    ArticlesHandler = None
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -61,20 +80,36 @@ class handler(BaseHTTPRequestHandler):
             
             if summary:
                 # 要約をデータベースに保存
-                articles_handler = ArticlesHandler()
-                save_result = articles_handler.update_ai_summary(article_id, summary, user_data)
-                
-                if save_result:
-                    response = {
-                        "success": True,
-                        "summary": summary
-                    }
+                if ArticlesHandler:
+                    try:
+                        articles_handler = ArticlesHandler()
+                        save_result = articles_handler.update_ai_summary(article_id, summary, user_data)
+                        
+                        if save_result:
+                            response = {
+                                "success": True,
+                                "summary": summary
+                            }
+                        else:
+                            # 要約生成は成功したが保存に失敗した場合でも、要約は返す
+                            response = {
+                                "success": True,
+                                "summary": summary,
+                                "warning": "要約の保存に失敗しましたが、要約は生成されました"
+                            }
+                    except Exception as save_error:
+                        print(f"Save error: {save_error}")
+                        response = {
+                            "success": True,
+                            "summary": summary,
+                            "warning": f"要約の保存に失敗しました: {str(save_error)}"
+                        }
                 else:
-                    # 要約生成は成功したが保存に失敗した場合でも、要約は返す
+                    # ArticlesHandlerが利用できない場合
                     response = {
                         "success": True,
                         "summary": summary,
-                        "warning": "要約の保存に失敗しましたが、要約は生成されました"
+                        "warning": "要約の保存機能が利用できませんが、要約は生成されました"
                     }
             else:
                 response = {

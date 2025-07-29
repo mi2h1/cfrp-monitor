@@ -2270,7 +2270,21 @@ async function generateAISummary(articleId) {
             })
         });
         
-        const summaryData = await summaryResponse.json();
+        // レスポンスのデバッグ情報を追加
+        console.log('Summary API response status:', summaryResponse.status);
+        console.log('Summary API response headers:', summaryResponse.headers);
+        
+        const responseText = await summaryResponse.text();
+        console.log('Summary API raw response:', responseText);
+        
+        let summaryData;
+        try {
+            summaryData = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            console.error('Response text that failed to parse:', responseText);
+            throw new Error(`サーバーから無効なレスポンスが返されました: ${parseError.message}`);
+        }
         
         if (summaryData.success) {
             // 成功時の表示
