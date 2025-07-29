@@ -2239,7 +2239,7 @@ async function generateAISummary(articleId) {
             <div class="spinner-border spinner-border-sm me-2" role="status">
                 <span class="visually-hidden">生成中...</span>
             </div>
-            AI要約を生成しています...
+            記事を読み込んでAI要約を生成しています...
         </div>
     `;
     
@@ -2259,9 +2259,9 @@ async function generateAISummary(articleId) {
         
         const article = articleData.articles[0];
         
-        // 記事本文をチェック
-        if (!article.body || article.body.trim().length === 0) {
-            throw new Error('記事本文が存在しないため要約を生成できません');
+        // 記事URLをチェック
+        if (!article.url || article.url.trim().length === 0) {
+            throw new Error('記事URLが存在しないため要約を生成できません');
         }
         
         // AI要約APIを呼び出し
@@ -2273,7 +2273,7 @@ async function generateAISummary(articleId) {
             },
             body: JSON.stringify({
                 article_id: articleId,
-                article_text: article.body
+                article_url: article.url
             })
         });
         

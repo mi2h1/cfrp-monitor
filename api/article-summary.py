@@ -95,25 +95,33 @@ class handler(BaseHTTPRequestHandler):
             data = json.loads(post_data.decode('utf-8'))
             
             article_id = data.get('article_id', '').strip()
-            article_text = data.get('article_text', '').strip()
+            article_url = data.get('article_url', '').strip()
             
             if not article_id:
                 response = {"success": False, "error": "記事IDが必要です"}
                 self.wfile.write(json.dumps(response).encode('utf-8'))
                 return
                 
-            if not article_text:
-                response = {"success": False, "error": "記事本文が必要です"}
+            if not article_url:
+                response = {"success": False, "error": "記事URLが必要です"}
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            # URLから記事内容を取得
+            article_content = self.fetch_article_content(article_url)
+            
+            if not article_content:
+                response = {"success": False, "error": "記事の内容を取得できませんでした"}
                 self.wfile.write(json.dumps(response).encode('utf-8'))
                 return
             
             # 記事本文の長さチェック（長すぎる場合は先頭部分のみ使用）
             max_length = 8000  # Gemini APIの制限を考慮
-            if len(article_text) > max_length:
-                article_text = article_text[:max_length] + "..."
+            if len(article_content) > max_length:
+                article_content = article_content[:max_length] + "..."
             
             # Google Gemini APIで要約生成
-            summary = self.generate_summary(article_text)
+            summary = self.generate_summary(article_content)
             
             if summary:
                 # 要約をデータベースに保存
@@ -159,6 +167,51 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         self.end_headers()
+    
+    def fetch_article_content(self, url):
+        """URLから記事内容を取得"""
+        try:
+            print(f"Fetching content from URL: {url}")
+            
+            # User-Agentを設定してWebページを取得
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            
+            req = urllib.request.Request(url, headers=headers)
+            
+            with urllib.request.urlopen(req, timeout=10) as response:
+                html_content = response.read().decode('utf-8')
+                
+                # 簡単なHTMLパースでテキストを抽出
+                import re
+                
+                # HTMLタグを除去
+                text_content = re.sub(r'<[^>]+>', '', html_content)
+                
+                # 複数の空白・改行を整理
+                text_content = re.sub(r'\s+', ' ', text_content)
+                
+                # 不要な部分を除去（基本的なクリーニング）
+                text_content = text_content.strip()
+                
+                # 記事らしい部分を抽出（最低500文字以上あることを確認）
+                if len(text_content) < 500:
+                    print(f"Content too short: {len(text_content)} characters")
+                    return None
+                
+                print(f"Successfully extracted {len(text_content)} characters")
+                return text_content
+                
+        except urllib.error.HTTPError as e:
+            print(f"HTTP error fetching {url}: {e.code}")
+            return None
+        except urllib.error.URLError as e:
+            print(f"URL error fetching {url}: {e}")
+            return None
+        except Exception as e:
+            print(f"Error fetching article content: {e}")
+            return None
     
     def generate_summary(self, article_text):
         """Google Gemini APIを使用して記事を要約"""
