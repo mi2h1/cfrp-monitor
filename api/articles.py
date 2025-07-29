@@ -305,9 +305,8 @@ class handler(BaseHTTPRequestHandler):
                 if filters:
                     temp_url += "&" + "&".join(filters)
                 
-                # ソート順を適用
-                order_field = "published_at" if order in ['asc', 'desc'] else "published_at"
-                temp_url += f"&order={order_field}.{order}"
+                # ソート順を適用（記事登録日の降順固定）
+                temp_url += f"&order=added_at.desc"
                 
                 url = temp_url
             else:
@@ -327,9 +326,8 @@ class handler(BaseHTTPRequestHandler):
                 if filters:
                     url += "&" + "&".join(filters)
                 
-                # ソートとページネーションを追加
-                order_field = "published_at" if order in ['asc', 'desc'] else "published_at"
-                url += f"&order={order_field}.{order}&limit={limit}&offset={offset}"
+                # ソートとページネーションを追加（記事登録日の降順固定）
+                url += f"&order=added_at.desc&limit={limit}&offset={offset}"
             
             headers = {
                 'apikey': supabase_key,
