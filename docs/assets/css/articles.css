@@ -192,3 +192,17 @@
     transform: scale(1.1);
     transition: all 0.2s ease;
 }
+
+/* ステータスタグの幅統一 */
+.status-badge {
+    width: 70px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* 重要タグも同じ幅に */
+.badge.border-danger {
+    width: 70px;
+    text-align: center;
+    display: inline-block;
+}
