@@ -438,19 +438,55 @@ async function loadArticlesPage(page, totalCount = null) {
     }
 }
 
-// ローディング状態管理関数
+// ローディング状態管理関数（テーブル形式スケルトンローダー）
 function showLoadingState() {
     const container = document.getElementById('articlesContainer');
-    container.innerHTML = `
-        <div class="d-flex justify-content-center align-items-center" style="min-height: 300px;">
-            <div class="text-center">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">読み込み中...</span>
-                </div>
-                <p class="text-muted">記事を読み込んでいます...</p>
-            </div>
+    const skeletonCount = parseInt(document.getElementById('itemsPerPage').value) || 20;
+    
+    // 実際のテーブル構造と同じ形式でスケルトンを作成
+    const skeletonHTML = `
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 90px;">ステータス</th>
+                        <th>タイトル</th>
+                        <th style="width: 140px;">情報源</th>
+                        <th style="width: 120px;">公開日</th>
+                        <th style="width: 80px;" title="AI要約の有無">AI要約</th>
+                        <th style="width: 80px;">コメント</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${Array.from({length: skeletonCount}, (_, i) => `
+                        <tr>
+                            <td>
+                                <div class="skeleton-badge" style="width: 70px; height: 20px;"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton-text" style="width: ${60 + Math.random() * 30}%; height: 18px; margin-bottom: 4px;"></div>
+                                <div class="skeleton-text" style="width: ${40 + Math.random() * 20}%; height: 14px;"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton-text" style="width: 80%; height: 16px;"></div>
+                            </td>
+                            <td>
+                                <div class="skeleton-text" style="width: 90%; height: 16px;"></div>
+                            </td>
+                            <td class="text-center">
+                                <div class="skeleton-badge" style="width: 20px; height: 20px; border-radius: 50%; margin: 0 auto;"></div>
+                            </td>
+                            <td class="text-center">
+                                <div class="skeleton-badge" style="width: 30px; height: 18px; border-radius: 12px; margin: 0 auto;"></div>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
         </div>
     `;
+    
+    container.innerHTML = skeletonHTML;
 }
 
 function hideLoadingState() {
@@ -2143,24 +2179,19 @@ async function handlePaginationClick(page) {
         behavior: 'smooth' 
     });
     
-    // 3. 記事一覧を非表示にしてローディング状態を表示
+    // 3. 記事一覧にスケルトンローダーを表示
     const articlesContainer = document.getElementById('articlesContainer');
     const loadingElement = document.getElementById('loading');
     
+    // スケルトンローダーを表示
     if (articlesContainer) {
-        articlesContainer.style.display = 'none';
+        showLoadingState();
+        articlesContainer.style.display = 'block';
     }
     
+    // 従来のローディング要素を非表示
     if (loadingElement) {
-        loadingElement.style.display = 'block';
-        loadingElement.innerHTML = `
-            <div class="text-center py-4">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">読み込み中...</span>
-                </div>
-                <p class="mt-2">ページ ${page} を読み込んでいます...</p>
-            </div>
-        `;
+        loadingElement.style.display = 'none';
     }
     
     // 4. 少し待ってからページ読み込み（スムーススクロールが完了するまで）
