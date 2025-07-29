@@ -918,27 +918,25 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
     
     const isOwnComment = currentUser && currentUser === comment.user_id;
     
-    // デバッグ情報をコンソールに出力（編集機能が動作しているので簡略化）
-    // console.log('Debug - renderCommentCard:', {
-    //     currentUser: currentUser,
-    //     commentUserId: comment.user_id,
-    //     isOwnComment: isOwnComment
-    // });
-    
     let html = `
         <div class="comment-card mb-3" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
             <div class="card card-body py-2 px-3">
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="comment-content flex-grow-1">
-                        <div class="comment-meta mb-1 d-flex align-items-center">
-                            <strong class="me-2">${escapeHtml(comment.users?.display_name || comment.user_id)}</strong>
-                            <small class="text-muted me-1">${formatJSTDisplay(comment.created_at)}</small>
-                            ${isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
+                        <div class="comment-meta mb-1 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <strong class="me-2">${escapeHtml(comment.users?.display_name || comment.user_id)}</strong>
+                                <small class="text-muted me-1">${formatJSTDisplay(comment.created_at)}</small>
+                                ${isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
+                                ${isOwnComment && !isDeleted ? `
+                                    <button class="btn btn-link btn-sm p-1 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1; color: #6c757d;" title="コメントを編集">
+                                        <i class="fas fa-edit me-1"></i>編集
+                                    </button>
+                                ` : ''}
+                            </div>
                             ${isOwnComment && !isDeleted ? `
-                                <button class="btn btn-link btn-sm p-1 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1; color: #6c757d;" title="コメントを編集">
-                                    <i class="fas fa-edit me-1"></i>編集
-                                </button>
-                            ` : '<!-- Debug: No edit button - currentUser: ' + currentUser + ', commentUserId: ' + comment.user_id + ', isOwnComment: ' + isOwnComment + ', isDeleted: ' + isDeleted + ' -->'}
+                                <a href="#" class="text-danger small text-decoration-none" onclick="deleteComment('${comment.id}'); return false;" style="font-size: 0.75rem;">削除</a>
+                            ` : ''}
                         </div>
                         <div class="comment-text" id="commentText-${comment.id}">${commentText}</div>
                         
@@ -1429,22 +1427,12 @@ async function loadAndRenderEditableArticleDetail(articleId) {
         const articleData = await articleResponse.json();
         const commentsData = await commentsResponse.json();
         
-        // デバッグ: APIレスポンスを確認
-        console.log('APIレスポンス確認:');
-        console.log('コメントAPIレスポンス全体:', commentsData);
-        console.log('success:', commentsData.success);
-        console.log('comments:', commentsData.comments);
-        console.log('error:', commentsData.error);
-        
         if (!articleData.success || !articleData.articles?.length) {
             throw new Error('記事が見つかりません');
         }
         
         const article = articleData.articles[0];
         const comments = commentsData.success ? commentsData.comments || [] : [];
-        
-        console.log('抽出されたコメント配列:', comments);
-        console.log('コメント数:', comments.length);
         
         // 編集可能な記事詳細を表示
         renderEditableArticleDetailContent(article, comments);
@@ -1576,10 +1564,7 @@ function renderEditableArticleDetailContent(article, comments) {
 
 // 詳細画面用のコメント表示
 function renderDetailComments(comments) {
-    console.log('renderDetailComments called with:', comments);
-    
     if (!comments || comments.length === 0) {
-        console.log('コメントが空のため「まだコメントはありません」を表示');
         return '<div class="text-muted text-center py-3">まだコメントはありません</div>';
     }
     
@@ -1672,6 +1657,59 @@ async function postDetailComment(articleId) {
             submitBtn.classList.remove('btn-danger');
             submitBtn.classList.add('btn-primary');
         }, 3000);
+    }
+}
+
+// コメント削除関数
+async function deleteComment(commentId) {
+    if (!confirm('このコメントを削除してもよろしいですか？')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/article-comments?comment_id=${commentId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // コメントカードを非表示にする
+            const commentCard = document.querySelector(`[data-comment-id="${commentId}"]`);
+            if (commentCard) {
+                commentCard.style.transition = 'opacity 0.3s';
+                commentCard.style.opacity = '0';
+                setTimeout(() => {
+                    commentCard.remove();
+                }, 300);
+            }
+            
+            // 記事一覧のコメント数を更新
+            // URLから記事IDを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('edit');
+            if (articleId) {
+                const article = articles.find(a => a.id === articleId);
+                if (article && article.comment_count > 0) {
+                    article.comment_count--;
+                    // 記事一覧の表示も更新
+                    const countBadge = document.querySelector(`tr[data-id="${articleId}"] .comment-count`);
+                    if (countBadge) {
+                        countBadge.textContent = article.comment_count;
+                        countBadge.className = article.comment_count > 0 ? 'badge bg-primary ms-1 comment-count' : 'badge bg-secondary ms-1 comment-count';
+                    }
+                }
+            }
+        } else {
+            alert('削除に失敗しました: ' + (data.error || '不明なエラー'));
+        }
+    } catch (error) {
+        console.error('コメント削除エラー:', error);
+        alert('削除に失敗しました');
     }
 }
 

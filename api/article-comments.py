@@ -213,10 +213,83 @@ class handler(BaseHTTPRequestHandler):
             }
             self.wfile.write(json.dumps(response).encode('utf-8'))
 
+    def do_DELETE(self):
+        """コメントを削除（論理削除）"""
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        self.end_headers()
+        
+        try:
+            # 認証チェック
+            user_data = self.verify_token()
+            if not user_data:
+                response = {
+                    "success": False,
+                    "error": "認証が必要です"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            # クエリパラメータからコメントIDを取得
+            query_params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            comment_id = query_params.get('comment_id', [None])[0]
+            
+            if not comment_id:
+                response = {
+                    "success": False,
+                    "error": "コメントIDが指定されていません"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            # コメントの所有者チェック
+            comment = self.get_comment_by_id(comment_id)
+            if not comment:
+                response = {
+                    "success": False,
+                    "error": "コメントが見つかりません"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            if comment['user_id'] != user_data['user_id']:
+                response = {
+                    "success": False,
+                    "error": "自分のコメントのみ削除できます"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            
+            # コメントを論理削除
+            result = self.delete_comment(comment_id)
+            
+            if result:
+                response = {
+                    "success": True,
+                    "message": "コメントを削除しました"
+                }
+            else:
+                response = {
+                    "success": False,
+                    "error": "コメントの削除に失敗しました"
+                }
+            
+            self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+            
+        except Exception as e:
+            response = {
+                "success": False,
+                "error": f"サーバーエラー: {str(e)}"
+            }
+            self.wfile.write(json.dumps(response).encode('utf-8'))
+
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         self.end_headers()
 
@@ -391,4 +464,42 @@ class handler(BaseHTTPRequestHandler):
         
         except Exception as e:
             print(f"Update comment error: {str(e)}")
+            return None
+    
+    def delete_comment(self, comment_id):
+        """コメントを削除（論理削除）"""
+        try:
+            supabase_url = os.environ.get('SUPABASE_URL')
+            supabase_key = os.environ.get('SUPABASE_KEY')
+            
+            if not supabase_url or not supabase_key:
+                return None
+            
+            url = f"{supabase_url}/rest/v1/article_comments?id=eq.{comment_id}"
+            
+            headers = {
+                'apikey': supabase_key,
+                'Authorization': f'Bearer {supabase_key}',
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            }
+            
+            update_data = {
+                'is_deleted': True,
+                'updated_at': now_jst_naive_iso()
+            }
+            
+            req = urllib.request.Request(
+                url, 
+                data=json.dumps(update_data).encode('utf-8'),
+                headers=headers,
+                method='PATCH'
+            )
+            
+            with urllib.request.urlopen(req) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                return result[0] if result else None
+        
+        except Exception as e:
+            print(f"Delete comment error: {str(e)}")
             return None
