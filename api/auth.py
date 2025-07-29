@@ -134,6 +134,7 @@ class handler(BaseHTTPRequestHandler):
             secret = os.environ.get('JWT_SECRET', 'default-secret-key')
             payload = {
                 'user_id': user_data['user_id'],
+                'display_name': user_data.get('display_name'),
                 'role': user_data['role'],
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
             }
