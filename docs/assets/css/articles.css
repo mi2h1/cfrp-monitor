@@ -171,3 +171,24 @@
         background-position: -200% 0;
     }
 }
+
+/* AI要約列のレスポンシブ対応 */
+@media (max-width: 768px) {
+    /* モバイル表示時はAI要約列を非表示 */
+    .table th:nth-child(5),  
+    .table td:nth-child(5) {
+        display: none;
+    }
+}
+
+/* AI要約アイコンのスタイリング */
+.fa-robot.text-info {
+    font-size: 1.1em;
+    cursor: help;
+}
+
+.fa-robot.text-info:hover {
+    color: #0dcaf0 !important;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}

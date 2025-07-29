@@ -500,6 +500,7 @@ function renderArticles() {
             <th>タイトル</th>
             <th style="width: 140px;">情報源</th>
             <th style="width: 120px;">公開日</th>
+            <th style="width: 80px;" title="AI要約の有無">AI要約</th>
             <th style="width: 80px;">コメント</th>
         </tr>
     `;
@@ -543,6 +544,7 @@ function renderArticlesWithServerPagination(totalCount, itemsPerPage) {
                         <th>タイトル</th>
                         <th style="width: 140px;">情報源</th>
                         <th style="width: 120px;">公開日</th>
+                        <th style="width: 80px;" title="AI要約の有無">AI要約</th>
                         <th style="width: 80px;">コメント</th>
                     </tr>
                 </thead>
@@ -647,6 +649,23 @@ function createArticleTableRowElement(article) {
     dateSmall.appendChild(document.createTextNode(' ' + pubDate));
     dateCell.appendChild(dateSmall);
     
+    // AI要約セル
+    const summaryCell = document.createElement('td');
+    summaryCell.className = 'text-center';
+    if (article.ai_summary && article.ai_summary.trim()) {
+        // AI要約済みの場合
+        const summaryIcon = document.createElement('i');
+        summaryIcon.className = 'fas fa-robot text-info';
+        summaryIcon.title = 'AI要約済み';
+        summaryCell.appendChild(summaryIcon);
+    } else {
+        // AI要約未作成の場合
+        const noSummarySpan = document.createElement('span');
+        noSummarySpan.className = 'text-muted';
+        noSummarySpan.textContent = '-';
+        summaryCell.appendChild(noSummarySpan);
+    }
+    
     // コメント数セル
     const commentCell = document.createElement('td');
     commentCell.className = 'text-center';
@@ -665,6 +684,7 @@ function createArticleTableRowElement(article) {
     row.appendChild(titleCell);
     row.appendChild(sourceCell);
     row.appendChild(dateCell);
+    row.appendChild(summaryCell);
     row.appendChild(commentCell);
     
     return row;
@@ -702,6 +722,12 @@ function createArticleTableRow(article) {
                 <small class="text-muted">
                     <i class="fas fa-calendar-alt"></i> ${pubDate}
                 </small>
+            </td>
+            <td class="text-center">
+                ${article.ai_summary && article.ai_summary.trim() ? 
+                    '<i class="fas fa-robot text-info" title="AI要約済み"></i>' : 
+                    '<span class="text-muted">-</span>'
+                }
             </td>
             <td class="text-center">
                 <span class="badge ${(article.comment_count || 0) > 0 ? 'bg-primary' : 'bg-secondary'}">
