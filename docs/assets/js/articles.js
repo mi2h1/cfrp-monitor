@@ -2294,6 +2294,14 @@ async function generateAISummary(articleId) {
         }
         
         if (summaryData.success) {
+            // デバッグ情報をコンソールに出力
+            if (summaryData.debug_info) {
+                console.log('=== EXTRACTED ARTICLE CONTENT START ===');
+                console.log('Full content length:', summaryData.debug_info.extracted_content_length);
+                console.log('Content preview:', summaryData.debug_info.extracted_content_preview);
+                console.log('=== EXTRACTED ARTICLE CONTENT END ===');
+            }
+            
             // 成功時の表示
             summaryContainer.innerHTML = `
                 <div class="alert alert-info mb-0">

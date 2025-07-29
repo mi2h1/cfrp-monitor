@@ -131,21 +131,33 @@ class handler(BaseHTTPRequestHandler):
                     if save_result:
                         response = {
                             "success": True,
-                            "summary": summary
+                            "summary": summary,
+                            "debug_info": {
+                                "extracted_content_length": len(article_content),
+                                "extracted_content_preview": article_content[:500] + "..." if len(article_content) > 500 else article_content
+                            }
                         }
                     else:
                         # 要約生成は成功したが保存に失敗した場合でも、要約は返す
                         response = {
                             "success": True,
                             "summary": summary,
-                            "warning": "要約の保存に失敗しましたが、要約は生成されました"
+                            "warning": "要約の保存に失敗しましたが、要約は生成されました",
+                            "debug_info": {
+                                "extracted_content_length": len(article_content),
+                                "extracted_content_preview": article_content[:500] + "..." if len(article_content) > 500 else article_content
+                            }
                         }
                 except Exception as save_error:
                     print(f"Save error: {save_error}")
                     response = {
                         "success": True,
                         "summary": summary,
-                        "warning": f"要約の保存に失敗しました: {str(save_error)}"
+                        "warning": f"要約の保存に失敗しました: {str(save_error)}",
+                        "debug_info": {
+                            "extracted_content_length": len(article_content),
+                            "extracted_content_preview": article_content[:500] + "..." if len(article_content) > 500 else article_content
+                        }
                     }
             else:
                 response = {
@@ -223,6 +235,17 @@ class handler(BaseHTTPRequestHandler):
                 
                 # デバッグ用：最初の500文字を表示
                 print(f"Content preview: {text_content[:500]}...")
+                
+                # デバッグ用：抽出した全文をログ出力（長い場合は分割）
+                print("=== EXTRACTED ARTICLE CONTENT START ===")
+                if len(text_content) > 2000:
+                    # 長い場合は最初と最後を表示
+                    print(f"First 1000 chars: {text_content[:1000]}")
+                    print("...")
+                    print(f"Last 1000 chars: {text_content[-1000:]}")
+                else:
+                    print(text_content)
+                print("=== EXTRACTED ARTICLE CONTENT END ===")
                 
                 return text_content
                 
