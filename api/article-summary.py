@@ -247,12 +247,39 @@ class handler(BaseHTTPRequestHandler):
             # Gemini API endpoint
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={gemini_api_key}"
             
-            # プロンプト作成（日本語で要約指示）
-            prompt = f"""以下のCFRP（炭素繊維強化プラスチック）関連の記事を、重要なポイントを押さえて200字程度で要約してください。技術的な内容や業界への影響も含めて簡潔にまとめてください。
+            # 元のプロンプト（バックアップ）
+            """
+            旧プロンプト:
+            以下のCFRP（炭素繊維強化プラスチック）関連の記事を、重要なポイントを押さえて200字程度で要約してください。技術的な内容や業界への影響も含めて簡潔にまとめてください。
+            
+            記事本文:
+            {article_text}
+            
+            要約:
+            """
+            
+            # YAML形式のプロンプト（実験版）
+            prompt = f"""# ペルソナ設定
+persona: "あなたは、炭素繊維複合材料（CFRP）を専門とする技術アナリストです。"
 
-記事本文:
-{article_text}
+# タスク定義
+task: "以下の記事を分析し、指定された要件に従って『要約』を生成してください。"
 
+# 入力記事
+input_article: |
+  {article_text}
+
+# 出力要件
+output_requirements:
+  summary:
+    length: "200字程度"
+    content: "技術的な新規性、応用分野、業界への影響を網羅した要点。具体的な数値や企業名、製品名があれば含める。"
+    style: "簡潔で読みやすく、専門知識のない読者にも理解できる表現。"
+
+# 出力フォーマット
+output_format: "要約のみをプレーンテキストで出力してください。前置きや説明は不要です。"
+
+# 実行
 要約:"""
             
             # リクエストデータ作成
