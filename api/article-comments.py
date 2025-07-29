@@ -11,9 +11,6 @@ from utils.timezone_utils import now_jst_naive_iso
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         """記事のコメント一覧を取得"""
-        print("DEBUG: article-comments GET request received")
-        print(f"DEBUG: Path: {self.path}")
-        
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -254,12 +251,9 @@ class handler(BaseHTTPRequestHandler):
             if not supabase_url or not supabase_key:
                 return []
             
-            print(f"DEBUG: Getting comments for article_id: {article_id}")
-            
             # コメント一覧を取得（ユーザーの表示名も含めて取得、削除されていないもののみ、作成日時順）
-            url = f'{supabase_url}/rest/v1/article_comments?select=*,users(display_name)&article_id=eq."{article_id}"&is_deleted=eq.false&order=created_at.asc'
-            
-            print(f"DEBUG: Comment API URL: {url}")
+            # UUIDの場合は引用符なしでクエリ
+            url = f'{supabase_url}/rest/v1/article_comments?select=*,users(display_name)&article_id=eq.{article_id}&is_deleted=eq.false&order=created_at.asc'
             
             headers = {
                 'apikey': supabase_key,
@@ -270,14 +264,10 @@ class handler(BaseHTTPRequestHandler):
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req) as response:
                 data = json.loads(response.read().decode('utf-8'))
-                print(f"DEBUG: Comments fetched: {len(data)} comments")
-                print(f"DEBUG: First comment (if any): {data[0] if data else 'No comments'}")
                 return data
         
         except Exception as e:
             print(f"Get comments error: {str(e)}")
-            import traceback
-            traceback.print_exc()
             return []
 
     def get_comment_by_id(self, comment_id):
