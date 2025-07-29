@@ -956,7 +956,7 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
             <div class="card card-body py-2 px-3 position-relative">
                 <!-- 削除ボタンを右上に配置 -->
                 ${isOwnComment && !isDeleted && !isVirtualParent ? `
-                    <div class="position-absolute top-0 end-0 p-2">
+                    <div class="position-absolute top-0 end-0" style="padding: 8px 12px;">
                         <a href="#" class="text-danger small text-decoration-none" onclick="deleteComment('${comment.id}'); return false;" style="font-size: 0.7rem;" title="コメントを削除">コメントを削除</a>
                     </div>
                 ` : ''}
@@ -991,7 +991,7 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
                     
                     <!-- 返信ボタンを右下に配置（子コメントがない場合のみ） -->
                     ${!isDeleted && !isVirtualParent && level === 0 && (!comment.replies || comment.replies.length === 0) ? `
-                        <div class="d-flex justify-content-end mt-2">
+                        <div class="d-flex justify-content-end mt-2" style="margin-right: 12px;">
                             <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                                 <i class="fas fa-reply"></i> 返信
                             </button>
