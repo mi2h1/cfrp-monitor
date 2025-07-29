@@ -1409,21 +1409,34 @@ function hideArticleDetail() {
 // 編集可能な記事詳細データを読み込んで表示
 async function loadAndRenderEditableArticleDetail(articleId) {
     try {
+        console.log('loadAndRenderEditableArticleDetail開始, articleId:', articleId);
+        console.log('authToken:', authToken ? 'exists' : 'missing');
+        
         // 記事詳細とコメントを並列読み込み
+        console.log('fetch開始...');
+        const articleUrl = `/api/articles?id=${articleId}`;
+        const commentsUrl = `/api/article-comments?article_id=${articleId}`;
+        console.log('記事URL:', articleUrl);
+        console.log('コメントURL:', commentsUrl);
+        
         const [articleResponse, commentsResponse] = await Promise.all([
-            fetch(`/api/articles?id=${articleId}`, {
+            fetch(articleUrl, {
                 headers: {
                     'Authorization': `Bearer ${authToken}`,
                     'Content-Type': 'application/json'
                 }
             }),
-            fetch(`/api/article-comments?article_id=${articleId}`, {
+            fetch(commentsUrl, {
                 headers: {
                     'Authorization': `Bearer ${authToken}`,
                     'Content-Type': 'application/json'
                 }
             })
         ]);
+        
+        console.log('fetch完了');
+        console.log('記事レスポンス status:', articleResponse.status);
+        console.log('コメントレスポンス status:', commentsResponse.status);
         
         const articleData = await articleResponse.json();
         const commentsData = await commentsResponse.json();
@@ -1444,8 +1457,9 @@ async function loadAndRenderEditableArticleDetail(articleId) {
         
     } catch (error) {
         console.error('記事詳細読み込みエラー:', error);
+        console.error('エラースタック:', error.stack);
         document.getElementById('detailLoading').innerHTML = 
-            '<div class="alert alert-danger">記事の読み込みに失敗しました</div>';
+            '<div class="alert alert-danger">記事の読み込みに失敗しました: ' + error.message + '</div>';
     }
 }
 
