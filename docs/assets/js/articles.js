@@ -581,7 +581,7 @@ function createArticleTableRowElement(article) {
     // 重要フラグをステータスセルに追加
     if (article.flagged) {
         const importantBadge = document.createElement('span');
-        importantBadge.className = 'badge border border-danger text-danger bg-transparent ms-1';
+        importantBadge.className = 'badge border border-danger text-danger bg-transparent d-block mt-1';
         importantBadge.textContent = '重要';
         statusCell.appendChild(importantBadge);
     }
@@ -692,7 +692,7 @@ function createArticleTableRow(article) {
                 <span class="badge bg-${getStatusColor(article.status)} status-badge">
                     ${getStatusLabel(article.status)}
                 </span>
-                ${article.flagged ? '<span class="badge border border-danger text-danger bg-transparent ms-1">重要</span>' : ''}
+                ${article.flagged ? '<span class="badge border border-danger text-danger bg-transparent d-block mt-1">重要</span>' : ''}
             </td>
             <td>
                 <div class="fw-medium">${escapeHtml(article.title || 'タイトルなし')}</div>
