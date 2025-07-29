@@ -226,6 +226,12 @@ async function loadArticles() {
             // UI更新
             renderArticles();
             renderPagination(totalCount, parseInt(document.getElementById('itemsPerPage').value), page);
+            
+            // ページネーションの表示
+            const paginationElement = document.getElementById('pagination');
+            if (paginationElement) {
+                paginationElement.style.display = 'block';
+            }
         } else {
             // エラーハンドリング - フォールバック処理
             const totalCount = await getTotalArticlesCount();
@@ -338,6 +344,12 @@ async function loadArticlesPage(page, totalCount = null) {
             
             renderArticles();
             renderPagination(totalCount || articles.length, itemsPerPage, page);
+            
+            // ページネーションの表示
+            const paginationElement = document.getElementById('pagination');
+            if (paginationElement) {
+                paginationElement.style.display = 'block';
+            }
             return;
         }
         
@@ -400,6 +412,12 @@ async function loadArticlesPage(page, totalCount = null) {
         
         renderArticles();
         renderPagination(totalCount, itemsPerPage, page);
+        
+        // ページネーションの表示
+        const paginationElement = document.getElementById('pagination');
+        if (paginationElement) {
+            paginationElement.style.display = 'block';
+        }
         
     } catch (error) {
         console.error('記事ページ読み込みエラー:', error);
