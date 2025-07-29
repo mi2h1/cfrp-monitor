@@ -493,6 +493,121 @@ function hideLoadingState() {
     // 特に何もしない（renderArticles()で内容が置き換わるため）
 }
 
+// 記事詳細用スケルトンローダーを作成
+function createArticleDetailSkeleton() {
+    return `
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <!-- タイトル部分のスケルトン -->
+                        <div style="flex: 1;">
+                            <div class="skeleton-badge mb-2" style="width: 60px; height: 24px;"></div>
+                            <div class="skeleton-text" style="width: 70%; height: 24px;"></div>
+                        </div>
+                        <div class="skeleton-badge" style="width: 120px; height: 32px;"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <!-- 左側: 記事情報のスケルトン -->
+                            <div class="col-md-3">
+                                <!-- 公開日時 -->
+                                <div class="mb-3">
+                                    <div class="skeleton-text" style="width: 90%; height: 16px;"></div>
+                                </div>
+                                
+                                <!-- 情報源 -->
+                                <div class="mb-3">
+                                    <div class="skeleton-text" style="width: 80%; height: 16px;"></div>
+                                </div>
+                                
+                                <!-- URL -->
+                                <div class="mb-3">
+                                    <div class="skeleton-text" style="width: 100%; height: 16px;"></div>
+                                </div>
+                                
+                                <!-- ステータス -->
+                                <div class="mb-3">
+                                    <div class="skeleton-text" style="width: 50%; height: 14px; margin-bottom: 4px;"></div>
+                                    <div class="skeleton-badge" style="width: 100%; height: 32px;"></div>
+                                </div>
+                                
+                                <!-- 重要記事フラグ -->
+                                <div class="mb-3">
+                                    <div class="skeleton-text" style="width: 70%; height: 16px;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- 右側: AI要約エリアのスケルトン -->
+                            <div class="col-md-9">
+                                <div class="ai-summary-section">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div class="skeleton-text" style="width: 120px; height: 24px;"></div>
+                                        <div class="skeleton-badge" style="width: 100px; height: 32px;"></div>
+                                    </div>
+                                    <div class="alert alert-light">
+                                        <div class="skeleton-text" style="width: 100%; height: 16px; margin-bottom: 8px;"></div>
+                                        <div class="skeleton-text" style="width: 95%; height: 16px; margin-bottom: 8px;"></div>
+                                        <div class="skeleton-text" style="width: 88%; height: 16px; margin-bottom: 8px;"></div>
+                                        <div class="skeleton-text" style="width: 92%; height: 16px; margin-bottom: 8px;"></div>
+                                        <div class="skeleton-text" style="width: 85%; height: 16px; margin-bottom: 16px;"></div>
+                                        <div class="skeleton-text" style="width: 60%; height: 14px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 備考欄のスケルトン -->
+                        <div class="article-comments mb-3">
+                            <div class="skeleton-text" style="width: 60px; height: 20px; margin-bottom: 8px;"></div>
+                            <div class="skeleton-badge" style="width: 100%; height: 80px;"></div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="skeleton-text" style="width: 200px; height: 14px;"></div>
+                            <div class="skeleton-badge" style="width: 80px; height: 32px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- コメント部分のスケルトン -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="skeleton-text" style="width: 100px; height: 20px;"></div>
+                    </div>
+                    <div class="card-body">
+                        <!-- コメント投稿フォームのスケルトン -->
+                        <div class="mb-4">
+                            <div class="skeleton-badge" style="width: 100%; height: 80px; margin-bottom: 8px;"></div>
+                            <div class="skeleton-badge" style="width: 100px; height: 32px;"></div>
+                        </div>
+                        
+                        <!-- 既存コメントのスケルトン -->
+                        ${Array.from({length: 3}, (_, i) => `
+                            <div class="comment-card mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="skeleton-text" style="width: 80px; height: 16px; margin-right: 16px;"></div>
+                                            <div class="skeleton-text" style="width: 120px; height: 14px;"></div>
+                                        </div>
+                                        <div class="skeleton-text" style="width: 100%; height: 16px; margin-bottom: 6px;"></div>
+                                        <div class="skeleton-text" style="width: ${70 + Math.random() * 25}%; height: 16px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 // タスクログ機能は削除（APIで実装しないため）
 
 // ソースフィルターを設定
@@ -1608,18 +1723,18 @@ async function showEditableArticleDetail(articleId) {
                     <i class="fas fa-arrow-left"></i> 記事一覧に戻る
                 </button>
             </div>
-            <div id="detailLoading" class="text-center py-5">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">読み込み中...</span>
-                </div>
-                <p class="mt-2">記事を読み込んでいます...</p>
-            </div>
+            <div id="detailLoading"></div>
             <div id="articleDetailContent" style="display: none;">
                 <!-- 記事詳細がここに表示される -->
             </div>
         `;
         
         detailContainer.style.display = 'block';
+        
+        // スケルトンローダーを表示
+        const detailLoading = document.getElementById('detailLoading');
+        detailLoading.innerHTML = createArticleDetailSkeleton();
+        detailLoading.style.display = 'block';
         
         // 記事詳細を読み込み
         await loadAndRenderEditableArticleDetail(articleId);
