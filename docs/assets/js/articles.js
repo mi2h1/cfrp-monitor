@@ -2158,8 +2158,13 @@ window.addEventListener('popstate', (e) => {
         // 現在のページ番号を更新
         currentPage = page;
         
-        // 指定されたページを読み込み
-        loadArticlesPage(page);
+        // 総件数を取得してから指定ページを読み込み
+        getTotalArticlesCount().then(totalCount => {
+            loadArticlesPage(page, totalCount);
+        }).catch(error => {
+            console.error('総件数取得エラー:', error);
+            loadArticlesPage(page);
+        });
     }
 });
 
