@@ -134,7 +134,8 @@ class handler(BaseHTTPRequestHandler):
                             "summary": summary,
                             "debug_info": {
                                 "extracted_content_length": len(article_content),
-                                "extracted_content_preview": article_content[:500] + "..." if len(article_content) > 500 else article_content
+                                "extracted_content_preview": article_content[:500] + "..." if len(article_content) > 500 else article_content,
+                                "extraction_method": "structured_html_parsing"
                             }
                         }
                     else:
@@ -145,7 +146,8 @@ class handler(BaseHTTPRequestHandler):
                             "warning": "要約の保存に失敗しましたが、要約は生成されました",
                             "debug_info": {
                                 "extracted_content_length": len(article_content),
-                                "extracted_content_preview": article_content[:500] + "..." if len(article_content) > 500 else article_content
+                                "extracted_content_preview": article_content[:500] + "..." if len(article_content) > 500 else article_content,
+                                "extraction_method": "structured_html_parsing"
                             }
                         }
                 except Exception as save_error:
@@ -195,49 +197,112 @@ class handler(BaseHTTPRequestHandler):
             with urllib.request.urlopen(req, timeout=10) as response:
                 html_content = response.read().decode('utf-8')
                 
-                # 簡単なHTMLパースでテキストを抽出
+                # 構造化されたHTMLパースで記事内容を抽出
                 import re
                 
                 # scriptタグとstyleタグを除去
                 html_content = re.sub(r'<script[^>]*>.*?</script>', '', html_content, flags=re.DOTALL | re.IGNORECASE)
                 html_content = re.sub(r'<style[^>]*>.*?</style>', '', html_content, flags=re.DOTALL | re.IGNORECASE)
                 
-                # HTMLタグを除去
-                text_content = re.sub(r'<[^>]+>', '', html_content)
+                # 記事本文を含む可能性の高い要素を優先的に抽出
+                article_selectors = [
+                    # 一般的な記事コンテナのID/クラス
+                    r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?content[-_]?body(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
+                    r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?article[-_]?content(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
+                    r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?post[-_]?content(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
+                    r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?entry[-_]?content(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
+                    r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?main[-_]?content(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
+                    r'<article[^>]*>(.*?)</article>',
+                    r'<main[^>]*>(.*?)</main>',
+                    # より具体的なパターン
+                    r'<div[^>]*(?:id|class)[^>]*["\']content["\'][^>]*>(.*?)</div>',
+                    r'<div[^>]*(?:id|class)[^>]*["\']article["\'][^>]*>(.*?)</div>',
+                    r'<div[^>]*(?:id|class)[^>]*["\']post["\'][^>]*>(.*?)</div>',
+                ]
                 
-                # HTMLエンティティをデコード
-                import html
-                text_content = html.unescape(text_content)
+                article_html = None
+                used_selector = None
                 
-                # 複数の空白・改行を整理
-                text_content = re.sub(r'\s+', ' ', text_content)
+                # 各セレクターを試行して記事部分を抽出
+                for selector in article_selectors:
+                    matches = re.findall(selector, html_content, flags=re.DOTALL | re.IGNORECASE)
+                    if matches:
+                        # 最も長いマッチを選択（最も内容が豊富と想定）
+                        article_html = max(matches, key=len)
+                        used_selector = selector
+                        print(f"Article content found using selector: {selector}")
+                        break
                 
-                # 不要な部分を除去（基本的なクリーニング）
-                text_content = text_content.strip()
+                # 構造化された記事部分が見つからない場合は全体から抽出
+                if not article_html:
+                    print("No structured article content found, using full HTML")
+                    article_html = html_content
+                    used_selector = "full_html"
                 
-                # より良い記事抽出：長い段落を優先的に取得
-                paragraphs = text_content.split('。')  # 日本語の文で分割
-                # 50文字以上の段落のみを抽出
-                meaningful_paragraphs = [p.strip() for p in paragraphs if len(p.strip()) > 50]
+                # 記事HTML内のp要素を優先的に抽出
+                paragraph_pattern = r'<p[^>]*>(.*?)</p>'
+                paragraphs = re.findall(paragraph_pattern, article_html, flags=re.DOTALL | re.IGNORECASE)
                 
-                if meaningful_paragraphs:
-                    # 意味のある段落を結合
-                    text_content = '。'.join(meaningful_paragraphs[:20])  # 最初の20段落まで
-                    if not text_content.endswith('。'):
-                        text_content += '。'
+                if paragraphs:
+                    print(f"Found {len(paragraphs)} paragraph elements")
+                    # p要素からテキストを抽出してクリーニング
+                    cleaned_paragraphs = []
+                    for p in paragraphs:
+                        # HTMLタグを除去
+                        clean_p = re.sub(r'<[^>]+>', '', p)
+                        # HTMLエンティティをデコード
+                        import html
+                        clean_p = html.unescape(clean_p)
+                        # 空白を整理
+                        clean_p = re.sub(r'\s+', ' ', clean_p).strip()
+                        # 意味のある長さの段落のみ保持（30文字以上）
+                        if len(clean_p) > 30:
+                            cleaned_paragraphs.append(clean_p)
+                    
+                    if cleaned_paragraphs:
+                        text_content = '\n'.join(cleaned_paragraphs)
+                        print(f"Extracted {len(cleaned_paragraphs)} meaningful paragraphs from p elements")
+                    else:
+                        # p要素に意味のある内容がない場合はフォールバック
+                        text_content = re.sub(r'<[^>]+>', '', article_html)
+                        import html
+                        text_content = html.unescape(text_content)
+                        text_content = re.sub(r'\s+', ' ', text_content).strip()
+                        print("No meaningful paragraphs found in p elements, using article content")
+                else:
+                    print("No p elements found, extracting text from article content")
+                    # HTMLタグを除去
+                    text_content = re.sub(r'<[^>]+>', '', article_html)
+                    # HTMLエンティティをデコード
+                    import html
+                    text_content = html.unescape(text_content)
+                    # 複数の空白・改行を整理
+                    text_content = re.sub(r'\s+', ' ', text_content).strip()
+                    
+                    # より良い記事抽出：長い段落を優先的に取得
+                    paragraphs = text_content.split('。')  # 日本語の文で分割
+                    # 50文字以上の段落のみを抽出
+                    meaningful_paragraphs = [p.strip() for p in paragraphs if len(p.strip()) > 50]
+                    
+                    if meaningful_paragraphs:
+                        # 意味のある段落を結合
+                        text_content = '。'.join(meaningful_paragraphs[:20])  # 最初の20段落まで
+                        if not text_content.endswith('。'):
+                            text_content += '。'
                 
                 # 記事らしい部分を抽出（最低500文字以上あることを確認）
                 if len(text_content) < 500:
                     print(f"Content too short: {len(text_content)} characters")
                     return None
                 
-                print(f"Successfully extracted {len(text_content)} characters")
+                print(f"Successfully extracted {len(text_content)} characters using {used_selector}")
                 
                 # デバッグ用：最初の500文字を表示
                 print(f"Content preview: {text_content[:500]}...")
                 
                 # デバッグ用：抽出した全文をログ出力（長い場合は分割）
                 print("=== EXTRACTED ARTICLE CONTENT START ===")
+                print(f"Extraction method: {used_selector}")
                 if len(text_content) > 2000:
                     # 長い場合は最初と最後を表示
                     print(f"First 1000 chars: {text_content[:1000]}")
