@@ -166,8 +166,8 @@ class handler(BaseHTTPRequestHandler):
             # 更新データを準備
             update_data = {}
             
-            # 表示名更新
-            if 'display_name' in data and data['display_name']:
+            # 表示名更新（空文字列も許可）
+            if 'display_name' in data:
                 update_data['display_name'] = data['display_name']
             
             # パスワード更新

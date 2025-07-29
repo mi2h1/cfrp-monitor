@@ -134,7 +134,7 @@ function displayUserInfo(user, userMenu) {
     if (userNameElement) {
         // ユーザー名と設定アイコンを表示
         userNameElement.innerHTML = `
-            <span>${userMenu.display_name}</span>
+            <span>${userMenu.display_name || '（表示名未設定）'}</span>
             <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
                 <i class="fas fa-cog"></i>
             </button>
@@ -335,19 +335,14 @@ async function saveUserSettings() {
     const saveBtn = document.getElementById('saveSettingsBtn');
     const errorDiv = document.getElementById('settingsError');
     const successDiv = document.getElementById('settingsSuccess');
-    const displayName = document.getElementById('displayName').value.trim();
+    const displayName = document.getElementById('displayName').value;
     const newPassword = document.getElementById('newPassword').value;
     
     // エラー・成功メッセージをクリア
     errorDiv.classList.add('d-none');
     successDiv.classList.add('d-none');
     
-    // バリデーション
-    if (!displayName) {
-        errorDiv.textContent = '表示名を入力してください';
-        errorDiv.classList.remove('d-none');
-        return;
-    }
+    // バリデーション（表示名は任意、空文字列も許可）
     
     if (newPassword && newPassword.length < 4) {
         errorDiv.textContent = 'パスワードは4文字以上で入力してください';
@@ -389,7 +384,7 @@ async function saveUserSettings() {
             if (userNameElement) {
                 const settingsBtn = userNameElement.querySelector('.user-settings-btn');
                 userNameElement.innerHTML = `
-                    <span>${displayName}</span>
+                    <span>${displayName || '（表示名未設定）'}</span>
                     <button class="user-settings-btn" id="userSettingsBtn" title="ユーザー設定">
                         <i class="fas fa-cog"></i>
                     </button>
