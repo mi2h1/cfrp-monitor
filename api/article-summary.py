@@ -7,25 +7,62 @@ import jwt
 import sys
 import importlib.util
 
-# Vercelでのインポート処理
-try:
-    # パスを設定
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    sys.path.insert(0, current_dir)
-    
-    # timezone_utilsをインポート
-    utils_dir = os.path.join(current_dir, 'utils')
-    if os.path.exists(utils_dir):
-        sys.path.insert(0, utils_dir)
-    
-    # articles.pyをインポート
-    from articles import ArticlesHandler
-    
-    print("ArticlesHandler imported successfully")
-except Exception as import_error:
-    print(f"Import error: {import_error}")
-    # フォールバック: ArticlesHandlerなしで動作
-    ArticlesHandler = None
+# ArticlesHandlerを直接定義（インポート問題を回避）
+def update_ai_summary_direct(article_id, ai_summary, user_data):
+    """記事のAI要約を直接データベースに保存"""
+    try:
+        supabase_url = os.environ.get('SUPABASE_URL')
+        supabase_key = os.environ.get('SUPABASE_KEY')
+        
+        if not supabase_url or not supabase_key:
+            print("Supabase credentials not found")
+            return None
+        
+        # 現在時刻（JST）を取得
+        from datetime import datetime, timezone, timedelta
+        jst = timezone(timedelta(hours=9))
+        now_jst = datetime.now(jst).strftime('%Y-%m-%d %H:%M:%S')
+        
+        # AI要約データを準備
+        update_data = {
+            'ai_summary': ai_summary,
+            'last_edited_by': user_data['user_id'],
+            'reviewed_at': now_jst
+        }
+        
+        # データベースを更新
+        url = f"{supabase_url}/rest/v1/articles?id=eq.{article_id}"
+        headers = {
+            'apikey': supabase_key,
+            'Authorization': f'Bearer {supabase_key}',
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+        }
+        
+        data = json.dumps(update_data).encode('utf-8')
+        
+        req = urllib.request.Request(
+            url,
+            data=data,
+            headers=headers,
+            method='PATCH'
+        )
+        
+        with urllib.request.urlopen(req) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            print(f"AI summary saved for article {article_id}")
+            return result[0] if isinstance(result, list) and result else result
+                
+    except urllib.error.HTTPError as e:
+        print(f"Update AI summary HTTP error: {e.code} - {e.reason}")
+        error_body = e.read().decode('utf-8')
+        print(f"Error body: {error_body}")
+        return None
+    except Exception as e:
+        print(f"Update AI summary error: {e}")
+        return None
+
+print("Direct AI summary update function ready")
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -80,36 +117,27 @@ class handler(BaseHTTPRequestHandler):
             
             if summary:
                 # 要約をデータベースに保存
-                if ArticlesHandler:
-                    try:
-                        articles_handler = ArticlesHandler()
-                        save_result = articles_handler.update_ai_summary(article_id, summary, user_data)
-                        
-                        if save_result:
-                            response = {
-                                "success": True,
-                                "summary": summary
-                            }
-                        else:
-                            # 要約生成は成功したが保存に失敗した場合でも、要約は返す
-                            response = {
-                                "success": True,
-                                "summary": summary,
-                                "warning": "要約の保存に失敗しましたが、要約は生成されました"
-                            }
-                    except Exception as save_error:
-                        print(f"Save error: {save_error}")
+                try:
+                    save_result = update_ai_summary_direct(article_id, summary, user_data)
+                    
+                    if save_result:
+                        response = {
+                            "success": True,
+                            "summary": summary
+                        }
+                    else:
+                        # 要約生成は成功したが保存に失敗した場合でも、要約は返す
                         response = {
                             "success": True,
                             "summary": summary,
-                            "warning": f"要約の保存に失敗しました: {str(save_error)}"
+                            "warning": "要約の保存に失敗しましたが、要約は生成されました"
                         }
-                else:
-                    # ArticlesHandlerが利用できない場合
+                except Exception as save_error:
+                    print(f"Save error: {save_error}")
                     response = {
                         "success": True,
                         "summary": summary,
-                        "warning": "要約の保存機能が利用できませんが、要約は生成されました"
+                        "warning": f"要約の保存に失敗しました: {str(save_error)}"
                     }
             else:
                 response = {
