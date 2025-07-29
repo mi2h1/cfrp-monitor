@@ -1185,11 +1185,11 @@ function buildCommentTree(comments) {
         commentsByRoot[virtualParentId].replies.push({ ...orphan });
     });
     
-    // ルートコメントを作成日時でソート
+    // ルートコメントを「そのツリー内の最新コメント日時」でソート
     const sortedRootIds = Object.keys(commentsByRoot).sort((a, b) => {
-        const dateA = new Date(commentsByRoot[a].root.created_at);
-        const dateB = new Date(commentsByRoot[b].root.created_at);
-        return dateB - dateA; // 新しい順
+        const latestDateA = getLatestDateInTree(commentsByRoot[a]);
+        const latestDateB = getLatestDateInTree(commentsByRoot[b]);
+        return latestDateB - latestDateA; // 新しい順
     });
     
     // 結果を構築（削除された親でも子がいる場合は表示）
@@ -1209,6 +1209,34 @@ function buildCommentTree(comments) {
     });
     
     return rootComments;
+}
+
+// コメントツリー内の最新日時を取得する関数
+function getLatestDateInTree(commentGroup) {
+    // 親コメントの日時
+    const rootDate = new Date(commentGroup.root.created_at);
+    let latestDate = rootDate;
+    
+    // 全ての返信の中から最新日時を探す
+    function findLatestInReplies(replies) {
+        replies.forEach(reply => {
+            const replyDate = new Date(reply.created_at);
+            if (replyDate > latestDate) {
+                latestDate = replyDate;
+            }
+            
+            // 返信の返信も再帰的にチェック
+            if (reply.replies && reply.replies.length > 0) {
+                findLatestInReplies(reply.replies);
+            }
+        });
+    }
+    
+    if (commentGroup.replies && commentGroup.replies.length > 0) {
+        findLatestInReplies(commentGroup.replies);
+    }
+    
+    return latestDate;
 }
 
 // ルートコメントIDを再帰的に探す
