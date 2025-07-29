@@ -1441,6 +1441,11 @@ async function loadAndRenderEditableArticleDetail(articleId) {
         const articleData = await articleResponse.json();
         const commentsData = await commentsResponse.json();
         
+        console.log('記事データ:', articleData);
+        console.log('コメントデータ:', commentsData);
+        console.log('コメント配列:', commentsData.comments);
+        console.log('コメント数:', commentsData.comments ? commentsData.comments.length : 'undefined');
+        
         if (!articleData.success || !articleData.articles?.length) {
             throw new Error('記事が見つかりません');
         }

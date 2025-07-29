@@ -11,6 +11,9 @@ from utils.timezone_utils import now_jst_naive_iso
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         """記事のコメント一覧を取得"""
+        print("DEBUG: article-comments GET request received")
+        print(f"DEBUG: Path: {self.path}")
+        
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
