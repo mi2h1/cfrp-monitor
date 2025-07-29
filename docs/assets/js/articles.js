@@ -2158,8 +2158,8 @@ window.addEventListener('popstate', (e) => {
         // 現在のページ番号を更新
         currentPage = page;
         
-        // 記事一覧を再読み込み
-        loadArticles();
+        // 指定されたページを読み込み
+        loadArticlesPage(page);
     }
 });
 
