@@ -108,12 +108,16 @@ class handler(BaseHTTPRequestHandler):
                 return
             
             # URLから記事内容を取得
+            print(f"Attempting to fetch content from URL: {article_url}")
             article_content = self.fetch_article_content(article_url)
             
             if not article_content:
+                print(f"Failed to fetch article content from URL: {article_url}")
                 response = {"success": False, "error": "記事の内容を取得できませんでした"}
                 self.wfile.write(json.dumps(response).encode('utf-8'))
                 return
+            
+            print(f"Successfully fetched article content: {len(article_content)} characters")
             
             # 記事本文の長さチェック（長すぎる場合は先頭部分のみ使用）
             max_length = 8000  # Gemini APIの制限を考慮
@@ -220,15 +224,19 @@ class handler(BaseHTTPRequestHandler):
                         candidate = max(matches, key=len)
                         # HTMLタグを除去してテキスト化
                         text_candidate = re.sub(r'<[^>]+>', '', candidate)
+                        import html
                         text_candidate = html.unescape(text_candidate)
                         text_candidate = re.sub(r'\s+', ' ', text_candidate).strip()
                         
+                        print(f"Candidate found with selector {selector}: {len(text_candidate)} chars")
                         if len(text_candidate) > 200:  # 最低限の長さチェック
                             candidates.append({
                                 'text': text_candidate[:1000],  # 最初の1000文字のみAI判定用
                                 'full_content': text_candidate,
                                 'selector': selector
                             })
+                
+                print(f"Total candidates found: {len(candidates)}")
                 
                 article_html = None
                 used_selector = None
