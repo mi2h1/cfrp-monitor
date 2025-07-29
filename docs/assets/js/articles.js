@@ -578,35 +578,28 @@ function createArticleTableRowElement(article) {
     statusBadge.textContent = getStatusLabel(article.status);
     statusCell.appendChild(statusBadge);
     
-    // タイトルセル
-    const titleCell = document.createElement('td');
-    const titleContainer = document.createElement('div');
-    titleContainer.className = 'd-flex align-items-center gap-2';
-    
-    // 重要フラグ
+    // 重要フラグをステータスセルに追加
     if (article.flagged) {
         const importantBadge = document.createElement('span');
-        importantBadge.className = 'badge bg-danger flex-shrink-0 align-self-start';
-        importantBadge.style.marginTop = '2px';
+        importantBadge.className = 'badge border border-danger text-danger bg-transparent ms-1';
         importantBadge.textContent = '重要';
-        titleContainer.appendChild(importantBadge);
+        statusCell.appendChild(importantBadge);
     }
     
-    // タイトル部分
-    const titleContent = document.createElement('div');
-    titleContent.className = 'flex-grow-1';
+    // タイトルセル
+    const titleCell = document.createElement('td');
     
     const titleDiv = document.createElement('div');
     titleDiv.className = 'fw-medium';
     titleDiv.textContent = article.title || 'タイトルなし';
-    titleContent.appendChild(titleDiv);
+    titleCell.appendChild(titleDiv);
     
     const urlDiv = document.createElement('div');
     urlDiv.className = 'small text-muted text-truncate';
     urlDiv.style.maxWidth = '350px';
     urlDiv.title = article.url;
     urlDiv.textContent = article.url;
-    titleContent.appendChild(urlDiv);
+    titleCell.appendChild(urlDiv);
     
     // コメント表示
     if (article.comments) {
@@ -619,11 +612,8 @@ function createArticleTableRowElement(article) {
             article.comments.substring(0, 100) + '...' : 
             article.comments;
         commentDiv.appendChild(document.createTextNode(' ' + text));
-        titleContent.appendChild(commentDiv);
+        titleCell.appendChild(commentDiv);
     }
-    
-    titleContainer.appendChild(titleContent);
-    titleCell.appendChild(titleContainer);
     
     // 情報源セル
     const sourceCell = document.createElement('td');
@@ -702,16 +692,12 @@ function createArticleTableRow(article) {
                 <span class="badge bg-${getStatusColor(article.status)} status-badge">
                     ${getStatusLabel(article.status)}
                 </span>
+                ${article.flagged ? '<span class="badge border border-danger text-danger bg-transparent ms-1">重要</span>' : ''}
             </td>
             <td>
-                <div class="d-flex align-items-center gap-2">
-                    ${article.flagged ? '<span class="badge bg-danger flex-shrink-0 align-self-start" style="margin-top: 2px;">重要</span>' : ''}
-                    <div class="flex-grow-1">
-                        <div class="fw-medium">${escapeHtml(article.title || 'タイトルなし')}</div>
-                        <div class="small text-muted text-truncate" style="max-width: 350px;" title="${escapeHtml(article.url)}">${escapeHtml(article.url)}</div>
-                        ${article.comments ? `<div class="small text-muted mt-1"><i class="fas fa-sticky-note"></i> ${escapeHtml(article.comments.substring(0, 100))}${article.comments.length > 100 ? '...' : ''}</div>` : ''}
-                    </div>
-                </div>
+                <div class="fw-medium">${escapeHtml(article.title || 'タイトルなし')}</div>
+                <div class="small text-muted text-truncate" style="max-width: 350px;" title="${escapeHtml(article.url)}">${escapeHtml(article.url)}</div>
+                ${article.comments ? `<div class="small text-muted mt-1"><i class="fas fa-sticky-note"></i> ${escapeHtml(article.comments.substring(0, 100))}${article.comments.length > 100 ? '...' : ''}</div>` : ''}
             </td>
             <td class="text-nowrap">
                 <small class="text-muted">
