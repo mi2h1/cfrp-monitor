@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 認証チェックはメインページのスクリプトで実行済み
     authToken = localStorage.getItem('auth_token');
     
+    // イベントハンドラを設定
+    setupEventHandlers();
+    
     // レイアウトAPIの呼び出しが完了するまで待機
     const checkAuthInterval = setInterval(() => {
         if (window.userFeatures) {
@@ -28,6 +31,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }, 5000);
 });
+
+// イベントハンドラを設定
+function setupEventHandlers() {
+    // ビューモード切り替えボタン
+    const navSources = document.getElementById('nav-sources');
+    const navCandidates = document.getElementById('nav-candidates');
+    
+    if (navSources) {
+        navSources.addEventListener('click', () => switchViewMode('sources'));
+    }
+    if (navCandidates) {
+        navCandidates.addEventListener('click', () => switchViewMode('candidates'));
+    }
+    
+    // 候補更新ボタン
+    const refreshBtn = document.getElementById('refreshCandidatesBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            loadCandidates();
+            renderCandidates();
+        });
+    }
+    
+    // RSSテストモーダル閉じるボタン
+    const rssTestOverlay = document.getElementById('rssTestOverlay');
+    const closeRssTestBtn = document.getElementById('closeRssTestBtn');
+    
+    if (rssTestOverlay) {
+        rssTestOverlay.addEventListener('click', closeRssTestModal);
+    }
+    if (closeRssTestBtn) {
+        closeRssTestBtn.addEventListener('click', closeRssTestModal);
+    }
+}
 
 async function initializePage() {
     // 権限チェック

@@ -1,5 +1,25 @@
 // CFRP Monitor - 共通JavaScript
 
+// DOM読み込み完了後にイベントハンドラを設定
+document.addEventListener('DOMContentLoaded', function() {
+    // サイドバートグルボタンのイベントハンドラを設定
+    const mobileToggle = document.getElementById('mobileToggle');
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', toggleSidebar);
+    }
+
+    // ログアウトリンクのイベントハンドラを設定
+    const logoutLinks = document.querySelectorAll('a[href="#"]');
+    logoutLinks.forEach(link => {
+        if (link.textContent.trim() === 'ログアウト') {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        }
+    });
+});
+
 // パスワードハッシュ化関数
 async function hashPassword(password, salt = null) {
     // ソルトが指定されていない場合は新しいソルトを生成

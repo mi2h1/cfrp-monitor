@@ -13,7 +13,7 @@
 <body>
     <div class="app-container">
         <!-- モバイル用トグルボタン -->
-        <button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()">
+        <button class="mobile-toggle" id="mobileToggle">
             ☰
         </button>
 
@@ -57,12 +57,12 @@
                 <div class="mb-3">
                     <ul class="nav nav-pills" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active view-mode-nav" id="nav-sources" type="button" onclick="switchViewMode('sources')">
+                            <button class="nav-link active view-mode-nav" id="nav-sources" type="button">
                                 <i class="fas fa-rss me-2"></i>情報源リスト
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link view-mode-nav" id="nav-candidates" type="button" onclick="switchViewMode('candidates')">
+                            <button class="nav-link view-mode-nav" id="nav-candidates" type="button">
                                 <i class="fas fa-search me-2"></i>探索候補
                             </button>
                         </li>
@@ -145,7 +145,7 @@
                         <option value="status">ステータス順</option>
                     </select>
                 </div>
-                <button id="refreshCandidatesBtn" class="btn btn-primary btn-sm" onclick="loadCandidates(); renderCandidates();">更新</button>
+                <button id="refreshCandidatesBtn" class="btn btn-primary btn-sm">更新</button>
             </div>
             
         </header>
@@ -199,11 +199,11 @@
     </div>
 
     <!-- RSSテストモーダル -->
-    <div class="rss-test-overlay" onclick="closeRssTestModal()"></div>
+    <div class="rss-test-overlay" id="rssTestOverlay"></div>
     <div class="rss-test-modal" id="rssTestModal">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">RSSフィードテスト</h5>
-            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="closeRssTestModal()">✕ 閉じる</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="closeRssTestBtn">✕ 閉じる</button>
         </div>
         <div id="rssTestContent">
             <div class="text-center">
@@ -222,9 +222,9 @@
     <script src="assets/js/timezone-utils.js"></script>
     <script src="assets/js/common.js"></script>
     <script src="assets/js/page-init.js"></script>
+    <script src="assets/js/sources.js"></script>
     <script>
         initializeSourcesPage();
     </script>
-    <script src="assets/js/sources.js"></script>
 </body>
 </html>
