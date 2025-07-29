@@ -146,7 +146,7 @@ class handler(BaseHTTPRequestHandler):
             "features": features,
             "test_pages": test_pages,
             "user_menu": {
-                "display_name": user_data.get('display_name') or user_data.get('user_id'),
+                "display_name": user_data.get('display_name') if user_data.get('display_name') else None,
                 "role": role,
                 "role_display": {
                     "admin": "管理者",
