@@ -1429,12 +1429,22 @@ async function loadAndRenderEditableArticleDetail(articleId) {
         const articleData = await articleResponse.json();
         const commentsData = await commentsResponse.json();
         
+        // デバッグ: APIレスポンスを確認
+        console.log('APIレスポンス確認:');
+        console.log('コメントAPIレスポンス全体:', commentsData);
+        console.log('success:', commentsData.success);
+        console.log('comments:', commentsData.comments);
+        console.log('error:', commentsData.error);
+        
         if (!articleData.success || !articleData.articles?.length) {
             throw new Error('記事が見つかりません');
         }
         
         const article = articleData.articles[0];
         const comments = commentsData.success ? commentsData.comments || [] : [];
+        
+        console.log('抽出されたコメント配列:', comments);
+        console.log('コメント数:', comments.length);
         
         // 編集可能な記事詳細を表示
         renderEditableArticleDetailContent(article, comments);
@@ -1566,7 +1576,10 @@ function renderEditableArticleDetailContent(article, comments) {
 
 // 詳細画面用のコメント表示
 function renderDetailComments(comments) {
+    console.log('renderDetailComments called with:', comments);
+    
     if (!comments || comments.length === 0) {
+        console.log('コメントが空のため「まだコメントはありません」を表示');
         return '<div class="text-muted text-center py-3">まだコメントはありません</div>';
     }
     
