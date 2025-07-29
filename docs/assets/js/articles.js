@@ -1774,14 +1774,9 @@ function renderEditableArticleDetailContent(article, comments) {
                                     <div id="summaryContainer" class="small">
                                         ${article.ai_summary ? `
                                             <div class="alert alert-info mb-0">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <div style="line-height: 1.4;">
-                                                        <i class="fas fa-lightbulb me-1"></i>
-                                                        ${escapeHtml(article.ai_summary)}
-                                                    </div>
-                                                    <button class="btn btn-outline-secondary btn-sm ms-2" onclick="generateAISummary('${article.id}')" title="再生成">
-                                                        <i class="fas fa-redo"></i>
-                                                    </button>
+                                                <div style="line-height: 1.4;">
+                                                    <i class="fas fa-lightbulb me-1"></i>
+                                                    ${escapeHtml(article.ai_summary)}
                                                 </div>
                                                 <div class="text-muted small mt-2">
                                                     <i class="fas fa-robot me-1"></i>Google Gemini APIによる要約
@@ -2316,14 +2311,9 @@ async function generateAISummary(articleId) {
             // 成功時の表示
             summaryContainer.innerHTML = `
                 <div class="alert alert-info mb-0">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div style="line-height: 1.4;">
-                            <i class="fas fa-lightbulb me-1"></i>
-                            ${escapeHtml(summaryData.summary)}
-                        </div>
-                        <button class="btn btn-outline-secondary btn-sm ms-2" onclick="generateAISummary('${articleId}')" title="再生成">
-                            <i class="fas fa-redo"></i>
-                        </button>
+                    <div style="line-height: 1.4;">
+                        <i class="fas fa-lightbulb me-1"></i>
+                        ${escapeHtml(summaryData.summary)}
                     </div>
                     <div class="text-muted small mt-2">
                         <i class="fas fa-robot me-1"></i>Google Gemini APIによる要約
