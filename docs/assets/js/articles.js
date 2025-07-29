@@ -1509,48 +1509,71 @@ function renderEditableArticleDetailContent(article, comments) {
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <div class="d-flex flex-wrap align-items-center gap-3 small text-muted">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-rss me-1"></i>
-                                    <span>${sourceName}</span>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-calendar-alt me-1"></i>
-                                    <span>${pubDate}</span>
-                                </div>
-                                <div class="d-flex align-items-center flex-grow-1" style="min-width: 0;">
-                                    <i class="fas fa-link me-1"></i>
-                                    <a href="${article.url}" target="_blank" class="text-decoration-none text-truncate" title="${escapeHtml(article.url)}" style="max-width: 300px;">${article.url}</a>
-                                </div>
-                            </div>
-                        </div>
                         <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label class="form-label small">ステータス</label>
-                                <select class="form-select form-select-sm" id="editStatus">
-                                    <option value="unread" ${article.status === 'unread' ? 'selected' : ''}>未読</option>
-                                    <option value="reviewed" ${article.status === 'reviewed' ? 'selected' : ''}>確認済み</option>
-                                    <option value="flagged" ${article.status === 'flagged' ? 'selected' : ''}>フラグ付き</option>
-                                    <option value="archived" ${article.status === 'archived' ? 'selected' : ''}>アーカイブ</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small">重要フラグ</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="editFlagged" ${article.flagged ? 'checked' : ''}>
-                                    <label class="form-check-label" for="editFlagged">重要記事</label>
+                            <!-- 左側: 情報源・URL・ステータス -->
+                            <div class="col-md-6">
+                                <!-- 情報源・取得日時 -->
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center gap-3 small text-muted">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-rss me-1"></i>
+                                            <span>${sourceName}</span>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            <span>${pubDate}</span>
+                                        </div>
+                                    </div>
                                 </div>
+                                
+                                <!-- URL -->
+                                <div class="mb-3">
+                                    <div class="small text-muted">
+                                        <i class="fas fa-link me-1"></i>
+                                        <a href="${article.url}" target="_blank" class="text-decoration-none text-truncate d-inline-block" title="${escapeHtml(article.url)}" style="max-width: 280px;">${article.url}</a>
+                                    </div>
+                                </div>
+                                
+                                <!-- ステータス・重要フラグ -->
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">ステータス</label>
+                                        <select class="form-select form-select-sm" id="editStatus">
+                                            <option value="unread" ${article.status === 'unread' ? 'selected' : ''}>未読</option>
+                                            <option value="reviewed" ${article.status === 'reviewed' ? 'selected' : ''}>確認済み</option>
+                                            <option value="flagged" ${article.status === 'flagged' ? 'selected' : ''}>フラグ付き</option>
+                                            <option value="archived" ${article.status === 'archived' ? 'selected' : ''}>アーカイブ</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">重要フラグ</label>
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input" type="checkbox" id="editFlagged" ${article.flagged ? 'checked' : ''}>
+                                            <label class="form-check-label" for="editFlagged">重要記事</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 右側: 記事内容 -->
+                            <div class="col-md-6">
+                                ${article.body ? `
+                                    <div class="article-body">
+                                        <h6 class="mb-2">記事内容</h6>
+                                        <div class="border rounded p-2 bg-light small" style="height: 120px; overflow: hidden;">
+                                            ${escapeHtml(article.body.substring(0, 150)).replace(/\n/g, '<br>')}${article.body.length > 150 ? '...' : ''}
+                                        </div>
+                                    </div>
+                                ` : `
+                                    <div class="article-body">
+                                        <h6 class="mb-2">記事内容</h6>
+                                        <div class="border rounded p-2 bg-light small text-muted" style="height: 120px;">
+                                            記事内容がありません
+                                        </div>
+                                    </div>
+                                `}
                             </div>
                         </div>
-                        ${article.body ? `
-                            <div class="article-body mb-3">
-                                <h5>記事内容</h5>
-                                <div class="border rounded p-3 bg-light">
-                                    ${escapeHtml(article.body).replace(/\\n/g, '<br>')}
-                                </div>
-                            </div>
-                        ` : ''}
                         <div class="article-comments mb-3">
                             <label class="form-label"><h5>備考</h5></label>
                             <textarea class="form-control" id="editComments" rows="4" placeholder="備考を入力...">${escapeHtml(article.comments || '')}</textarea>
