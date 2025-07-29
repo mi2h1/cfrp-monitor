@@ -1972,6 +1972,37 @@ window.addEventListener('popstate', (e) => {
         showEditableArticleDetail(e.state.edit);
     } else {
         hideArticleDetail();
+        // URLパラメータに基づいてページ表示を更新
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = parseInt(urlParams.get('page')) || 1;
+        const status = urlParams.get('status') || '';
+        const flagged = urlParams.get('flagged') || '';
+        const source = urlParams.get('source') || '';
+        const comment = urlParams.get('comment') || '';
+        const sort = urlParams.get('sort') || 'desc';
+        
+        // フィルター要素の状態を更新
+        if (document.getElementById('statusFilter')) {
+            document.getElementById('statusFilter').value = status;
+        }
+        if (document.getElementById('flaggedFilter')) {
+            document.getElementById('flaggedFilter').value = flagged;
+        }
+        if (document.getElementById('sourceFilter')) {
+            document.getElementById('sourceFilter').value = source;
+        }
+        if (document.getElementById('commentFilter')) {
+            document.getElementById('commentFilter').value = comment;
+        }
+        if (document.getElementById('sortOrder')) {
+            document.getElementById('sortOrder').value = sort;
+        }
+        
+        // 現在のページ番号を更新
+        currentPage = page;
+        
+        // 記事一覧を再読み込み
+        loadArticles();
     }
 });
 
