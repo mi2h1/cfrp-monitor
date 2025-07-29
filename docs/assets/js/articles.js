@@ -339,17 +339,19 @@ async function loadArticlesPage(page, totalCount = null) {
             // URL更新
             updateURLWithCurrentState();
             
-            // ローディング状態を非表示
+            // ローディング状態を非表示して記事一覧を表示
             hideLoadingState();
+            document.getElementById('articlesContainer').style.display = 'block';
             
             renderArticles();
             renderPagination(totalCount || articles.length, itemsPerPage, page);
             
-            // ページネーションの表示
+            // ページネーションの表示とボタン有効化
             const paginationElement = document.getElementById('pagination');
             if (paginationElement) {
                 paginationElement.style.display = 'block';
             }
+            enablePaginationButtons();
             return;
         }
         
@@ -407,22 +409,29 @@ async function loadArticlesPage(page, totalCount = null) {
         // URL更新
         updateURLWithCurrentState();
         
-        // ローディング状態を非表示
+        // ローディング状態を非表示して記事一覧を表示
         hideLoadingState();
+        document.getElementById('articlesContainer').style.display = 'block';
         
         renderArticles();
         renderPagination(totalCount, itemsPerPage, page);
         
-        // ページネーションの表示
+        // ページネーションの表示とボタン有効化
         const paginationElement = document.getElementById('pagination');
         if (paginationElement) {
             paginationElement.style.display = 'block';
         }
+        enablePaginationButtons();
         
     } catch (error) {
         console.error('記事ページ読み込みエラー:', error);
         hideLoadingState();
-        document.getElementById('articlesContainer').innerHTML = '<div class="alert alert-danger">記事の読み込みに失敗しました: ' + error.message + '</div>';
+        const articlesContainer = document.getElementById('articlesContainer');
+        if (articlesContainer) {
+            articlesContainer.style.display = 'block';
+            articlesContainer.innerHTML = '<div class="alert alert-danger">記事の読み込みに失敗しました: ' + error.message + '</div>';
+        }
+        enablePaginationButtons();
     }
 }
 
@@ -859,7 +868,7 @@ function setupEventListeners() {
         if (pageLink && !pageLink.parentElement.classList.contains('disabled')) {
             const page = parseInt(pageLink.dataset.page);
             if (!isNaN(page)) {
-                loadArticlesPage(page);
+                handlePaginationClick(page);
             }
         }
     });
@@ -871,7 +880,7 @@ function setupEventListeners() {
         if (pageLink && !pageLink.parentElement.classList.contains('disabled')) {
             const page = parseInt(pageLink.dataset.page);
             if (!isNaN(page)) {
-                loadArticlesPage(page);
+                handlePaginationClick(page);
             }
         }
     });
@@ -2054,6 +2063,76 @@ function clearArticlesCache() {
     articlesCache.clear();
     articlesCacheTime.clear();
     console.log('記事キャッシュをクリア');
+}
+
+// ページネーションクリック時のUX改善
+async function handlePaginationClick(page) {
+    // 既に同じページの場合は何もしない
+    if (page === currentPage) {
+        return;
+    }
+    
+    // 1. ページネーションボタンを無効化
+    disablePaginationButtons();
+    
+    // 2. ページトップにスムーススクロール
+    window.scrollTo({ 
+        top: 0, 
+        behavior: 'smooth' 
+    });
+    
+    // 3. 記事一覧を非表示にしてローディング状態を表示
+    const articlesContainer = document.getElementById('articlesContainer');
+    const loadingElement = document.getElementById('loading');
+    
+    if (articlesContainer) {
+        articlesContainer.style.display = 'none';
+    }
+    
+    if (loadingElement) {
+        loadingElement.style.display = 'block';
+        loadingElement.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">読み込み中...</span>
+                </div>
+                <p class="mt-2">ページ ${page} を読み込んでいます...</p>
+            </div>
+        `;
+    }
+    
+    // 4. 少し待ってからページ読み込み（スムーススクロールが完了するまで）
+    setTimeout(async () => {
+        try {
+            await loadArticlesPage(page);
+            // 成功時はページネーションボタンを再有効化（loadArticlesPageで処理される）
+        } catch (error) {
+            console.error('ページ読み込みエラー:', error);
+            if (loadingElement) {
+                loadingElement.innerHTML = '<div class="alert alert-danger">ページの読み込みに失敗しました</div>';
+            }
+            // エラー時もページネーションボタンを再有効化
+            enablePaginationButtons();
+        }
+    }, 300); // 300ms待機（スクロールアニメーション時間を考慮）
+}
+
+// ページネーションボタンを無効化
+function disablePaginationButtons() {
+    const paginationButtons = document.querySelectorAll('#paginationList .page-link, #paginationListTop .page-link');
+    paginationButtons.forEach(button => {
+        button.style.pointerEvents = 'none';
+        button.style.opacity = '0.6';
+    });
+}
+
+// ページネーションボタンを有効化
+function enablePaginationButtons() {
+    const paginationButtons = document.querySelectorAll('#paginationList .page-link, #paginationListTop .page-link');
+    paginationButtons.forEach(button => {
+        button.style.pointerEvents = '';
+        button.style.opacity = '';
+    });
 }
 
 // パフォーマンス最適化: コメントのみ再読み込み
