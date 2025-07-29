@@ -186,8 +186,16 @@ class handler(BaseHTTPRequestHandler):
                 # 簡単なHTMLパースでテキストを抽出
                 import re
                 
+                # scriptタグとstyleタグを除去
+                html_content = re.sub(r'<script[^>]*>.*?</script>', '', html_content, flags=re.DOTALL | re.IGNORECASE)
+                html_content = re.sub(r'<style[^>]*>.*?</style>', '', html_content, flags=re.DOTALL | re.IGNORECASE)
+                
                 # HTMLタグを除去
                 text_content = re.sub(r'<[^>]+>', '', html_content)
+                
+                # HTMLエンティティをデコード
+                import html
+                text_content = html.unescape(text_content)
                 
                 # 複数の空白・改行を整理
                 text_content = re.sub(r'\s+', ' ', text_content)
@@ -195,12 +203,27 @@ class handler(BaseHTTPRequestHandler):
                 # 不要な部分を除去（基本的なクリーニング）
                 text_content = text_content.strip()
                 
+                # より良い記事抽出：長い段落を優先的に取得
+                paragraphs = text_content.split('。')  # 日本語の文で分割
+                # 50文字以上の段落のみを抽出
+                meaningful_paragraphs = [p.strip() for p in paragraphs if len(p.strip()) > 50]
+                
+                if meaningful_paragraphs:
+                    # 意味のある段落を結合
+                    text_content = '。'.join(meaningful_paragraphs[:20])  # 最初の20段落まで
+                    if not text_content.endswith('。'):
+                        text_content += '。'
+                
                 # 記事らしい部分を抽出（最低500文字以上あることを確認）
                 if len(text_content) < 500:
                     print(f"Content too short: {len(text_content)} characters")
                     return None
                 
                 print(f"Successfully extracted {len(text_content)} characters")
+                
+                # デバッグ用：最初の500文字を表示
+                print(f"Content preview: {text_content[:500]}...")
+                
                 return text_content
                 
         except urllib.error.HTTPError as e:
