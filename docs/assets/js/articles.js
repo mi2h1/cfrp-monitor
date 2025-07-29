@@ -1687,89 +1687,78 @@ function renderEditableArticleDetailContent(article, comments) {
                     <div class="card-body">
                         <div class="row mb-3">
                             <!-- 左側: 情報源・URL・ステータス -->
-                            <div class="col-md-4">
-                                <!-- 情報源・取得日時 -->
+                            <div class="col-md-3">
+                                <!-- 公開日時 -->
                                 <div class="mb-3">
-                                    <div class="d-flex align-items-center gap-3 small text-muted">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-rss me-1"></i>
-                                            <span>${sourceName}</span>
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-calendar-alt me-1"></i>
-                                            <span>${pubDate}</span>
-                                        </div>
+                                    <div class="small text-muted">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        <span>${pubDate}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- 情報源 -->
+                                <div class="mb-3">
+                                    <div class="small text-muted">
+                                        <i class="fas fa-rss me-1"></i>
+                                        <span>${sourceName}</span>
                                     </div>
                                 </div>
                                 
                                 <!-- URL -->
                                 <div class="mb-3">
                                     <div class="small text-muted">
-                                        <i class="fas fa-link me-1"></i><a href="${article.url}" target="_blank" class="text-decoration-none text-truncate d-inline-block" title="${escapeHtml(article.url)}" style="max-width: 250px;">${article.url}</a>
+                                        <i class="fas fa-link me-1"></i>
+                                        <a href="${article.url}" target="_blank" class="text-decoration-none text-truncate d-inline-block" title="${escapeHtml(article.url)}" style="max-width: 200px;">${article.url}</a>
                                     </div>
                                 </div>
                                 
-                                <!-- ステータス・重要フラグ -->
-                                <div class="row">
-                                    <div class="col-6">
-                                        <label class="form-label small mb-1">ステータス</label>
-                                        <select class="form-select form-select-sm" id="editStatus">
-                                            <option value="unread" ${article.status === 'unread' ? 'selected' : ''}>未読</option>
-                                            <option value="reviewed" ${article.status === 'reviewed' ? 'selected' : ''}>確認済み</option>
-                                            <option value="flagged" ${article.status === 'flagged' ? 'selected' : ''}>フラグ付き</option>
-                                            <option value="archived" ${article.status === 'archived' ? 'selected' : ''}>アーカイブ</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-check mt-4">
-                                            <input class="form-check-input" type="checkbox" id="editFlagged" ${article.flagged ? 'checked' : ''}>
-                                            <label class="form-check-label" for="editFlagged">重要記事</label>
-                                        </div>
+                                <!-- ステータス -->
+                                <div class="mb-3">
+                                    <label class="form-label small mb-1">ステータス</label>
+                                    <select class="form-select form-select-sm" id="editStatus">
+                                        <option value="unread" ${article.status === 'unread' ? 'selected' : ''}>未読</option>
+                                        <option value="reviewed" ${article.status === 'reviewed' ? 'selected' : ''}>確認済み</option>
+                                        <option value="flagged" ${article.status === 'flagged' ? 'selected' : ''}>フラグ付き</option>
+                                        <option value="archived" ${article.status === 'archived' ? 'selected' : ''}>アーカイブ</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- 重要記事フラグ -->
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="editFlagged" ${article.flagged ? 'checked' : ''}>
+                                        <label class="form-check-label" for="editFlagged">重要記事</label>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- 右側: 記事内容 -->
-                            <div class="col-md-8">
-                                ${article.body ? `
-                                    <div class="article-body">
-                                        <h6 class="mb-2">記事内容</h6>
-                                        <div class="small text-dark" style="line-height: 1.4;">
-                                            ${escapeHtml(article.body.substring(0, 200)).replace(/\n/g, '<br>')}${article.body.length > 200 ? '...' : ''}
-                                        </div>
-                                    </div>
-                                ` : `
-                                    <div class="article-body">
-                                        <h6 class="mb-2">記事内容</h6>
-                                        <div class="small text-muted" style="line-height: 1.4;">
-                                            記事内容がありません
-                                        </div>
-                                    </div>
-                                `}
-                                
+                            <!-- 右側: AI要約エリア -->
+                            <div class="col-md-9">
                                 <!-- AI要約セクション -->
-                                <div class="ai-summary-section mt-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="mb-0">
-                                            <i class="fas fa-robot me-1"></i> AI要約
-                                        </h6>
+                                <div class="ai-summary-section">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-robot me-2"></i> AI要約
+                                        </h5>
                                         <button class="btn btn-outline-primary btn-sm" onclick="generateAISummary('${article.id}')" id="generateSummaryBtn">
-                                            <i class="fas fa-magic"></i> ${article.ai_summary ? '要約再生成' : '要約生成'}
+                                            <i class="fas fa-magic me-1"></i> ${article.ai_summary ? '要約再生成' : '要約生成'}
                                         </button>
                                     </div>
-                                    <div id="summaryContainer" class="small">
+                                    <div id="summaryContainer">
                                         ${article.ai_summary ? `
-                                            <div class="alert alert-info mb-0">
-                                                <div style="line-height: 1.4;">
-                                                    <i class="fas fa-lightbulb me-1"></i>
+                                            <div class="alert alert-info mb-0" style="font-size: 0.95rem; line-height: 1.6;">
+                                                <div>
                                                     ${escapeHtml(article.ai_summary)}
                                                 </div>
-                                                <div class="text-muted small mt-2">
+                                                <div class="text-muted small mt-3 pt-2 border-top">
                                                     <i class="fas fa-robot me-1"></i>Google Gemini APIによる要約
                                                 </div>
                                             </div>
                                         ` : `
-                                            <div class="text-muted">「要約生成」ボタンをクリックして記事の要約を生成できます</div>
+                                            <div class="alert alert-light text-muted text-center py-4">
+                                                <i class="fas fa-robot fa-2x mb-2 d-block"></i>
+                                                「要約生成」ボタンをクリックして記事の要約を生成できます
+                                            </div>
                                         `}
                                     </div>
                                 </div>
