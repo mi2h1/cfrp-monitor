@@ -910,7 +910,7 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
     let commentText, displayName, displayDate;
     if (isDeleted || isVirtualParent) {
         commentText = '<em class="text-muted">このコメントは削除されました</em>';
-        displayName = '<em class="text-muted">削除されたユーザー</em>';
+        displayName = '<em class="text-muted">削除済みコメント</em>';
         displayDate = comment.created_at ? formatJSTDisplay(comment.created_at) : '';
     } else {
         commentText = escapeHtml(comment.comment).replace(/\n/g, '<br>');
@@ -991,7 +991,7 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
                     
                     <!-- 返信ボタンを右下に配置（子コメントがない場合のみ） -->
                     ${!isDeleted && !isVirtualParent && level === 0 && (!comment.replies || comment.replies.length === 0) ? `
-                        <div class="d-flex justify-content-end mt-2" style="padding-right: 12px;">
+                        <div class="d-flex justify-content-end mt-2">
                             <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                                 <i class="fas fa-reply"></i> 返信
                             </button>
