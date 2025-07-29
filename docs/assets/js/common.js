@@ -286,11 +286,11 @@ function openUserSettingsModal() {
                         <form id="userSettingsForm">
                             <div class="mb-3">
                                 <label for="displayName" class="form-label">表示名</label>
-                                <input type="text" class="form-control" id="displayName" placeholder="表示名を入力">
+                                <input type="text" class="form-control" id="displayName" placeholder="表示名を入力" autocomplete="off">
                             </div>
                             <div class="mb-3">
                                 <label for="newPassword" class="form-label">新しいパスワード</label>
-                                <input type="password" class="form-control" id="newPassword" placeholder="新しいパスワード（4文字以上）">
+                                <input type="password" class="form-control" id="newPassword" placeholder="新しいパスワード（4文字以上）" autocomplete="new-password">
                                 <div class="form-text">パスワードを変更しない場合は空のままにしてください</div>
                             </div>
                             <div id="settingsError" class="alert alert-danger d-none"></div>
