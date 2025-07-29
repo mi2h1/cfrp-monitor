@@ -991,7 +991,7 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
                     
                     <!-- 返信ボタンを右下に配置（子コメントがない場合のみ） -->
                     ${!isDeleted && !isVirtualParent && level === 0 && (!comment.replies || comment.replies.length === 0) ? `
-                        <div class="d-flex justify-content-end mt-2" style="margin-right: 12px;">
+                        <div class="d-flex justify-content-end mt-2" style="padding-right: 12px;">
                             <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                                 <i class="fas fa-reply"></i> 返信
                             </button>
@@ -1513,7 +1513,7 @@ function renderEditableArticleDetailContent(article, comments) {
                             <!-- 左側: 情報源・URL・ステータス -->
                             <div class="col-md-4">
                                 <!-- 情報源・取得日時 -->
-                                <div class="mb-2">
+                                <div class="mb-3">
                                     <div class="d-flex align-items-center gap-3 small text-muted">
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-rss me-1"></i>
@@ -1529,8 +1529,7 @@ function renderEditableArticleDetailContent(article, comments) {
                                 <!-- URL -->
                                 <div class="mb-3">
                                     <div class="small text-muted">
-                                        <i class="fas fa-link me-1"></i>
-                                        <a href="${article.url}" target="_blank" class="text-decoration-none text-truncate d-inline-block" title="${escapeHtml(article.url)}" style="max-width: 250px;">${article.url}</a>
+                                        <i class="fas fa-link me-1"></i><a href="${article.url}" target="_blank" class="text-decoration-none text-truncate d-inline-block" title="${escapeHtml(article.url)}" style="max-width: 250px;">${article.url}</a>
                                     </div>
                                 </div>
                                 
@@ -1546,8 +1545,7 @@ function renderEditableArticleDetailContent(article, comments) {
                                         </select>
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label small mb-1">重要フラグ</label>
-                                        <div class="form-check mt-2">
+                                        <div class="form-check mt-4">
                                             <input class="form-check-input" type="checkbox" id="editFlagged" ${article.flagged ? 'checked' : ''}>
                                             <label class="form-check-label" for="editFlagged">重要記事</label>
                                         </div>
@@ -1581,7 +1579,7 @@ function renderEditableArticleDetailContent(article, comments) {
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="text-muted small">
                                 ${article.reviewed_at ? `<i class="fas fa-clock me-1"></i>最終更新: ${formatJSTDisplay(article.reviewed_at)}` : ''}
-                                ${article.last_edited_by ? ` | <i class="fas fa-user me-1"></i>編集者: ${article.last_edited_by}` : ''}
+                                ${article.last_edited_by ? ` <i class="fas fa-user me-1"></i>編集者: ${article.last_edited_by}` : ''}
                             </div>
                             <button class="btn btn-success btn-sm" onclick="saveArticleDetail('${article.id}')" id="saveBtn">
                                 <i class="fas fa-save"></i> 保存
