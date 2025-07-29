@@ -1425,23 +1425,8 @@ async function loadAndRenderEditableArticleDetail(articleId) {
             })
         ]);
         
-        // レスポンスのステータスをチェック
-        console.log('記事API ステータス:', articleResponse.status);
-        console.log('コメントAPI ステータス:', commentsResponse.status);
-        
         const articleData = await articleResponse.json();
-        let commentsData;
-        
-        // コメントAPIの応答をチェック
-        if (commentsResponse.ok) {
-            commentsData = await commentsResponse.json();
-        } else {
-            console.error('コメントAPI エラー:', commentsResponse.status, commentsResponse.statusText);
-            commentsData = { success: false, error: 'コメント取得に失敗' };
-        }
-        
-        console.log('記事詳細API応答:', articleData);
-        console.log('コメントAPI応答:', commentsData);
+        const commentsData = await commentsResponse.json();
         
         if (!articleData.success || !articleData.articles?.length) {
             throw new Error('記事が見つかりません');
@@ -1449,9 +1434,6 @@ async function loadAndRenderEditableArticleDetail(articleId) {
         
         const article = articleData.articles[0];
         const comments = commentsData.success ? commentsData.comments || [] : [];
-        
-        console.log('取得されたコメント数:', comments.length);
-        console.log('コメントデータ:', comments);
         
         // 編集可能な記事詳細を表示
         renderEditableArticleDetailContent(article, comments);
@@ -1583,11 +1565,7 @@ function renderEditableArticleDetailContent(article, comments) {
 
 // 詳細画面用のコメント表示
 function renderDetailComments(comments) {
-    console.log('renderDetailComments called with:', comments);
-    console.log('comments.length:', comments ? comments.length : 'undefined');
-    
     if (!comments || comments.length === 0) {
-        console.log('コメントが空またはnull/undefinedのため、"まだコメントはありません"を表示');
         return '<div class="text-muted text-center py-3">まだコメントはありません</div>';
     }
     
