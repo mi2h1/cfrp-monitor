@@ -204,91 +204,74 @@ class handler(BaseHTTPRequestHandler):
                 html_content = re.sub(r'<script[^>]*>.*?</script>', '', html_content, flags=re.DOTALL | re.IGNORECASE)
                 html_content = re.sub(r'<style[^>]*>.*?</style>', '', html_content, flags=re.DOTALL | re.IGNORECASE)
                 
-                # 記事本文を含む可能性の高い要素を優先的に抽出
+                # 記事候補要素を抽出してAIに判定させる
                 article_selectors = [
-                    # 一般的な記事コンテナのID/クラス
                     r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?content[-_]?body(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
                     r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?article[-_]?content(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
-                    r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?post[-_]?content(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
-                    r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?entry[-_]?content(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
-                    r'<div[^>]*(?:id|class)[^>]*["\'](?:[^"\']*)?main[-_]?content(?:[^"\']*)?["\'][^>]*>(.*?)</div>',
                     r'<article[^>]*>(.*?)</article>',
                     r'<main[^>]*>(.*?)</main>',
-                    # より具体的なパターン
                     r'<div[^>]*(?:id|class)[^>]*["\']content["\'][^>]*>(.*?)</div>',
-                    r'<div[^>]*(?:id|class)[^>]*["\']article["\'][^>]*>(.*?)</div>',
-                    r'<div[^>]*(?:id|class)[^>]*["\']post["\'][^>]*>(.*?)</div>',
                 ]
+                
+                candidates = []
+                for selector in article_selectors:
+                    matches = re.findall(selector, html_content, flags=re.DOTALL | re.IGNORECASE)
+                    if matches:
+                        candidate = max(matches, key=len)
+                        # HTMLタグを除去してテキスト化
+                        text_candidate = re.sub(r'<[^>]+>', '', candidate)
+                        text_candidate = html.unescape(text_candidate)
+                        text_candidate = re.sub(r'\s+', ' ', text_candidate).strip()
+                        
+                        if len(text_candidate) > 200:  # 最低限の長さチェック
+                            candidates.append({
+                                'text': text_candidate[:1000],  # 最初の1000文字のみAI判定用
+                                'full_content': text_candidate,
+                                'selector': selector
+                            })
                 
                 article_html = None
                 used_selector = None
                 
-                # 各セレクターを試行して記事部分を抽出
-                for selector in article_selectors:
-                    matches = re.findall(selector, html_content, flags=re.DOTALL | re.IGNORECASE)
-                    if matches:
-                        # 最も長いマッチを選択（最も内容が豊富と想定）
-                        article_html = max(matches, key=len)
-                        used_selector = selector
-                        print(f"Article content found using selector: {selector}")
-                        break
-                
-                # 構造化された記事部分が見つからない場合は全体から抽出
-                if not article_html:
-                    print("No structured article content found, using full HTML")
-                    article_html = html_content
+                if candidates:
+                    # AIに最適な候補を選択させる
+                    best_candidate = self.select_best_content_with_ai(candidates)
+                    if best_candidate:
+                        text_content = best_candidate['full_content']
+                        used_selector = f"ai_selected_{best_candidate['selector']}"
+                        print(f"AI selected content using: {used_selector}")
+                    else:
+                        # AI判定に失敗した場合は最長の候補を使用
+                        best_candidate = max(candidates, key=lambda x: len(x['full_content']))
+                        text_content = best_candidate['full_content']
+                        used_selector = f"fallback_{best_candidate['selector']}"
+                        print(f"AI selection failed, using longest candidate: {used_selector}")
+                else:
+                    print("No content candidates found, using full HTML")
+                    text_content = re.sub(r'<[^>]+>', '', html_content)
+                    text_content = html.unescape(text_content)
+                    text_content = re.sub(r'\s+', ' ', text_content).strip()
                     used_selector = "full_html"
                 
-                # 記事HTML内のp要素を優先的に抽出
-                paragraph_pattern = r'<p[^>]*>(.*?)</p>'
-                paragraphs = re.findall(paragraph_pattern, article_html, flags=re.DOTALL | re.IGNORECASE)
-                
-                if paragraphs:
-                    print(f"Found {len(paragraphs)} paragraph elements")
-                    # p要素からテキストを抽出してクリーニング
-                    cleaned_paragraphs = []
-                    for p in paragraphs:
-                        # HTMLタグを除去
-                        clean_p = re.sub(r'<[^>]+>', '', p)
-                        # HTMLエンティティをデコード
-                        import html
-                        clean_p = html.unescape(clean_p)
-                        # 空白を整理
-                        clean_p = re.sub(r'\s+', ' ', clean_p).strip()
-                        # 意味のある長さの段落のみ保持（30文字以上）
-                        if len(clean_p) > 30:
-                            cleaned_paragraphs.append(clean_p)
+                # AIで選択された場合はそのまま使用、そうでなければp要素も試行
+                if not used_selector.startswith("ai_selected_") and not used_selector.startswith("fallback_"):
+                    # 従来のp要素抽出ロジック（AIが使用されなかった場合のみ）
+                    paragraph_pattern = r'<p[^>]*>(.*?)</p>'
+                    paragraphs = re.findall(paragraph_pattern, text_content, flags=re.DOTALL | re.IGNORECASE)
                     
-                    if cleaned_paragraphs:
-                        text_content = '\n'.join(cleaned_paragraphs)
-                        print(f"Extracted {len(cleaned_paragraphs)} meaningful paragraphs from p elements")
-                    else:
-                        # p要素に意味のある内容がない場合はフォールバック
-                        text_content = re.sub(r'<[^>]+>', '', article_html)
-                        import html
-                        text_content = html.unescape(text_content)
-                        text_content = re.sub(r'\s+', ' ', text_content).strip()
-                        print("No meaningful paragraphs found in p elements, using article content")
-                else:
-                    print("No p elements found, extracting text from article content")
-                    # HTMLタグを除去
-                    text_content = re.sub(r'<[^>]+>', '', article_html)
-                    # HTMLエンティティをデコード
-                    import html
-                    text_content = html.unescape(text_content)
-                    # 複数の空白・改行を整理
-                    text_content = re.sub(r'\s+', ' ', text_content).strip()
-                    
-                    # より良い記事抽出：長い段落を優先的に取得
-                    paragraphs = text_content.split('。')  # 日本語の文で分割
-                    # 50文字以上の段落のみを抽出
-                    meaningful_paragraphs = [p.strip() for p in paragraphs if len(p.strip()) > 50]
-                    
-                    if meaningful_paragraphs:
-                        # 意味のある段落を結合
-                        text_content = '。'.join(meaningful_paragraphs[:20])  # 最初の20段落まで
-                        if not text_content.endswith('。'):
-                            text_content += '。'
+                    if paragraphs and len(paragraphs) > 1:  # 複数のp要素がある場合のみ
+                        print(f"Found {len(paragraphs)} paragraph elements, refining extraction")
+                        cleaned_paragraphs = []
+                        for p in paragraphs:
+                            clean_p = re.sub(r'<[^>]+>', '', p)
+                            clean_p = html.unescape(clean_p)
+                            clean_p = re.sub(r'\s+', ' ', clean_p).strip()
+                            if len(clean_p) > 30:
+                                cleaned_paragraphs.append(clean_p)
+                        
+                        if cleaned_paragraphs:
+                            text_content = '\n'.join(cleaned_paragraphs)
+                            used_selector += "_with_paragraphs"
                 
                 # 記事らしい部分を抽出（最低500文字以上あることを確認）
                 if len(text_content) < 500:
@@ -322,6 +305,56 @@ class handler(BaseHTTPRequestHandler):
             return None
         except Exception as e:
             print(f"Error fetching article content: {e}")
+            return None
+    
+    def select_best_content_with_ai(self, candidates):
+        """AIを使って最適な記事コンテンツを選択"""
+        try:
+            gemini_api_key = os.environ.get('GEMINI_API_KEY')
+            if not gemini_api_key or len(candidates) <= 1:
+                return candidates[0] if candidates else None
+            
+            # 簡潔なプロンプトで候補を判定
+            candidates_text = ""
+            for i, candidate in enumerate(candidates):
+                candidates_text += f"候補{i+1}: {candidate['text'][:300]}...\n\n"
+            
+            prompt = f"""以下の候補から最も記事本文として適切なものを選んでください。番号のみ回答してください。
+            
+{candidates_text}
+            
+記事本文として最適な候補番号（1-{len(candidates)}）:"""
+            
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={gemini_api_key}"
+            
+            request_data = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "temperature": 0.1,
+                    "maxOutputTokens": 10
+                }
+            }
+            
+            req_data = json.dumps(request_data).encode('utf-8')
+            req = urllib.request.Request(url, data=req_data, headers={'Content-Type': 'application/json'})
+            
+            with urllib.request.urlopen(req, timeout=10) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                
+                if 'candidates' in result and len(result['candidates']) > 0:
+                    response_text = result['candidates'][0]['content']['parts'][0]['text'].strip()
+                    try:
+                        selected_index = int(response_text) - 1
+                        if 0 <= selected_index < len(candidates):
+                            print(f"AI selected candidate {selected_index + 1}")
+                            return candidates[selected_index]
+                    except ValueError:
+                        pass
+            
+            return None
+                        
+        except Exception as e:
+            print(f"AI content selection error: {e}")
             return None
     
     def generate_summary(self, article_text):
