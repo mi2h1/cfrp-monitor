@@ -953,43 +953,45 @@ function renderCommentCard(comment, level = 0, isLast = false, parentHasMoreSibl
     
     let html = `
         <div class="comment-card mb-3" style="margin-left: ${marginLeft}px;" data-comment-id="${comment.id}">
-            <div class="card card-body py-2 px-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div class="comment-content flex-grow-1">
-                        <div class="comment-meta mb-1 d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <strong class="me-2">${displayName}</strong>
-                                <small class="text-muted me-1">${displayDate}</small>
-                                ${!isDeleted && !isVirtualParent && isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
-                                ${isOwnComment && !isDeleted && !isVirtualParent ? `
-                                    <button class="btn btn-link btn-sm p-1 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1; color: #6c757d;" title="コメントを編集">
-                                        <i class="fas fa-edit me-1"></i>編集
-                                    </button>
-                                ` : ''}
-                            </div>
-                            ${isOwnComment && !isDeleted && !isVirtualParent ? `
-                                <a href="#" class="text-danger small text-decoration-none" onclick="deleteComment('${comment.id}'); return false;" style="font-size: 0.75rem;">削除</a>
-                            ` : ''}
-                        </div>
-                        <div class="comment-text" id="commentText-${comment.id}">${commentText}</div>
-                        
-                        <!-- 編集フォーム（初期非表示） -->
-                        ${!isDeleted && !isVirtualParent ? `
-                            <div class="edit-form mt-2" id="editForm-${comment.id}" style="display: none;">
-                                <textarea class="form-control mb-2" id="editText-${comment.id}" rows="3">${escapeHtml(comment.comment || '')}</textarea>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-success btn-sm" onclick="submitCommentEdit('${comment.id}')">
-                                        <i class="fas fa-save"></i> 保存
-                                    </button>
-                                    <button class="btn btn-outline-secondary btn-sm" onclick="cancelCommentEdit('${comment.id}')">
-                                        キャンセル
-                                    </button>
-                                </div>
-                            </div>
+            <div class="card card-body py-2 px-3 position-relative">
+                <!-- 削除ボタンを右上に配置 -->
+                ${isOwnComment && !isDeleted && !isVirtualParent ? `
+                    <div class="position-absolute top-0 end-0 p-2">
+                        <a href="#" class="text-danger small text-decoration-none" onclick="deleteComment('${comment.id}'); return false;" style="font-size: 0.7rem;" title="コメントを削除">コメントを削除</a>
+                    </div>
+                ` : ''}
+                
+                <div class="comment-content">
+                    <div class="comment-meta mb-1 d-flex align-items-center">
+                        <strong class="me-2">${displayName}</strong>
+                        <small class="text-muted me-1">${displayDate}</small>
+                        ${!isDeleted && !isVirtualParent && isEdited ? '<small class="text-info me-2">(編集済み)</small>' : ''}
+                        ${isOwnComment && !isDeleted && !isVirtualParent ? `
+                            <button class="btn btn-link btn-sm p-1 ms-1 edit-meta-btn" onclick="showCommentEditForm('${comment.id}')" style="font-size: 0.75rem; line-height: 1; color: #6c757d;" title="コメントを編集">
+                                <i class="fas fa-edit me-1"></i>編集
+                            </button>
                         ` : ''}
                     </div>
+                    <div class="comment-text" id="commentText-${comment.id}">${commentText}</div>
+                    
+                    <!-- 編集フォーム（初期非表示） -->
+                    ${!isDeleted && !isVirtualParent ? `
+                        <div class="edit-form mt-2" id="editForm-${comment.id}" style="display: none;">
+                            <textarea class="form-control mb-2" id="editText-${comment.id}" rows="3">${escapeHtml(comment.comment || '')}</textarea>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success btn-sm" onclick="submitCommentEdit('${comment.id}')">
+                                    <i class="fas fa-save"></i> 保存
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="cancelCommentEdit('${comment.id}')">
+                                    キャンセル
+                                </button>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- 返信ボタンを右下に配置（子コメントがない場合のみ） -->
                     ${!isDeleted && !isVirtualParent && level === 0 && (!comment.replies || comment.replies.length === 0) ? `
-                        <div class="comment-actions ms-2">
+                        <div class="d-flex justify-content-end mt-2">
                             <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyForm('${comment.id}')">
                                 <i class="fas fa-reply"></i> 返信
                             </button>
