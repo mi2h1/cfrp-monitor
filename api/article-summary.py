@@ -128,7 +128,15 @@ class handler(BaseHTTPRequestHandler):
             print(f"Generating summary for {len(article_content)} characters of content")
             summary = self.generate_summary(article_content)
             
-            if summary:
+            if summary == "OVERLOADED":
+                # API過負荷の場合は専用のエラーメッセージを返す
+                response = {
+                    "success": False,
+                    "error": "AI要約サービスが一時的に過負荷状態です。しばらく待ってから再度お試しください。"
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
+            elif summary:
                 print(f"Summary generated successfully: {len(summary)} characters")
                 # 要約をデータベースに保存
                 try:
@@ -466,10 +474,17 @@ output_format: "要約のみをプレーンテキストで出力してくださ�
         except urllib.error.HTTPError as e:
             error_body = e.read().decode('utf-8')
             print(f"Gemini API HTTPError: {e.code} - {error_body}")
-            # エラー内容を詳細に表示
+            
+            # エラー内容を詳細に表示し、ユーザーフレンドリーなメッセージを作成
             try:
                 error_json = json.loads(error_body)
                 print(f"Gemini API Error Details: {json.dumps(error_json, indent=2)}")
+                
+                # 503エラー（サービス過負荷）の場合は分かりやすいメッセージにする
+                if e.code == 503:
+                    print("Gemini API is temporarily overloaded")
+                    return "OVERLOADED"  # 特別な値を返してフロントエンドで処理
+                
             except:
                 print(f"Raw error body: {error_body}")
             return None
