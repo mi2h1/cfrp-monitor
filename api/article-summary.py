@@ -125,9 +125,11 @@ class handler(BaseHTTPRequestHandler):
                 article_content = article_content[:max_length] + "..."
             
             # Google Gemini APIで要約生成
+            print(f"Generating summary for {len(article_content)} characters of content")
             summary = self.generate_summary(article_content)
             
             if summary:
+                print(f"Summary generated successfully: {len(summary)} characters")
                 # 要約をデータベースに保存
                 try:
                     save_result = update_ai_summary_direct(article_id, summary, user_data)
@@ -166,6 +168,7 @@ class handler(BaseHTTPRequestHandler):
                         }
                     }
             else:
+                print("Summary generation failed - returned None or empty")
                 response = {
                     "success": False,
                     "error": "要約の生成に失敗しました"
@@ -367,6 +370,7 @@ class handler(BaseHTTPRequestHandler):
     
     def generate_summary(self, article_text):
         """Google Gemini APIを使用して記事を要約"""
+        print(f"generate_summary called with {len(article_text)} characters")
         try:
             gemini_api_key = os.environ.get('GEMINI_API_KEY')
             if not gemini_api_key:
@@ -435,6 +439,7 @@ output_format: "要約のみをプレーンテキストで出力してくださ�
             req_data = json.dumps(request_data).encode('utf-8')
             req = urllib.request.Request(url, data=req_data, headers=headers)
             
+            print(f"Calling Gemini API with {len(req_data)} bytes of data")
             with urllib.request.urlopen(req, timeout=30) as response:
                 result = json.loads(response.read().decode('utf-8'))
                 
