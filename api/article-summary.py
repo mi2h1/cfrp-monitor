@@ -441,7 +441,10 @@ output_format: "要約のみをプレーンテキストで出力してくださ�
             
             print(f"Calling Gemini API with {len(req_data)} bytes of data")
             with urllib.request.urlopen(req, timeout=30) as response:
-                result = json.loads(response.read().decode('utf-8'))
+                response_data = response.read().decode('utf-8')
+                print(f"Gemini API response received: {len(response_data)} bytes")
+                result = json.loads(response_data)
+                print(f"Gemini API response parsed successfully")
                 
                 # レスポンスから要約テキストを抽出
                 if 'candidates' in result and len(result['candidates']) > 0:
@@ -463,10 +466,27 @@ output_format: "要約のみをプレーンテキストで出力してくださ�
         except urllib.error.HTTPError as e:
             error_body = e.read().decode('utf-8')
             print(f"Gemini API HTTPError: {e.code} - {error_body}")
+            # エラー内容を詳細に表示
+            try:
+                error_json = json.loads(error_body)
+                print(f"Gemini API Error Details: {json.dumps(error_json, indent=2)}")
+            except:
+                print(f"Raw error body: {error_body}")
             return None
         except urllib.error.URLError as e:
             print(f"Gemini API URLError: {e}")
+            print(f"URLError reason: {e.reason}")
+            return None
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")
+            try:
+                print(f"Response data that failed to parse: {response_data[:500]}...")
+            except:
+                print("Response data not available for display")
             return None
         except Exception as e:
             print(f"Gemini API Error: {e}")
+            print(f"Error type: {type(e).__name__}")
+            import traceback
+            print(f"Traceback: {traceback.format_exc()}")
             return None
