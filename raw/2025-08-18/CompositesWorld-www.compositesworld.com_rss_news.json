@@ -1,0 +1,442 @@
+[
+  {
+    "published": "Fri, 15 Aug 2025 14:00:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      15,
+      18,
+      0,
+      0,
+      4,
+      227,
+      0
+    ],
+    "title": "Smartbeam develops HMS-embedded composite profiles for space",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Smartbeam develops HMS-embedded composite profiles for space"
+    },
+    "summary": "Project goals adapted filament winding&nbsp;to properly integrate optical and carbon fiber sensors and meet technical requirements, resulting in a verified, simplified process for smart composite structures at reduced cost.",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "Project goals adapted filament winding&nbsp;to properly integrate optical and carbon fiber sensors and meet technical requirements, resulting in a verified, simplified process for smart composite structures at reduced cost."
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"centered g-img\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0725-cw-news-smartbeam-project-2.jpg\" target=\"_blank\"><!--[if IE 9]><video style='display: none;'><![endif]--> <source media=\"(min - width: 1000px)\" /> <source media=\"(min - width: 401px) and (max-width: 1000px)\" /> <source media=\"(max-width: 400px)\" /> <!--[if IE 9]></video><![endif]--> <img alt=\"\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0725-cw-news-smartbeam-project-2.jpg;maxWidth=720\" /> </a></div>\n\n<p>Bending test setup. Source (All Images) | Smartbeam project</p>\n</div>\n\n<p><a href=\"https://compotech.com/\" target=\"_blank\">Compo Tech PLUS&nbsp;spol. s r.o.&nbsp;</a>(Su&scaron;ice, Czech Republic) reports on its participation&nbsp;in the Smartbeam project led by&nbsp;spacecraft and launcher structures supplier&nbsp;<a href=\"https://www.ohb-czech.cz/\" target=\"_blank\">OHB</a><a href=\"https://www.ohb-czech.cz/\" target=\"_blank\"> Czechspace</a>&nbsp;(Brno-Medl&aacute;nky, Czechia). Supported by Future Innovation Research in Space Transportation (FIRST!), a Space Transportation (ESA STS)&nbsp;Future Launchers Preparatory Program (FLPP) initiative, Smartbeam&rsquo;s main objective is to create affordable and scalable manufacturing methods to enable the production of off-the-shelf smart composite structures for space applications. Through this, project partners aimed to develop and test a carbon fiber-reinforced polymer (CFRP)&nbsp;beam with an embedded health monitoring system (HMS).&nbsp;</p>\n\n<p>The project focused&nbsp;on two key goals: a universal manufacturing process, and an embedded HMS. Partners wanted to develop a universal process for producing CFRP trusses that allows manufacturing tubes with an integrated HMS in a wide range of dimensions (length, internal diameter, wall thickness and fiber orientation) at an attractive cost. Implementation of an HMS would enable real-time structural monitoring&nbsp;without significantly increasing manufacturing costs or compromising mechanical performance.</p>\n\n<p>Why was this development important for space structure applications? Technologies like Smartbeam&nbsp;are highly relevant in that it can&nbsp;significantly reduce inspection times by providing real-time structural health data. In reusable launchers, this minimizes ground time between launches. In spacecraft, it enables immediate identification of issues in orbit and targeted repairs or replacements of affected trusses, saving cost&nbsp;and reducing environmental impact by avoiding unnecessary disposal of undamaged components.</p>\n\n<p>CompoTech was responsible for developing the universal manufacturing process to produce CFRP tubes with integrated HMS. This process needed to accommodate various geometries and dimensions while ensuring consistent product quality and maintaining competitive costs.</p>\n\n<div class=\"article-figure fl-image fl-r font-weight-light g-img m-l-2 m-t-1 text-muted text-sm\">\n<div><img alt=\"\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0725-cw-news-smartbeam-project-1.jpg;maxWidth=385\" /></div>\n\n<div class=\"centered g-img\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0725-cw-news-smartbeam-project-3.jpg\" target=\"_blank\"><!--[if IE 9]><video style='display: none;'><![endif]--> <source media=\"(min - width: 1000px)\" /> <source media=\"(min - width: 401px) and (max-width: 1000px)\" /> <source media=\"(max-width: 400px)\" /> <!--[if IE 9]></video><![endif]--> <img alt=\"\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0725-cw-news-smartbeam-project-3.jpg;maxWidth=720\" /> </a>&nbsp;</div>\n</div>\n</div>\n\n<p>OHB Czechspace&nbsp;acted as the project leader and provided expertise on the space industry&rsquo;s technical requirements for structural components.&nbsp;CVUT FS was in charge of designing and preparing HMS sensors for integration. It also conducted mechanical testing and nondestructive evaluation of samples.</p>\n\n<p>In this project, CompoTech successfully developed the technology to integrate the optical measuring fibers used for the Distributed Fiber Optic Sensing (DFOS) method. This method is able to measure strain at points about 2.6&nbsp;millimeters apart along the entire length of the optical fiber. Carbon fiber sensors&nbsp;were also integrated to enable impaction detection.</p>\n\n<p>The carbon fiber sensors were incorporated directly during the filament winding process. They were placed between two layers of glass fabric prepreg to provide electrical insulation from the CFRP laminate. Optical fibers were positioned parallel to the carbon fiber sensors to simplify handling. The sensors were equipped with custom connectors, creating a plug-and-play interface that enables easy connection after manufacturing.</p>\n\n<p>The winding process itself became a technical hurdle during Smartbeam&rsquo;s development when determining how to prepare the sensors. The challenge, CompoTech explains,&nbsp;lay in precisely placing the connectors&nbsp;and meeting the high-temperature resistance requirements.&nbsp;Another issue that had to be solved was sealing the connectors against resin ingress during production.</p>\n\n<p>To overcome this, the&nbsp;team developed several design iterations and practical tooling to support sensor handling and placement, and multiple versions of connector housings were prototyped and tested.&nbsp;Special 3D printed fixtures were made for the connectors, and a connection interface with connectors was integrated so that no additional assembly was necessary after the profiles were wound. The filament winding process was also adapted to precisely position the sensors and ensure even coverage of their connectors, with modifications that prevented resin leakage around the connectors, and met requirements for thermal resistance, sealing&nbsp;and consistent laminate coverage.</p>\n\n<p>Upon completion, the project delivered:</p>\n\n<ul>\n\t<li>A verified manufacturing process for producing smart composite profiles with integrated sensors.</li>\n\t<li>Integrated connector interfaces eliminating post-production assembly steps.</li>\n\t<li>Solutions for resin sealing during curing.</li>\n\t<li>Verified sensor performance in mechanical and thermal tests.</li>\n\t<li>Initial evidence that carbon fiber sensors can detect impact under certain conditions.</li>\n</ul>\n\n<p>Correct functioning of the sensors was verified during mechanical tests in compression and bending. Initial information was obtained regarding the possibility of using a carbon sensor for impaction detection on this type of wound profile during impactions. Partners agree that, compared to traditional composites manufacturing, the Smartbeam approach simplifies integration of HMS&nbsp;and reduces time and cost for system assembly, making it well suited to reusable launcher structures, spacecraft components&nbsp;and ground support equipment.</p>\n\n<p>The next goal of the project is to increase TRL to at least 4 via breadboard validation in a laboratory environment.</p>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/smartbeam-develops-hms-embedded-composite-profiles-for-space"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/smartbeam-develops-hms-embedded-composite-profiles-for-space"
+  },
+  {
+    "published": "Fri, 15 Aug 2025 13:00:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      15,
+      17,
+      0,
+      0,
+      4,
+      227,
+      0
+    ],
+    "title": "Bcomp natural fiber composites to enhance Sunreef catamarans",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Bcomp natural fiber composites to enhance Sunreef catamarans"
+    },
+    "summary": "Innovative yacht manufacturer will use flax fiber-reinforced&nbsp;bio-based or recyclable resin to improve vibration damping, aesthetics and sustainability for its new 100 Sunreef Power cats.",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "Innovative yacht manufacturer will use flax fiber-reinforced&nbsp;bio-based or recyclable resin to improve vibration damping, aesthetics and sustainability for its new 100 Sunreef Power cats."
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"centered g-img\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-news-bcomp-sunreef.jpg\" target=\"_blank\"><!--[if IE 9]><video style='display: none;'><![endif]--> <source media=\"(min - width: 1000px)\" /> <source media=\"(min - width: 401px) and (max-width: 1000px)\" /> <source media=\"(max-width: 400px)\" /> <!--[if IE 9]></video><![endif]--> <img alt=\"Bcomp natural fiber composites for interiors of 100 Sunreef Power yacht\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-news-bcomp-sunreef.jpg;maxWidth=720\" /> </a></div>\n\n<p>Source (All Images) | Sunreef Yachts</p>\n</div>\n\n<p><a href=\"https://www.compositesworld.com/suppliers/bcomp\" target=\"_blank\">Bcomp</a> (Fribourg, Switzerland) is collaborating with <a href=\"https://sunreef-yachts.com/en/\" target=\"_blank\">Sunreef Yachts</a> (Gdańsk, Poland) to bring natural fiber composites into the interiors of the company&rsquo;s latest power catamaran.</p>\n\n<div class=\"article-figure fl-image fl-r font-weight-light g-img m-l-2 m-t-1 text-muted text-sm\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-news-bcomp-sunreef-helm.jpg\" target=\"_blank\"><img alt=\"natural fiber composites in navigation station of Sunreef Power 100 yacht\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-news-bcomp-sunreef-helm.jpg;maxWidth=385\" /></a></div>\n</div>\n\n<p>The forward section, bar, barbecue and navigation station of the&nbsp;<a href=\"https://sunreef-yachts.com/en/news/100-sunreef-power-superyacht-living-redefined/\" target=\"_blank\"><em>100&nbsp;Sunreef Power</em></a> will be built with Bcomp&rsquo;s ampliTex material, which is made from flax fiber combined with bio-based or recyclable resin. Bcomp explains that this is a nontoxic, more sustainable and stiffer alternative to glass fiber, featuring vibration-damping properties that create a quieter and more comfortable interior experience for passengers.</p>\n\n<p>These interior parts, says Bcomp, will impart durability with minimal environmental impact and feature an aesthetically striking pearl gray and charcoal color scheme.</p>\n\n<p>Moreover, these natural fiber composites, adds Bcomp, help address the customization needs of each yacht&nbsp;customer, while helping marine manufacturers meet both sustainability goals and modern design expectations.</p>\n\n<blockquote>\n<p>&ldquo;Luxury should be redefined, not by excess but by conscious creation,&rdquo; says Nicolas Lapp, CTO and co-founder at Sunreef. &ldquo;Collaborating with Bcomp, a company that shares our commitment to innovation and environmental responsibility, enabled us to explore a new design language where natural materials elevate both aesthetics and performance of our interiors.&rdquo;</p>\n</blockquote>\n\n<div class=\"article-figure fl-image fl-l font-weight-light g-img m-r-2 m-t-1 text-muted text-sm\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-news-bcomp-deck.jpg\" target=\"_blank\"><img alt=\"natural fiber composites in Sunreef Yachts\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-news-bcomp-deck.jpg;maxWidth=385\" /></a></div>\n</div>\n\n<p>With sustainability and innovation at the core of both brands, this collaboration marks a strategic step for high-performance bio-based materials in the yachting sector and opens the door to expanded&nbsp;use of these technical fabrics for semi-structural catamaran parts.</p>\n\n<blockquote>\n<p>&ldquo;This project is a powerful example of what&rsquo;s possible when it comes to sustainable yacht design&rdquo; says Paolo Dassi, marine and industry manager at Bcomp. &ldquo;By collaborating with Sunreef, we can establish bio-based composites as a staple in the customized design and construction of eco-catamarans.&rdquo;</p>\n</blockquote>\n\n<p>Bcomp&rsquo;s natural fiber composites withstand the most extreme conditions, from Formula 1 seats to production sailboats, yachts&nbsp;and dinghies, as well as solar-powered ferries.&nbsp;</p>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/bcomp-natural-fiber-composites-to-enhance-sunreef-catamarans"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/bcomp-natural-fiber-composites-to-enhance-sunreef-catamarans"
+  },
+  {
+    "published": "Fri, 15 Aug 2025 12:00:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      15,
+      16,
+      0,
+      0,
+      4,
+      227,
+      0
+    ],
+    "title": "Uavos equips Avincis helicopters with composite main rotor blades",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Uavos equips Avincis helicopters with composite main rotor blades"
+    },
+    "summary": "Composite rotor blades&nbsp;will support and enhance Avincis&rsquo; emergency&nbsp;aerial services, including the company&rsquo;s&nbsp;Lumes unmanned helicopter.",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "Composite rotor blades&nbsp;will support and enhance Avincis&rsquo; emergency&nbsp;aerial services, including the company&rsquo;s&nbsp;Lumes unmanned helicopter."
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"centered g-img\">\n<div>&nbsp;</div>\n\n<div>&nbsp;</div>\n</div>\n\n<div class=\"centered g-img\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0825-cw-lumes-equipped-with-uavos-blades.jpg\" target=\"_blank\"><!--[if IE 9]><video style='display: none;'><![endif]--> <source media=\"(min - width: 1000px)\" /> <source media=\"(min - width: 401px) and (max-width: 1000px)\" /> <source media=\"(max-width: 400px)\" /> <!--[if IE 9]></video><![endif]--> <img alt=\"Lumes unmanned helicopter platform. \" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0825-cw-lumes-equipped-with-uavos-blades.jpg;maxWidth=720\" /> </a></div>\n\n<p>Lumes unmanned helicopter platform. Source | Uavos, Avincis</p>\n</div>\n\n<p><a href=\"https://www.compositesworld.com/suppliers/uavos-inc\" target=\"_blank\">Uavos Inc.</a>&nbsp;(Mountain View, Calif., U.S.) has been&nbsp;selected by emergency aerial services provider <a href=\"https://www.avincis.com/\" target=\"_blank\">Avincis</a>&nbsp;(Madrid, Spain), a European company specializing in aerial emergency services and critical operations, to supply composite main rotor blades for its Lumes&nbsp;unmanned helicopter platform. This collaboration reinforces Uavos&rsquo;&nbsp;position as a trusted OEM supplier of advanced rotorcraft components to international unmanned platform operators.</p>\n\n<p>The delivered rotor blades are engineered using advanced composite materials to ensure high resistance to overload and fatigue; reduced weight and enhanced aerodynamic performance; and long service life and low-maintenance requirements.</p>\n\n<p>The blades have passed rigorous qualification tests, including overload, fatigue and environmental performance evaluations, ensuring their compliance with strict operational standards. Uavos says its&nbsp;rotor blades are an ideal match for multi-role unmanned helicopters operating in challenging conditions.</p>\n\n<p>&ldquo;We are committed to developing the latest technology to support and enhance the emergency aerial services we already provide to more than 50 customers across three continents,&rdquo; notes John Bag, Group CEO, Avincis. &ldquo;Lumes is one of the key products in the portfolio of innovations we are currently working on and Uavos&nbsp;will be an important partner in the journey to bringing this UAS platform to market in the near future.&rdquo;</p>\n\n<p>The collaboration is part of the Biodiversity Project, funded by the Xunta de Galicia within the framework of the Civil UAVs Initiative.</p>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/uavos-to-equip-avincis-helicopters-with-composite-main-rotor-blades"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/uavos-to-equip-avincis-helicopters-with-composite-main-rotor-blades"
+  },
+  {
+    "published": "Fri, 15 Aug 2025 11:00:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      15,
+      15,
+      0,
+      0,
+      4,
+      227,
+      0
+    ],
+    "title": "ACMA reaffirms GFRP grating standard manual",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "ACMA reaffirms GFRP grating standard manual"
+    },
+    "summary": "Official approval from ANSI earlier this year reinforces&nbsp;support for engineering and design innovation when working with fiberglass-reinforced polymer grating.",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "Official approval from ANSI earlier this year reinforces&nbsp;support for engineering and design innovation when working with fiberglass-reinforced polymer grating."
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"article-figure fl-image fl-r font-weight-light g-img m-l-2 m-t-1 text-muted text-sm\">\n<div><img alt=\"ACMA manual cover.\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0825-cw-news-acma-frpgratings-cover.jpg;maxWidth=385\" /></div>\n\n<p>Source | ACMA</p>\n</div>\n\n<p>The <a href=\"https://www.compositesworld.com/suppliers/acma-american-composites-manufacturers-association\" target=\"_blank\">American Composites Manufacturers Association</a> (ACMA, Arlington, Va., U.S.) has announced the reaffirmation of the ANSI/ACMA/FGMC-Grating Manual-2017 (R2025) &ldquo;FRP Composites Grating Manual for Pultruded and Molded Grating and Stair Treads.&rdquo; The standard received official approval from the American National Standards Institute (ANSI, Washington, D.C., U.S.) on April 29, 2025, with the final action recorded in the May 9, 2025, edition of ANSI<em> </em><a href=\"https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fd2v-g604.na1.hubspotlinks.com%2FCtc%2FW%2B113%2Fd2v-g604%2FVWXYrY7JbHnJW5fz48c1llVRJW6WXg815B6VmHN20xtvg5kBVzW69t95C6lZ3pcW3759kf2HX_6JN2C4nvlKCWMsW4G8Np985xvLCW58z6HS7dvF7jW353xPk6Wd1QNW5BHBDk1NBBQmV9Vb-P5Gvx_gN6xrlp0tV6j_W6F3w4Z294BhsW2c7YYf4V9-nXW7s35j43DjgqnW2DcWz05NNKBWVxyr5g2cDgcqW16VJyg76rdGqW8dBCxF2f048KVN1Rs081v4_KW4LH67Y56q1VCW1Y8Mgd5_bwGMN8Cn7XzBgGqnW8S3-4G2GZrw-VYLhzp6KTPG2W3YZkkm63rjBMW2GHSGW6z3MvVW4nlTJ64MYlVwW973zMG20TCQGW2V3Z0l42VdKyN7p7041t1vqCW1CLNcg8Z8fGrW608Lx12NKGMyW2H6TD729F7wZW979Gbm2nQg1tW2bJLG57CyN3wW6gl-_p8TZtHfW51PGq422thWRW4kdcx76TfVlCW4cmT_b1bK2w1f4KsxJF04&amp;data=05%7C02%7Cgnehls%40gardnerweb.com%7Cf952adc5332e4c015b9908ddd9988a60%7Ce20a8cb0b30a43d2841c1690a0420621%7C1%7C0%7C638905971500989132%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&amp;sdata=12LbvW1NE4KXdses1sKTHj5u9w05K07e4NDoT%2BKBKoU%3D&amp;reserved=0\" target=\"_blank\"><em>Standards Action</em></a> (vol. 56, no. 19).</p>\n\n<p>This comprehensive manual remains a vital tool for engineers, architects and designers working with fiberglass-reinforced polymer (GFRP) grating. It offers essential technical data including performance-based load tables, manufacturing tolerances and ordering guidance to support effective specification and design decisions.</p>\n\n<p>GFRP grating has been used for more than half a century and continues to gain traction due to its durability and adaptability. Unlike traditional materials such as metal, GFRP grating resists corrosion, weighs less&nbsp;and offers optimal strength-to-weight ratios. It also provides nonconductive properties and long-lasting color integration, making it ideal for use in harsh or demanding environments.</p>\n\n<p>A key distinction in GFRP design is its emphasis on serviceability &mdash; specifically deflection limits &mdash; over strength as the primary criterion for safety and performance. This design approach results in higher safety margins, providing engineers and facility managers with greater confidence in critical applications.</p>\n\n<p>The reaffirmed &ldquo;FRP Composites Grating Manual for Pultruded and Molded Grating and Stair Treads&rdquo; is available now for purchase in both digital and print formats via the <a href=\"https://my.acmanet.org/nc__store?category=a0L5w00000EeQvYEAV&amp;utm_medium=email&amp;_hsenc=p2ANqtz-8m_vo3EDDd4L9NsEQVvlLnnZXdLHZyXC8AuPECZVHW4SesNxU01Eb9k81LTr9LNwuvJgQVgwKjRh0rci7-ZcGh9ghn8A&amp;_hsmi=375508162&amp;utm_content=375508162&amp;utm_source=hs_email\" target=\"_blank\">ACMA web store</a>.&nbsp;</p>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/acma-reaffirms-gfrp-grating-standard-manual"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/acma-reaffirms-gfrp-grating-standard-manual"
+  },
+  {
+    "published": "Fri, 15 Aug 2025 10:30:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      15,
+      14,
+      30,
+      0,
+      4,
+      227,
+      0
+    ],
+    "title": "Europe launches MetOp-SG A1 meteorological satellite",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Europe launches MetOp-SG A1 meteorological satellite"
+    },
+    "summary": "Airbus-built satellite, supported by Beyond Gravity composite materials, is the first in a series of six satellites that will support weather forecasting into the mid-2040s.",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "Airbus-built satellite, supported by Beyond Gravity composite materials, is the first in a series of six satellites that will support weather forecasting into the mid-2040s."
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"article-figure fl-image fl-r font-weight-light g-img m-l-2 m-t-1 text-muted text-sm\">\n<div><img alt=\"MetOp-SG A1 satellite.\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0825-cw-news-airbus-metops-satellite.jpg;maxWidth=385\" /></div>\n\n<p>Source |&nbsp; 2025 ESA/CNES/ArianeSpace</p>\n</div>\n\n<p>On Aug. 13, Europe&rsquo;s next-gen&nbsp;meteorological satellites,&nbsp;MetOp-Second Generation (MetOp-SG) A1, successfully launched from&nbsp;Europe&rsquo;s Spaceport in Kourou, French Guiana, on board an <em>Ariane 6</em> rocket.</p>\n\n<p>The Airbus-built satellite, developed under the lead of the European Space Agency (ESA) for the European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT), has established communication and is beginning its commissioning phase. This launch marks the start of a new era that will significantly enhance weather forecasting accuracy, providing critical data for years to come.</p>\n\n<div class=\"article_sidebar\">\n<p>The&nbsp;6-meter, 1-ton structure &mdash; made of carbon fiber, aluminum&nbsp;and titanium for critical connections&nbsp;&mdash; was supported by&nbsp;<a href=\"https://www.beyondgravity.com/en\" target=\"_blank\">Beyond Gravity</a>&nbsp;(Zurich, Switzerland). The project includes EUMETSAT, the ESA, the European Union&rsquo;s Copernicus program, the French Space Agency (CNES), the German Aerospace Center (DLR), the UK Space Agency and an industrial consortium led by Airbus.&nbsp;<a href=\"https://www.compositesworld.com/news/beyond-gravity-composites-space-instruments-power-european-metop-weather-satellites\" target=\"_blank\">Learn more here</a>.</p>\n</div>\n\n<p>MetOp-SG A1 is the first in a new series of six satellites that will ensure the continuity and enhancement of meteorological data from space into the mid-2040s. The program&nbsp;consists of two types of satellites with three satellites each &mdash; &ldquo;A&rdquo;&nbsp;and &ldquo;B&rdquo;&nbsp;&mdash;&nbsp;which carry complementary instrument packages. This first &ldquo;A&rdquo;&nbsp;satellite is equipped with sophisticated atmospheric sounding and imaging instruments.&nbsp;The MetOp-SG B satellites carry instruments for microwave imaging and radar observations.&nbsp;</p>\n\n<p>The satellite&rsquo;s payload includes an infrared atmospheric sounding interferometer&nbsp;&ndash;&nbsp;next generation (IASI-NG), which will provide highly detailed data for weather forecasting and climate research. It also carries the METimage visible and infrared imager;&nbsp;a microwave sounder;&nbsp;a radio occultation sounder;&nbsp;and a&nbsp;multi-viewing, multi-channel, multi-polarization&nbsp;imager, designed to improve aerosol and cloud monitoring. Furthermore, the satellite hosts the Copernicus Sentinel-5 instrument, which will measure trace gases and pollutants to monitor atmospheric composition in high detail.</p>\n\n<p>The A-series satellites are being built at Airbus in Toulouse, France, and the B-series at Airbus in Friedrichshafen, in southern Germany. The nominal operational lifetime of each MetOp-SG satellite is 7.5 years, ensuring full operational coverage over a 21-year period.</p>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/europe-launches-metop-sg-a1-meteorological-satellite"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/europe-launches-metop-sg-a1-meteorological-satellite"
+  },
+  {
+    "published": "Fri, 15 Aug 2025 10:00:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      15,
+      14,
+      0,
+      0,
+      4,
+      227,
+      0
+    ],
+    "title": "DowAksa to continue carbon fiber operations under new name, Aksa Carbon",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "DowAksa to continue carbon fiber operations under new name, Aksa Carbon"
+    },
+    "summary": "Acrylic fiber producer Aksa Akrilik has completed the acquisition of Dow Europe Holding B.V.&rsquo;s 50% stake in DowAksa.&nbsp;",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "Acrylic fiber producer Aksa Akrilik has completed the acquisition of Dow Europe Holding B.V.&rsquo;s 50% stake in DowAksa.&nbsp;"
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"centered g-img\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-AksaCarbon-campus-entrance.jpg\" target=\"_blank\"><!--[if IE 9]><video style='display: none;'><![endif]--> <source media=\"(min - width: 1000px)\" /> <source media=\"(min - width: 401px) and (max-width: 1000px)\" /> <source media=\"(max-width: 400px)\" /> <!--[if IE 9]></video><![endif]--> <img alt=\"\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-AksaCarbon-campus-entrance.jpg;maxWidth=720\" /> </a></div>\n\n<p>Source | DowAksa (now Aksa Carbon)</p>\n</div>\n\n<p>Acrylic fiber producer&nbsp;<a href=\"https://www.aksa.com/en\" target=\"_blank\">Aksa Akrilik</a>&nbsp;(Yalova, Turkey), a subsidiary of Akk&ouml;k Holding, has taken another&nbsp;step toward its vision of expanding in advanced materials and delivering innovative solutions through the completed acquisition of&nbsp;Dow Europe Holding B.V.&rsquo;s (Hoek, Netherlands)&nbsp;50% stake in&nbsp;<a href=\"https://www.compositesworld.com/suppliers/dowaksa-carbon-fibers\" target=\"_blank\">DowAksa</a>&nbsp;(Gumussuyu/Istanbul, Turkey). With a&nbsp;cash payment of $125 million, Aksa Akrilik has become the sole owner of the business. This transaction places DowAksa&rsquo;s total valuation at approximately $450 million.</p>\n\n<blockquote>\n<p>Read &ldquo;<a href=\"https://www.compositesworld.com/news/dow-to-sell-50-ownership-in-dowaksa-carbon-fiber-jv\" target=\"_blank\">Dow to sell 50% ownership in DowAksa carbon fiber JV</a>&rdquo; for more info.</p>\n</blockquote>\n\n<p>Aksa Akrilik entered the carbon fiber market in 2009 and, in 2012, formed the 50-50 joint venture DowAksa with Dow Europe Holdings B.V.&nbsp;Cengiz Taş, board member of Akk&ouml;k Holding, and president of the group&rsquo;s Chemicals and Advanced Materials division, emphasizes that&nbsp;gaining full ownership of DowAksa is a key milestone in Aksa&rsquo;s transformation into a global player, not only in acrylic fiber production but also in carbon fiber-based advanced material solutions.</p>\n\n<p>&ldquo;Bringing DowAksa entirely under the Aksa Akrilik umbrella is more than an acquisition; it represents the restructuring of knowledge, expertise&nbsp;and technology in advanced materials,&rdquo; says Taş.&nbsp;</p>\n\n<p>Operating under its new name, Aksa Carbon, the company will be led by G&uuml;rcan Koman, vice president of Akk&ouml;k Chemicals and Advanced Materials Group, who has been appointed as general manager. Koman graduated from Middle East Technical University (METU) in chemical engineering in 2005 and began his career at Aksa Akrilik in 2006. He has held leadership positions in critical areas such as production, R&amp;D&nbsp;and product development. Since 2019, he served as factory director at Aksa. As of January 2025, he has been appointed vice president of Akk&ouml;k&rsquo;s Chemicals and Advanced Materials Group.&nbsp;</p>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/dowaksa-to-continue-carbon-fiber-operations-under-new-name-aksa-carbon"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/dowaksa-to-continue-carbon-fiber-operations-under-new-name-aksa-carbon"
+  },
+  {
+    "published": "Thu, 14 Aug 2025 12:30:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      14,
+      16,
+      30,
+      0,
+      3,
+      226,
+      0
+    ],
+    "title": "Purdue, Thermwood explore the acceleration of composites manufacturing through 3D printing",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Purdue, Thermwood explore the acceleration of composites manufacturing through 3D printing"
+    },
+    "summary": "A video interview highlights how the&nbsp;university, the CAMS Consortium&nbsp;and Thermwood&rsquo;s LSAM&nbsp;technology have enabled&nbsp;first-time-right&nbsp;production.",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "A video interview highlights how the&nbsp;university, the CAMS Consortium&nbsp;and Thermwood&rsquo;s LSAM&nbsp;technology have enabled&nbsp;first-time-right&nbsp;production."
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"centered g-img\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0825-cw-news-thermwood-purdue-thumbnail.jpg\" target=\"_blank\"><!--[if IE 9]><video style='display: none;'><![endif]--> <source media=\"(min - width: 1000px)\" /> <source media=\"(min - width: 401px) and (max-width: 1000px)\" /> <source media=\"(max-width: 400px)\" /> <!--[if IE 9]></video><![endif]--> <img alt=\"Thumbnail of interview video.\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0825-cw-news-thermwood-purdue-thumbnail.jpg;maxWidth=720\" /> </a></div>\n\n<p>Source | Thermwood</p>\n</div>\n\n<p>Purdue University&rsquo;s (West Lafayette, Ind., U.S.) <a href=\"https://www.purdue.edu/cmsc/\" target=\"_blank\">Composites Manufacturing and Simulation Center</a> (CMSC) and <a href=\"https://www.compositesworld.com/suppliers/thermwood\" target=\"_blank\">Thermwood Corp.</a> (Dale, U.S.) have joined forces to merge predictive simulation with large-scale 3D printing, enabling &ldquo;first-time-right&rdquo; production of advanced composite parts.</p>\n\n<p>In an interview, Purdue&rsquo;s Dr. Byron Pipes and Dr. Eduardo Barocio share how this collaboration between the university, the CAMS Consortium&nbsp;and Thermwood&rsquo;s large-scale additive manufacturing (LSAM) technology is redefining how research moves from the lab to the factory floor. The result? Faster&nbsp;development, reduces costs and stronger, more complex structures. From advancing large-scale 3D printing to developing simulation-driven software tools, this partnership aims to&nbsp;accelerate&nbsp;innovation and transform&nbsp;how research translates into real-world industrial solutions.</p>\n\n<p>Some key insights from the interview address:</p>\n\n<ul>\n\t<li>Why digital simulation is the key to unlocking the full potential of additive manufacturing</li>\n\t<li>How LSAM technology helps bridge the gap between research and production</li>\n\t<li>The impact of collaborative research on the future of composite materials for aerospace, automotive&nbsp;and defense</li>\n</ul>\n\n<p>&ldquo;It is one of the most exciting problems I&rsquo;ve worked on,&rdquo; says Pipes during the interview. &ldquo;Thermwood is innovative from the very top. Some of the smartest people I&rsquo;ve ever met work in this organization.&rdquo;</p>\n\n<p>Access the complete interview in the video below or on <a href=\"https://blog.thermwood.com/shaping-the-future-of-composites-manufacturing?utm_campaign=19051150-Shaping%20the%20Future%20of%20Composites%20Manufacturing%20-%20LSAM%20Purdue%20Interview%208-8-25&amp;utm_source=Press%20Release&amp;utm_medium=Press%20Release&amp;utm_term=Press%20Release&amp;utm_content=Press%20Release\" target=\"_blank\">Thermwood&rsquo;s website</a>.</p>\n\n<div style=\"text-align: center;\"></div>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/purdue-thermwood-explore-the-acceleration-of-composites-manufacturing-through-3d-printing"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/purdue-thermwood-explore-the-acceleration-of-composites-manufacturing-through-3d-printing"
+  },
+  {
+    "published": "Wed, 13 Aug 2025 15:00:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      13,
+      19,
+      0,
+      0,
+      2,
+      225,
+      0
+    ],
+    "title": "Fibre Glast achieves AS9120B certification",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Fibre Glast achieves AS9120B certification"
+    },
+    "summary": "Composites distributor demonstrates compliance with rigorous aerospace, aviation&nbsp;and defense quality standards in addition to its existing ISO 9001:2015 certification.",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "Composites distributor demonstrates compliance with rigorous aerospace, aviation&nbsp;and defense quality standards in addition to its existing ISO 9001:2015 certification."
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"centered g-img\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-news-FibreGlast-building.jpg\" target=\"_blank\"><!--[if IE 9]><video style='display: none;'><![endif]--> <source media=\"(min - width: 1000px)\" /> <source media=\"(min - width: 401px) and (max-width: 1000px)\" /> <source media=\"(max-width: 400px)\" /> <!--[if IE 9]></video><![endif]--> <img alt=\"Fibre Glast exterior HQ.\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/CW/2025-CW/0825-cw-news-FibreGlast-building.jpg;maxWidth=720\" /> </a></div>\n\n<p>Source | Fibre Glast Development Corp.</p>\n</div>\n\n<p><a href=\"https://www.compositesworld.com/suppliers/fibre-glast-developments\" target=\"_blank\">Fibre Glast Developments Corp. LLC</a> (Brookville, Ohio, U.S.) a composite materials distributor since 1957, announces that it is now AS9120B certified, adding to its ISO 9001:2015 certification.&nbsp;Fibre Glast now meets the elevated quality management standards required of aerospace, aviation and defense distributors.</p>\n\n<p>AS9120B, developed by the International Aerospace Quality Group (IAQG, Brussel, Belgium) and published by SAE International (Warrendale, Pa., U.S.), builds upon ISO 9001:2015 by adding aerospace-specific requirements such as risk-based thinking, organizational context, product safety, counterfeit parts prevention&nbsp;and enhanced performance evaluation. Distributors holding AS9120B certification adhere to stringent quality systems that meet the exacting demands of aviation, space&nbsp;and defense industries, ensuring traceability, consistency&nbsp;and reliability throughout the supply chain.</p>\n\n<p>&ldquo;Achieving AS9120B certification marks a pivotal step in Fibre Glast&rsquo;s ongoing commitment to customer satisfaction and continuous improvement. It further strengthens the company&rsquo;s standing as a world-class distributor,&rdquo; says Mark Knight, Fibre Glast CEO. The company is known for its extensive product portfolio &mdash; from reinforcements, core materials, resins and vacuum bagging supplies to tools &mdash; same-day shipping&nbsp;and customer-first ethos.</p>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/fibre-glast-achieves-as9120b-certification"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/fibre-glast-achieves-as9120b-certification"
+  },
+  {
+    "published": "Wed, 13 Aug 2025 14:00:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      13,
+      18,
+      0,
+      0,
+      2,
+      225,
+      0
+    ],
+    "title": "Eric Hein joins NIAR as director of strategy, product development",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Eric Hein joins NIAR as director of strategy, product development"
+    },
+    "summary": "Eric Hein, a veteran of more than 20 years in aerospace and defense with leadership positions held at Spirit AeroSystems, Cessna and Boeing, will lead strategic planning and product development initiatives.",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "Eric Hein, a veteran of more than 20 years in aerospace and defense with leadership positions held at Spirit AeroSystems, Cessna and Boeing, will lead strategic planning and product development initiatives."
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"article-figure fl-image fl-r font-weight-light g-img m-l-2 m-t-1 text-muted text-sm\">\n<div><img alt=\"Eric Hein headshot.\" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0825-cw-news-niar-erichein-original.jpeg;maxWidth=385\" /></div>\n\n<p>Eric Hein. Source | WSU-NIAR</p>\n</div>\n\n<p>Wichita State University&rsquo;s (WSU, Kan., U.S.) <a href=\"https://www.compositesworld.com/suppliers/national-institute-for-aviation-research\" target=\"_blank\">National Institute for Aviation Research</a> (NIAR) announces the appointment of Eric Hein as director of strategy and product development. In this role, Hein will lead the institute&rsquo;s long-term strategic planning and guide product development efforts that support industry partners and the U.S. Department of Defense.</p>\n\n<p>Hein brings more than 20 years of experience in the aerospace industry, leading engineering, R&amp;D and defense program execution efforts. At NIAR, he will be responsible for connecting advanced technologies to end users, fostering strategic partnerships and advancing innovative products.</p>\n\n<p>&ldquo;We are excited to welcome Eric back to WSU,&rdquo; says&nbsp;John Tomblin, WSU executive vice president&nbsp;for Research and Industry and Defense Programs and NIAR executive director. &ldquo;His extensive background in defense programs, product development&nbsp;and strategic innovation will significantly improve our ability to streamline capabilities across our organization to expand our capabilities, bandwidth and R&amp;D portfolio.&rdquo;</p>\n\n<p>Prior to joining NIAR, Hein served as vice president of defense programs at Spirit AeroSystems, where he led the execution of key defense contracts and guided the company&rsquo;s expansion into new defense markets. He began his career at Spirit in 2010, managing propulsion product engineering teams for Boeing programs, including the KC-46A tanker and the 737 <em>Max</em>. He went on to lead the 737 <em>Max</em> Propulsion Integrated Product Team and later served as senior director of research and technology, overseeing Spirit&rsquo;s R&amp;D portfolio, materials and processes group, structures engineering team&nbsp;and test labs.</p>\n\n<p>Previously Hein held engineering roles at Cessna and Boeing, contributing to a broad range of commercial and business aircraft programs. He has a private pilot license and Six Sigma certification.</p>\n\n<p>Hein graduated from WSU with a B.S. and M.S. in aerospace engineering. He serves on the board of directors for the American Red Cross of South Central and Southeast Kansas.</p>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/eric-hein-joins-niar-as-director-of-strategy-product-development"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/eric-hein-joins-niar-as-director-of-strategy-product-development"
+  },
+  {
+    "published": "Wed, 13 Aug 2025 13:00:00 -0400",
+    "published_parsed": [
+      2025,
+      8,
+      13,
+      17,
+      0,
+      0,
+      2,
+      225,
+      0
+    ],
+    "title": "Beta Alia aircraft flight kicks off Test Arena operations in Norway",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Beta Alia aircraft flight kicks off Test Arena operations in Norway"
+    },
+    "summary": "Demonstration eVTOL flights through the Test Arena established by Avinor and CAA Norway are designed to evaluate use cases and routes for zero- and low-emission aviation in the Nordic region.",
+    "summary_detail": {
+      "type": "text/html",
+      "language": null,
+      "base": "",
+      "value": "Demonstration eVTOL flights through the Test Arena established by Avinor and CAA Norway are designed to evaluate use cases and routes for zero- and low-emission aviation in the Nordic region."
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "language": null,
+        "base": "",
+        "value": "<div class=\"centered g-img\">\n<div><a class=\"js-lightbox\" href=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0825-cw-news-beta-alia-cx300-norway-flight.jpg\" target=\"_blank\"><!--[if IE 9]><video style='display: none;'><![endif]--> <source media=\"(min - width: 1000px)\" /> <source media=\"(min - width: 401px) and (max-width: 1000px)\" /> <source media=\"(max-width: 400px)\" /> <!--[if IE 9]></video><![endif]--> <img alt=\"All-electric Alia CX300 flies over Norway. \" src=\"https://d2n4wb9orp1vta.cloudfront.net/cms/brand/cw/2025-cw/0825-cw-news-beta-alia-cx300-norway-flight.jpg;maxWidth=720\" /> </a></div>\n\n<p>All-electric <em>Alia CX300</em> flies over Norway. Source | Beta Technologies</p>\n</div>\n\n<p>In early August, <a href=\"https://www.bristowgroup.com/\" target=\"_blank\">Bristow Norway AS</a> (Sola),&nbsp;a subsidiary of Bristow Group Inc., flew&nbsp;<a href=\"http://beta.team/\" target=\"_blank\">Beta Technologies</a>&nbsp;(South Burlington, Vt., U.S.)&nbsp;all-electric <em>Alia&nbsp;CX300</em> aircraft at Stavanger Airport, marking the first operations of&nbsp;Norway&rsquo;s&nbsp;Test Arena for zero- and low-emission aviation (for related content, read &ldquo;<a href=\"https://www.compositesworld.com/news/second-beta-ectol-to-join-norway-international-aircraft-test-arena\" target=\"_blank\">Second Beta eCTOL&nbsp;to join Norway&nbsp;international aircraft test arena</a>&rdquo;). The flights, which are being conducted in cooperation with Avinor&nbsp;(Oslo, Norway) and the Civil Aviation Authority of&nbsp;Norway&nbsp;(CAA Norway), mark a step toward integrating and scaling advanced air mobility (AAM) in&nbsp;Norway&nbsp;and the surrounding regions.</p>\n\n<p>The Test Arena will consist of a series of evaluation flights over the next several months, to test likely customer routes at Avinor-owned airports throughout&nbsp;Norway. Early routes will see <em>Alia</em>&nbsp;fly between Stavanger and Bergen airports, with potential for the program to expand to additional routes across&nbsp;Norway&nbsp;later this year. The aircraft will be flown by Beta-trained Bristow pilots.</p>\n\n<p>&ldquo;This first flight represents a significant step on a long and complex journey,&rdquo; explains Minister of Transport Jon-Ivar Nyg&aring;rd. &ldquo;The Test Arena demonstrates cooperation between authorities, airports, manufacturers, operators &mdash; and not least, political support &mdash; which is&nbsp;essential.&rdquo; The information learned through this program will&nbsp;provide&nbsp;valuable operational insights that could help operators, manufacturers&nbsp;and regulators better understand how best to move forward toward&nbsp;commercial operations.</p>\n\n<p>Norway&nbsp;has already established itself as a leader in innovative clean mobility, with electric cars comprising 89% of new car registrations in 2024. This Test Arena is an evaluation of the benefits of AAM for the region and its residents &mdash; as well as an investigation into the requirements to build out an ecosystem for integrated operations.</p>\n\n<p>With its composites-intensive design that optimizes payload, range&nbsp;and IFR capabilities, <em>Alia</em>&nbsp;is considered to be well-suited to&nbsp;Norway&rsquo;s&nbsp;distributed geography and cold-weather conditions.</p>\n\n<p>A team of Beta&nbsp;pilots and maintainers have delivered the&nbsp;aircraft, N214BT, to the Test Arena following a weeks-long journey across the European Union. The flights, which originated in Shannon,&nbsp;Ireland, have taken Beta&rsquo;s&nbsp;aircraft over the Irish Sea, through the U.K., over the English Channel&nbsp;and to the Paris Air Show, followed by&nbsp;Germany,&nbsp;Luxembourg,&nbsp;Denmark&nbsp;and, ultimately, Norway.</p>"
+      }
+    ],
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://www.compositesworld.com/news/beta-alia-aircraft-flight-kicks-off-test-arena-operations-in-norway"
+      }
+    ],
+    "link": "https://www.compositesworld.com/news/beta-alia-aircraft-flight-kicks-off-test-arena-operations-in-norway"
+  }
+]
