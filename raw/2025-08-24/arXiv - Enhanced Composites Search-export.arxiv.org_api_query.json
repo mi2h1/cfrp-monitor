@@ -1,0 +1,93 @@
+[
+  {
+    "id": "http://arxiv.org/abs/2508.11392v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2508.11392v1",
+    "updated": "2025-08-15T10:51:30Z",
+    "updated_parsed": [
+      2025,
+      8,
+      15,
+      10,
+      51,
+      30,
+      4,
+      227,
+      0
+    ],
+    "published": "2025-08-15T10:51:30Z",
+    "published_parsed": [
+      2025,
+      8,
+      15,
+      10,
+      51,
+      30,
+      4,
+      227,
+      0
+    ],
+    "title": "A 3D porous MXene/PNIPAAm hydrogel composite with advanced degradation\n  stability and control of electronic properties in air",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "A 3D porous MXene/PNIPAAm hydrogel composite with advanced degradation\n  stability and control of electronic properties in air"
+    },
+    "summary": "This study reports the fundamental investigation of a novel composite\nmaterial consisting of MXene (Ti$_3$C$_2$T$_x$) and a stimulus-responsive\nhydrogel (Poly(N-isopropylacrylamide) - PNIPAAm). In contrast to previously\nreported integration of MXene and hydrogels, the material described here offers\na tunable porous structure for volatile organic compound (VOC) sensing that\nmaintains its stability and responsiveness in any kind of gaseous environment\nand in a dried state. Furthermore, its synthesis is significantly simpler and\nmore efficient compared to other studies on porous MXene composites. The\npresented study focuses on a fundamental investigation of the synthesized\nMXene/PNIPAAm composite's properties. Thereby, the fabrication and comparison\nof pure MXene and composite samples featuring either a compact or a highly\nporous three-dimensional microstructure, reveal unique properties with respect\nto: (i) controllable three-dimensional spatial arrangement of MXene instead of\nthe prevalent stacked-sheet structure, (ii) reduction of oxidation-induced\ndegradation of MXene and substantially enhanced stability over the course of\nthree months, and (iii) tunable electronic states in response to gas\ninteractions. Material characterization is conducted by scanning electron\nmicroscopy and rheology to assess the microstructural and mechanical\nproperties, and in a chemiresistive measurement setup for determination of\nelectrical properties and the evaluation of the composite's potential for VOC\nsensing in a gaseous environment with the test analyte acetone. These\ninvestigations reveal fundamentally novel material effects and properties that\naddress some of the key MXene-related challenges. Additionally, the interplay\nbetween the MXene and the hydrogel enables unprecedented opportunities for\nenhancing the sensing potential of stimulus-responsive hydrogels, specifically\nin gaseous environments.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "This study reports the fundamental investigation of a novel composite\nmaterial consisting of MXene (Ti$_3$C$_2$T$_x$) and a stimulus-responsive\nhydrogel (Poly(N-isopropylacrylamide) - PNIPAAm). In contrast to previously\nreported integration of MXene and hydrogels, the material described here offers\na tunable porous structure for volatile organic compound (VOC) sensing that\nmaintains its stability and responsiveness in any kind of gaseous environment\nand in a dried state. Furthermore, its synthesis is significantly simpler and\nmore efficient compared to other studies on porous MXene composites. The\npresented study focuses on a fundamental investigation of the synthesized\nMXene/PNIPAAm composite's properties. Thereby, the fabrication and comparison\nof pure MXene and composite samples featuring either a compact or a highly\nporous three-dimensional microstructure, reveal unique properties with respect\nto: (i) controllable three-dimensional spatial arrangement of MXene instead of\nthe prevalent stacked-sheet structure, (ii) reduction of oxidation-induced\ndegradation of MXene and substantially enhanced stability over the course of\nthree months, and (iii) tunable electronic states in response to gas\ninteractions. Material characterization is conducted by scanning electron\nmicroscopy and rheology to assess the microstructural and mechanical\nproperties, and in a chemiresistive measurement setup for determination of\nelectrical properties and the evaluation of the composite's potential for VOC\nsensing in a gaseous environment with the test analyte acetone. These\ninvestigations reveal fundamentally novel material effects and properties that\naddress some of the key MXene-related challenges. Additionally, the interplay\nbetween the MXene and the hydrogel enables unprecedented opportunities for\nenhancing the sensing potential of stimulus-responsive hydrogels, specifically\nin gaseous environments."
+    },
+    "authors": [
+      {
+        "name": "Sitao Wang"
+      },
+      {
+        "name": "Chen Jiao"
+      },
+      {
+        "name": "Gerald Gerlach"
+      },
+      {
+        "name": "Julia Körner"
+      }
+    ],
+    "author_detail": {
+      "name": "Julia Körner"
+    },
+    "author": "Julia Körner",
+    "arxiv_comment": "Contains supporting information at the end",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2508.11392v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2508.11392v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cond-mat.soft",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cond-mat.soft",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  }
+]
