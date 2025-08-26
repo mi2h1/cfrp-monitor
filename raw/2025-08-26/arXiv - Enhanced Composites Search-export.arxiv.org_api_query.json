@@ -1,0 +1,483 @@
+[
+  {
+    "id": "http://arxiv.org/abs/2508.16857v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2508.16857v1",
+    "updated": "2025-08-23T01:00:43Z",
+    "updated_parsed": [
+      2025,
+      8,
+      23,
+      1,
+      0,
+      43,
+      5,
+      235,
+      0
+    ],
+    "published": "2025-08-23T01:00:43Z",
+    "published_parsed": [
+      2025,
+      8,
+      23,
+      1,
+      0,
+      43,
+      5,
+      235,
+      0
+    ],
+    "title": "Neural Contrast Expansion for Explainable Structure-Property Prediction\n  and Random Microstructure Design",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Neural Contrast Expansion for Explainable Structure-Property Prediction\n  and Random Microstructure Design"
+    },
+    "summary": "Effective properties of composite materials are defined as the ensemble\naverage of property-specific PDE solutions over the underlying microstructure\ndistributions. Traditionally, predicting such properties can be done by solving\nPDEs derived from microstructure samples or building data-driven models that\ndirectly map microstructure samples to properties. The former has a higher\nrunning cost, but provides explainable sensitivity information that may guide\nmaterial design; the latter could be more cost-effective if the data overhead\nis amortized, but its learned sensitivities are often less explainable. With a\nfocus on properties governed by linear self-adjoint PDEs (e.g., Laplace,\nHelmholtz, and Maxwell curl-curl) defined on bi-phase microstructures, we\npropose a structure-property model that is both cost-effective and explainable.\nOur method is built on top of the strong contrast expansion (SCE) formalism,\nwhich analytically maps $N$-point correlations of an unbounded random field to\nits effective properties. Since real-world material samples have finite sizes\nand analytical PDE kernels are not always available, we propose Neural Contrast\nExpansion (NCE), an SCE-inspired architecture to learn surrogate PDE kernels\nfrom structure-property data. For static conduction and electromagnetic wave\npropagation cases, we show that NCE models reveal accurate and insightful\nsensitivity information useful for material design. Compared with other PDE\nkernel learning methods, our method does not require measurements about the PDE\nsolution fields, but rather only requires macroscopic property measurements\nthat are more accessible in material development contexts.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Effective properties of composite materials are defined as the ensemble\naverage of property-specific PDE solutions over the underlying microstructure\ndistributions. Traditionally, predicting such properties can be done by solving\nPDEs derived from microstructure samples or building data-driven models that\ndirectly map microstructure samples to properties. The former has a higher\nrunning cost, but provides explainable sensitivity information that may guide\nmaterial design; the latter could be more cost-effective if the data overhead\nis amortized, but its learned sensitivities are often less explainable. With a\nfocus on properties governed by linear self-adjoint PDEs (e.g., Laplace,\nHelmholtz, and Maxwell curl-curl) defined on bi-phase microstructures, we\npropose a structure-property model that is both cost-effective and explainable.\nOur method is built on top of the strong contrast expansion (SCE) formalism,\nwhich analytically maps $N$-point correlations of an unbounded random field to\nits effective properties. Since real-world material samples have finite sizes\nand analytical PDE kernels are not always available, we propose Neural Contrast\nExpansion (NCE), an SCE-inspired architecture to learn surrogate PDE kernels\nfrom structure-property data. For static conduction and electromagnetic wave\npropagation cases, we show that NCE models reveal accurate and insightful\nsensitivity information useful for material design. Compared with other PDE\nkernel learning methods, our method does not require measurements about the PDE\nsolution fields, but rather only requires macroscopic property measurements\nthat are more accessible in material development contexts."
+    },
+    "authors": [
+      {
+        "name": "Guangyu Nie"
+      },
+      {
+        "name": "Yang Jiao"
+      },
+      {
+        "name": "Yi Ren"
+      }
+    ],
+    "author_detail": {
+      "name": "Yi Ren"
+    },
+    "author": "Yi Ren",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2508.16857v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2508.16857v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cs.LG",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cs.LG",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2508.11392v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2508.11392v1",
+    "updated": "2025-08-15T10:51:30Z",
+    "updated_parsed": [
+      2025,
+      8,
+      15,
+      10,
+      51,
+      30,
+      4,
+      227,
+      0
+    ],
+    "published": "2025-08-15T10:51:30Z",
+    "published_parsed": [
+      2025,
+      8,
+      15,
+      10,
+      51,
+      30,
+      4,
+      227,
+      0
+    ],
+    "title": "A 3D porous MXene/PNIPAAm hydrogel composite with advanced degradation\n  stability and control of electronic properties in air",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "A 3D porous MXene/PNIPAAm hydrogel composite with advanced degradation\n  stability and control of electronic properties in air"
+    },
+    "summary": "This study reports the fundamental investigation of a novel composite\nmaterial consisting of MXene (Ti$_3$C$_2$T$_x$) and a stimulus-responsive\nhydrogel (Poly(N-isopropylacrylamide) - PNIPAAm). In contrast to previously\nreported integration of MXene and hydrogels, the material described here offers\na tunable porous structure for volatile organic compound (VOC) sensing that\nmaintains its stability and responsiveness in any kind of gaseous environment\nand in a dried state. Furthermore, its synthesis is significantly simpler and\nmore efficient compared to other studies on porous MXene composites. The\npresented study focuses on a fundamental investigation of the synthesized\nMXene/PNIPAAm composite's properties. Thereby, the fabrication and comparison\nof pure MXene and composite samples featuring either a compact or a highly\nporous three-dimensional microstructure, reveal unique properties with respect\nto: (i) controllable three-dimensional spatial arrangement of MXene instead of\nthe prevalent stacked-sheet structure, (ii) reduction of oxidation-induced\ndegradation of MXene and substantially enhanced stability over the course of\nthree months, and (iii) tunable electronic states in response to gas\ninteractions. Material characterization is conducted by scanning electron\nmicroscopy and rheology to assess the microstructural and mechanical\nproperties, and in a chemiresistive measurement setup for determination of\nelectrical properties and the evaluation of the composite's potential for VOC\nsensing in a gaseous environment with the test analyte acetone. These\ninvestigations reveal fundamentally novel material effects and properties that\naddress some of the key MXene-related challenges. Additionally, the interplay\nbetween the MXene and the hydrogel enables unprecedented opportunities for\nenhancing the sensing potential of stimulus-responsive hydrogels, specifically\nin gaseous environments.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "This study reports the fundamental investigation of a novel composite\nmaterial consisting of MXene (Ti$_3$C$_2$T$_x$) and a stimulus-responsive\nhydrogel (Poly(N-isopropylacrylamide) - PNIPAAm). In contrast to previously\nreported integration of MXene and hydrogels, the material described here offers\na tunable porous structure for volatile organic compound (VOC) sensing that\nmaintains its stability and responsiveness in any kind of gaseous environment\nand in a dried state. Furthermore, its synthesis is significantly simpler and\nmore efficient compared to other studies on porous MXene composites. The\npresented study focuses on a fundamental investigation of the synthesized\nMXene/PNIPAAm composite's properties. Thereby, the fabrication and comparison\nof pure MXene and composite samples featuring either a compact or a highly\nporous three-dimensional microstructure, reveal unique properties with respect\nto: (i) controllable three-dimensional spatial arrangement of MXene instead of\nthe prevalent stacked-sheet structure, (ii) reduction of oxidation-induced\ndegradation of MXene and substantially enhanced stability over the course of\nthree months, and (iii) tunable electronic states in response to gas\ninteractions. Material characterization is conducted by scanning electron\nmicroscopy and rheology to assess the microstructural and mechanical\nproperties, and in a chemiresistive measurement setup for determination of\nelectrical properties and the evaluation of the composite's potential for VOC\nsensing in a gaseous environment with the test analyte acetone. These\ninvestigations reveal fundamentally novel material effects and properties that\naddress some of the key MXene-related challenges. Additionally, the interplay\nbetween the MXene and the hydrogel enables unprecedented opportunities for\nenhancing the sensing potential of stimulus-responsive hydrogels, specifically\nin gaseous environments."
+    },
+    "authors": [
+      {
+        "name": "Sitao Wang"
+      },
+      {
+        "name": "Chen Jiao"
+      },
+      {
+        "name": "Gerald Gerlach"
+      },
+      {
+        "name": "Julia Körner"
+      }
+    ],
+    "author_detail": {
+      "name": "Julia Körner"
+    },
+    "author": "Julia Körner",
+    "arxiv_comment": "Contains supporting information at the end",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2508.11392v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2508.11392v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cond-mat.soft",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cond-mat.soft",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2508.09329v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2508.09329v1",
+    "updated": "2025-08-12T20:33:01Z",
+    "updated_parsed": [
+      2025,
+      8,
+      12,
+      20,
+      33,
+      1,
+      1,
+      224,
+      0
+    ],
+    "published": "2025-08-12T20:33:01Z",
+    "published_parsed": [
+      2025,
+      8,
+      12,
+      20,
+      33,
+      1,
+      1,
+      224,
+      0
+    ],
+    "title": "Exploring the Nonlinear Rheology of Composite Hydrogels: A New Paradigm\n  for LAOS Analysis",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Exploring the Nonlinear Rheology of Composite Hydrogels: A New Paradigm\n  for LAOS Analysis"
+    },
+    "summary": "We investigate composite biopolymer networks composed of co-polymerized\nfibrin and gelatin networks and perform rheological measurements over a broad\nparameter space including strain amplitudes that go beyond the linear response\nregime. One goal of the work presented here is to provide a prototypical\nbiocomposite material with highly separable polymerization times and controlled\nnonlinear rheological characteristics. We then extend the Sequence of Physical\nProcesses (SPP)\\cite{Rogers2017} into a statistical and geometrical framework\nthat fingerprints the nonlinear rheological response of biopolymer composite\ngels. Our analysis is based on the changes in the shape of the time-dependent\nCole-Cole plots that allow to reduce the time resolved analysis of the SPP\nmethod into the transition between linear and nonlinear behavior as the\nrheological parameters are varied. While the results clearly highlight how the\nmechanical responses of individual constituents are not simply additive, our\nextended SPP analysis provides a robust and intuitive classification scheme for\ncomparing the nonlinear response of composite materials subjected to large\noscillatory strain.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "We investigate composite biopolymer networks composed of co-polymerized\nfibrin and gelatin networks and perform rheological measurements over a broad\nparameter space including strain amplitudes that go beyond the linear response\nregime. One goal of the work presented here is to provide a prototypical\nbiocomposite material with highly separable polymerization times and controlled\nnonlinear rheological characteristics. We then extend the Sequence of Physical\nProcesses (SPP)\\cite{Rogers2017} into a statistical and geometrical framework\nthat fingerprints the nonlinear rheological response of biopolymer composite\ngels. Our analysis is based on the changes in the shape of the time-dependent\nCole-Cole plots that allow to reduce the time resolved analysis of the SPP\nmethod into the transition between linear and nonlinear behavior as the\nrheological parameters are varied. While the results clearly highlight how the\nmechanical responses of individual constituents are not simply additive, our\nextended SPP analysis provides a robust and intuitive classification scheme for\ncomparing the nonlinear response of composite materials subjected to large\noscillatory strain."
+    },
+    "authors": [
+      {
+        "name": "Wayan A. Fontaine-Seiler"
+      },
+      {
+        "name": "Gavin J. Donley"
+      },
+      {
+        "name": "Emanuela Del Gado"
+      },
+      {
+        "name": "Daniel L. Blair"
+      }
+    ],
+    "author_detail": {
+      "name": "Daniel L. Blair"
+    },
+    "author": "Daniel L. Blair",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2508.09329v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2508.09329v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cond-mat.soft",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cond-mat.soft",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2508.08229v2",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2508.08229v2",
+    "updated": "2025-08-12T19:37:42Z",
+    "updated_parsed": [
+      2025,
+      8,
+      12,
+      19,
+      37,
+      42,
+      1,
+      224,
+      0
+    ],
+    "published": "2025-08-11T17:48:17Z",
+    "published_parsed": [
+      2025,
+      8,
+      11,
+      17,
+      48,
+      17,
+      0,
+      223,
+      0
+    ],
+    "title": "Quantum-centric simulation of hydrogen abstraction by sample-based\n  quantum diagonalization and entanglement forging",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Quantum-centric simulation of hydrogen abstraction by sample-based\n  quantum diagonalization and entanglement forging"
+    },
+    "summary": "The simulation of electronic systems is an anticipated application for\nquantum-centric computers, i.e. heterogeneous architectures where classical and\nquantum processing units operate in concert. An important application is the\ncomputation of radical chain reactions, including those responsible for the\nphotodegradation of composite materials used in aerospace engineering. Here, we\ncompute the activation energy and reaction energy for hydrogen abstraction from\n2,2-diphenyldipropane, used as a minimal model for a step in a radical chain\nreaction. Calculations are performed using a superconducting quantum processor\nof the IBM Heron family and classical computing resources. To this end, we\ncombine a qubit-reduction technique called entanglement forging (EF) with\nsample based quantum diagonalization (SQD), a method that projects the\nSchr\\\"{o}dinger equation into a subspace of configurations sampled from a\nquantum device. In conventional quantum simulations, a qubit represents a\nspin-orbital. In contrast, EF maps a qubit to a spatial orbital, reducing the\nrequired number of qubits by half. We provide a complete derivation and a\ndetailed description of the combined EF and SQD approach, and we assess its\naccuracy across active spaces of varying sizes.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "The simulation of electronic systems is an anticipated application for\nquantum-centric computers, i.e. heterogeneous architectures where classical and\nquantum processing units operate in concert. An important application is the\ncomputation of radical chain reactions, including those responsible for the\nphotodegradation of composite materials used in aerospace engineering. Here, we\ncompute the activation energy and reaction energy for hydrogen abstraction from\n2,2-diphenyldipropane, used as a minimal model for a step in a radical chain\nreaction. Calculations are performed using a superconducting quantum processor\nof the IBM Heron family and classical computing resources. To this end, we\ncombine a qubit-reduction technique called entanglement forging (EF) with\nsample based quantum diagonalization (SQD), a method that projects the\nSchr\\\"{o}dinger equation into a subspace of configurations sampled from a\nquantum device. In conventional quantum simulations, a qubit represents a\nspin-orbital. In contrast, EF maps a qubit to a spatial orbital, reducing the\nrequired number of qubits by half. We provide a complete derivation and a\ndetailed description of the combined EF and SQD approach, and we assess its\naccuracy across active spaces of varying sizes."
+    },
+    "authors": [
+      {
+        "name": "Tyler Smith"
+      },
+      {
+        "name": "Tanvi P. Gujarati"
+      },
+      {
+        "name": "Mario Motta"
+      },
+      {
+        "name": "Ben Link"
+      },
+      {
+        "name": "Ieva Liepuoniute"
+      },
+      {
+        "name": "Triet Friedhoff"
+      },
+      {
+        "name": "Hiromichi Nishimura"
+      },
+      {
+        "name": "Nam Nguyen"
+      },
+      {
+        "name": "Kristen S. Williams"
+      },
+      {
+        "name": "Javier Robledo Moreno"
+      },
+      {
+        "name": "Caleb Johnson"
+      },
+      {
+        "name": "Kevin J. Sung"
+      },
+      {
+        "name": "Abdullah Ash Saki"
+      },
+      {
+        "name": "Marna Kagele"
+      }
+    ],
+    "author_detail": {
+      "name": "Marna Kagele"
+    },
+    "author": "Marna Kagele",
+    "arxiv_comment": "14 pages, 8 figures, 2 tables",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2508.08229v2",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2508.08229v2",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "quant-ph",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "quant-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2508.07773v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2508.07773v1",
+    "updated": "2025-08-11T08:58:13Z",
+    "updated_parsed": [
+      2025,
+      8,
+      11,
+      8,
+      58,
+      13,
+      0,
+      223,
+      0
+    ],
+    "published": "2025-08-11T08:58:13Z",
+    "published_parsed": [
+      2025,
+      8,
+      11,
+      8,
+      58,
+      13,
+      0,
+      223,
+      0
+    ],
+    "title": "PCA-Guided Autoencoding for Structured Dimensionality Reduction in\n  Active Infrared Thermography",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "PCA-Guided Autoencoding for Structured Dimensionality Reduction in\n  Active Infrared Thermography"
+    },
+    "summary": "Active Infrared thermography (AIRT) is a widely adopted non-destructive\ntesting (NDT) technique for detecting subsurface anomalies in industrial\ncomponents. Due to the high dimensionality of AIRT data, current approaches\nemploy non-linear autoencoders (AEs) for dimensionality reduction. However, the\nlatent space learned by AIRT AEs lacks structure, limiting their effectiveness\nin downstream defect characterization tasks. To address this limitation, this\npaper proposes a principal component analysis guided (PCA-guided) autoencoding\nframework for structured dimensionality reduction to capture intricate,\nnon-linear features in thermographic signals while enforcing a structured\nlatent space. A novel loss function, PCA distillation loss, is introduced to\nguide AIRT AEs to align the latent representation with structured PCA\ncomponents while capturing the intricate, non-linear patterns in thermographic\nsignals. To evaluate the utility of the learned, structured latent space, we\npropose a neural network-based evaluation metric that assesses its suitability\nfor defect characterization. Experimental results show that the proposed\nPCA-guided AE outperforms state-of-the-art dimensionality reduction methods on\nPVC, CFRP, and PLA samples in terms of contrast, signal-to-noise ratio (SNR),\nand neural network-based metrics.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Active Infrared thermography (AIRT) is a widely adopted non-destructive\ntesting (NDT) technique for detecting subsurface anomalies in industrial\ncomponents. Due to the high dimensionality of AIRT data, current approaches\nemploy non-linear autoencoders (AEs) for dimensionality reduction. However, the\nlatent space learned by AIRT AEs lacks structure, limiting their effectiveness\nin downstream defect characterization tasks. To address this limitation, this\npaper proposes a principal component analysis guided (PCA-guided) autoencoding\nframework for structured dimensionality reduction to capture intricate,\nnon-linear features in thermographic signals while enforcing a structured\nlatent space. A novel loss function, PCA distillation loss, is introduced to\nguide AIRT AEs to align the latent representation with structured PCA\ncomponents while capturing the intricate, non-linear patterns in thermographic\nsignals. To evaluate the utility of the learned, structured latent space, we\npropose a neural network-based evaluation metric that assesses its suitability\nfor defect characterization. Experimental results show that the proposed\nPCA-guided AE outperforms state-of-the-art dimensionality reduction methods on\nPVC, CFRP, and PLA samples in terms of contrast, signal-to-noise ratio (SNR),\nand neural network-based metrics."
+    },
+    "authors": [
+      {
+        "name": "Mohammed Salah"
+      },
+      {
+        "name": "Numan Saeed"
+      },
+      {
+        "name": "Davor Svetinovic"
+      },
+      {
+        "name": "Stefano Sfarra"
+      },
+      {
+        "name": "Mohammed Omar"
+      },
+      {
+        "name": "Yusra Abdulrahman"
+      }
+    ],
+    "author_detail": {
+      "name": "Yusra Abdulrahman"
+    },
+    "author": "Yusra Abdulrahman",
+    "arxiv_comment": "Infrared thermography, Non-Destructive Testing, Principal Component\n  Analysis, PCA-Guided Autoencoder, PCA Distillation Loss, Dimensionality\n  Reduction",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2508.07773v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2508.07773v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "eess.IV",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "eess.IV",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cs.AI",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cs.CV",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cs.LG",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  }
+]
