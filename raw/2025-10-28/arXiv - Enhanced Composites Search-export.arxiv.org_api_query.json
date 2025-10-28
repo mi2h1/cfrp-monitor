@@ -1,0 +1,914 @@
+[
+  {
+    "id": "http://arxiv.org/abs/2510.23109v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2510.23109v1",
+    "updated": "2025-10-27T08:22:26Z",
+    "updated_parsed": [
+      2025,
+      10,
+      27,
+      8,
+      22,
+      26,
+      0,
+      300,
+      0
+    ],
+    "published": "2025-10-27T08:22:26Z",
+    "published_parsed": [
+      2025,
+      10,
+      27,
+      8,
+      22,
+      26,
+      0,
+      300,
+      0
+    ],
+    "title": "An Automated Tape Laying System Employing a Uniaxial Force Control\n  Device",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "An Automated Tape Laying System Employing a Uniaxial Force Control\n  Device"
+    },
+    "summary": "This paper deals with the design of a cost effective automated tape laying\nsystem (ATL system) with integrated uniaxial force control to ensure the\nnecessary compaction forces as well as with an accurate temperature control to\nguarantee the used tape being melted appropriate. It is crucial to control the\nsubstrate and the oncoming tape onto a specific temperature level to ensure an\noptimal consolidation between the different layers of the product. Therefore,\nit takes several process steps from the spooled tape on the coil until it is\nfinally tacked onto the desired mold. The different modules are divided into\nthe tape storage spool, a tape-guiding roller, a tape processing unit, a\nheating zone and the consolidation unit. Moreover, a special robot control\nconcept for testing the ATL system is presented. In contrast to many other\nsystems, with this approach, the tape laying device is spatially fixed and the\nshape is moved accordingly by the robot, which allows for handling of rather\ncompact and complex shapes. The functionality of the subsystems and the taping\nprocess itself was finally approved in experimental results using a carbon\nfiber reinforced HDPE tape.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "This paper deals with the design of a cost effective automated tape laying\nsystem (ATL system) with integrated uniaxial force control to ensure the\nnecessary compaction forces as well as with an accurate temperature control to\nguarantee the used tape being melted appropriate. It is crucial to control the\nsubstrate and the oncoming tape onto a specific temperature level to ensure an\noptimal consolidation between the different layers of the product. Therefore,\nit takes several process steps from the spooled tape on the coil until it is\nfinally tacked onto the desired mold. The different modules are divided into\nthe tape storage spool, a tape-guiding roller, a tape processing unit, a\nheating zone and the consolidation unit. Moreover, a special robot control\nconcept for testing the ATL system is presented. In contrast to many other\nsystems, with this approach, the tape laying device is spatially fixed and the\nshape is moved accordingly by the robot, which allows for handling of rather\ncompact and complex shapes. The functionality of the subsystems and the taping\nprocess itself was finally approved in experimental results using a carbon\nfiber reinforced HDPE tape."
+    },
+    "authors": [
+      {
+        "name": "Bernhard Rameder"
+      },
+      {
+        "name": "Hubert Gattringer"
+      },
+      {
+        "name": "Ronald Naderer"
+      },
+      {
+        "name": "Andreas Mueller"
+      }
+    ],
+    "author_detail": {
+      "name": "Andreas Mueller"
+    },
+    "author": "Andreas Mueller",
+    "arxiv_comment": "Proceedings ECCM21 - 21st European Conference on Composite Materials,\n  Nantes, France, 7-2024",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2510.23109v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2510.23109v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cs.RO",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cs.RO",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2510.16575v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2510.16575v1",
+    "updated": "2025-10-18T16:52:57Z",
+    "updated_parsed": [
+      2025,
+      10,
+      18,
+      16,
+      52,
+      57,
+      5,
+      291,
+      0
+    ],
+    "published": "2025-10-18T16:52:57Z",
+    "published_parsed": [
+      2025,
+      10,
+      18,
+      16,
+      52,
+      57,
+      5,
+      291,
+      0
+    ],
+    "title": "ViT-Transformer: Self-attention mechanism based constitutive modeling\n  for nonlinear heterogeneous materials",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "ViT-Transformer: Self-attention mechanism based constitutive modeling\n  for nonlinear heterogeneous materials"
+    },
+    "summary": "Multi-scale simulations of nonlinear heterogeneous materials and composites\nare challenging due to the prohibitive computational costs of high-fidelity\nsimulations. Recently, machine learning (ML) based approaches have emerged as\npromising alternatives to traditional multiscale methods. However, existing ML\nsurrogate constitutive models struggle in capturing long-range dependencies and\ngeneralization across microstructures. The recent advancements in\nattention-based Transformer architectures open the door to a more powerful\nclass of surrogate models. Attention mechanism has demonstrated remarkable\ncapabilities in natural language processing and computer vision. In this work,\nwe introduce a surrogate (meta) model, namely ViT-Transformer, using a Vision\nTransformer (ViT) encoder and a Transformer-based decoder which are both driven\nby the self-attention mechanism. The ViT encoder extracts microstructural\nfeatures from material images, while the decoder is a masked Transformer\nencoder that combines the latent geometrical features with the macroscopic\nstrain input sequence to predict the corresponding stress response. To enhance\ntraining, we propose a random extract training algorithm that improves\nrobustness to sequences of variable length. We design and construct a compact\nyet diverse dataset via data augmentation, and validate the surrogate model\nusing various composite material images and loading scenarios. Several\nnumerical examples are provided to show the effectiveness and accuracy of the\nViT-Transformer model and the training algorithm.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Multi-scale simulations of nonlinear heterogeneous materials and composites\nare challenging due to the prohibitive computational costs of high-fidelity\nsimulations. Recently, machine learning (ML) based approaches have emerged as\npromising alternatives to traditional multiscale methods. However, existing ML\nsurrogate constitutive models struggle in capturing long-range dependencies and\ngeneralization across microstructures. The recent advancements in\nattention-based Transformer architectures open the door to a more powerful\nclass of surrogate models. Attention mechanism has demonstrated remarkable\ncapabilities in natural language processing and computer vision. In this work,\nwe introduce a surrogate (meta) model, namely ViT-Transformer, using a Vision\nTransformer (ViT) encoder and a Transformer-based decoder which are both driven\nby the self-attention mechanism. The ViT encoder extracts microstructural\nfeatures from material images, while the decoder is a masked Transformer\nencoder that combines the latent geometrical features with the macroscopic\nstrain input sequence to predict the corresponding stress response. To enhance\ntraining, we propose a random extract training algorithm that improves\nrobustness to sequences of variable length. We design and construct a compact\nyet diverse dataset via data augmentation, and validate the surrogate model\nusing various composite material images and loading scenarios. Several\nnumerical examples are provided to show the effectiveness and accuracy of the\nViT-Transformer model and the training algorithm."
+    },
+    "authors": [
+      {
+        "name": "Yijing Zhou"
+      },
+      {
+        "name": "Shabnam J. Semnani"
+      }
+    ],
+    "author_detail": {
+      "name": "Shabnam J. Semnani"
+    },
+    "author": "Shabnam J. Semnani",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2510.16575v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2510.16575v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cs.CE",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cs.CE",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2510.15648v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2510.15648v1",
+    "updated": "2025-10-17T13:38:34Z",
+    "updated_parsed": [
+      2025,
+      10,
+      17,
+      13,
+      38,
+      34,
+      4,
+      290,
+      0
+    ],
+    "published": "2025-10-17T13:38:34Z",
+    "published_parsed": [
+      2025,
+      10,
+      17,
+      13,
+      38,
+      34,
+      4,
+      290,
+      0
+    ],
+    "title": "Experimental and simulation study of resin infiltration in carbon fiber\n  rovings",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Experimental and simulation study of resin infiltration in carbon fiber\n  rovings"
+    },
+    "summary": "Continuous-fiber-reinforced polymers are vital for lightweight structural\napplications, where fiber-matrix wetting critically influences composite\nperformance. Understanding dynamic wetting behavior during resin infiltration\nremains challenging, especially under realistic processing conditions. Here we\ninvestigate the dynamic wetting of commercial carbon fiber rovings by a\ncommonly used epoxy resin through combined optical experiments and two-phase\nflow simulations informed by microscale roving geometries. We measure\nvelocity-dependent advancing contact angles and observe roving geometry changes\nduring capillary-driven resin infiltration. Simulations using\nmicroscale-derived capillary pressure and permeability parameters\nquantitatively reproduce the time-dependent infiltration dynamics. Our findings\ndemonstrate that while dynamic contact angles vary with velocity, the\nmicroscale roving structure predominantly governs resin impregnation behavior.\nThis integrated experimental and modeling approach enhances insight into\nfiber-resin interactions, offering a pathway to optimize composite\nmanufacturing processes and improve material quality.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Continuous-fiber-reinforced polymers are vital for lightweight structural\napplications, where fiber-matrix wetting critically influences composite\nperformance. Understanding dynamic wetting behavior during resin infiltration\nremains challenging, especially under realistic processing conditions. Here we\ninvestigate the dynamic wetting of commercial carbon fiber rovings by a\ncommonly used epoxy resin through combined optical experiments and two-phase\nflow simulations informed by microscale roving geometries. We measure\nvelocity-dependent advancing contact angles and observe roving geometry changes\nduring capillary-driven resin infiltration. Simulations using\nmicroscale-derived capillary pressure and permeability parameters\nquantitatively reproduce the time-dependent infiltration dynamics. Our findings\ndemonstrate that while dynamic contact angles vary with velocity, the\nmicroscale roving structure predominantly governs resin impregnation behavior.\nThis integrated experimental and modeling approach enhances insight into\nfiber-resin interactions, offering a pathway to optimize composite\nmanufacturing processes and improve material quality."
+    },
+    "authors": [
+      {
+        "name": "Dominik Burr"
+      },
+      {
+        "name": "Rudi Reichenbächer"
+      },
+      {
+        "name": "Christina Scheffler"
+      },
+      {
+        "name": "Konrad Steiner"
+      },
+      {
+        "name": "Günter K. Auernhammer"
+      }
+    ],
+    "author_detail": {
+      "name": "Günter K. Auernhammer"
+    },
+    "author": "Günter K. Auernhammer",
+    "arxiv_comment": "39 pages, 16 figures Submitted to \"Composites Science and Technology\"\n  at 17.10.2025",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2510.15648v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2510.15648v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cond-mat.soft",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cond-mat.soft",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2510.10128v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2510.10128v1",
+    "updated": "2025-10-11T09:28:05Z",
+    "updated_parsed": [
+      2025,
+      10,
+      11,
+      9,
+      28,
+      5,
+      5,
+      284,
+      0
+    ],
+    "published": "2025-10-11T09:28:05Z",
+    "published_parsed": [
+      2025,
+      10,
+      11,
+      9,
+      28,
+      5,
+      5,
+      284,
+      0
+    ],
+    "title": "Material combination optimization for brazed ceramic-metal composites\n  using Artificial Intelligence",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Material combination optimization for brazed ceramic-metal composites\n  using Artificial Intelligence"
+    },
+    "summary": "This study proposes an Artificial Intelligence (AI) driven methodology for\npredicting a combination of brazed ceramic-metal composite materials. Multiple\nmachine learning (ML) algorithms are compared with the deep learning (DL)\nmodel. The developed models are tested using k-fold validation. Nine different\ninput-output feature configurations are evaluated to assess the model\nperformance. The input-output feature comprises material properties, namely,\nthe coefficient of thermal expansion (CTE) and molecular mass of brazed\nceramic-metal composite materials obtained from literature and the strength\nparameter (average Von Mises Stress (VMS)) estimated from Finite Element Method\n(FEM) simulation for joint assembly structure. A multi-output model,\nAutoencoder (AE), has also been developed and tested to predict various\nfeatures. The ML model, namely the polynomial regression (PR), outperforms the\nother ML/DL models with a Mean square Error (MSE) of 0.01 for the test data.\nThe autoencoder model with a 32-16-32 structure outperforms LR, PR, RF, and ANN\nwith an MSE of 0.04% for the prediction of unseen data. The developed\nmulti-output model accurately predicts all the features (single and multiple),\nwhile PR fails to accurately predict multi-output features of low importance.\nThe developed AE model predicts the different material properties with an\naverage error of ~0.16-3.78% with literature-reported values.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "This study proposes an Artificial Intelligence (AI) driven methodology for\npredicting a combination of brazed ceramic-metal composite materials. Multiple\nmachine learning (ML) algorithms are compared with the deep learning (DL)\nmodel. The developed models are tested using k-fold validation. Nine different\ninput-output feature configurations are evaluated to assess the model\nperformance. The input-output feature comprises material properties, namely,\nthe coefficient of thermal expansion (CTE) and molecular mass of brazed\nceramic-metal composite materials obtained from literature and the strength\nparameter (average Von Mises Stress (VMS)) estimated from Finite Element Method\n(FEM) simulation for joint assembly structure. A multi-output model,\nAutoencoder (AE), has also been developed and tested to predict various\nfeatures. The ML model, namely the polynomial regression (PR), outperforms the\nother ML/DL models with a Mean square Error (MSE) of 0.01 for the test data.\nThe autoencoder model with a 32-16-32 structure outperforms LR, PR, RF, and ANN\nwith an MSE of 0.04% for the prediction of unseen data. The developed\nmulti-output model accurately predicts all the features (single and multiple),\nwhile PR fails to accurately predict multi-output features of low importance.\nThe developed AE model predicts the different material properties with an\naverage error of ~0.16-3.78% with literature-reported values."
+    },
+    "authors": [
+      {
+        "name": "Sunita Khod"
+      },
+      {
+        "name": "Vinay Kamma"
+      },
+      {
+        "name": "Ravi Kumar Verma"
+      },
+      {
+        "name": "Mayank Goswami"
+      }
+    ],
+    "author_detail": {
+      "name": "Mayank Goswami"
+    },
+    "author": "Mayank Goswami",
+    "arxiv_comment": "28 pages, 16 figures, 21 tables",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2510.10128v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2510.10128v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "physics.app-ph",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "physics.app-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2510.06272v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2510.06272v1",
+    "updated": "2025-10-06T11:42:33Z",
+    "updated_parsed": [
+      2025,
+      10,
+      6,
+      11,
+      42,
+      33,
+      0,
+      279,
+      0
+    ],
+    "published": "2025-10-06T11:42:33Z",
+    "published_parsed": [
+      2025,
+      10,
+      6,
+      11,
+      42,
+      33,
+      0,
+      279,
+      0
+    ],
+    "title": "Non-destructive diagnostics of fiber orientation in large planar\n  fiber-reinforced concrete specimens",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Non-destructive diagnostics of fiber orientation in large planar\n  fiber-reinforced concrete specimens"
+    },
+    "summary": "The mechanical performance of fiber-reinforced concrete is critically\ndependent on the orientation and concentration of its reinforcing fibers. This\npaper presents a non-destructive method for diagnosing fiber parameters in\nlarge planar specimens. The proposed technique utilizes an electromagnetic\nmeasurement system using electrical coils with commercial LCR meters, but also\na novel custom-made meter suitable for factory environments, offering a\npractical solution for quality control in prefabrication of high-performance\nstructural elements. This study details the theoretical background,\nexperimental setup and methodology, and provides an evaluation of the\ndiagnostic system's effectiveness and accuracy. The results demonstrate a\nstrong correlation between the electromagnetic measurements and the actual\nfiber parameters, confirming the method's reliability.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "The mechanical performance of fiber-reinforced concrete is critically\ndependent on the orientation and concentration of its reinforcing fibers. This\npaper presents a non-destructive method for diagnosing fiber parameters in\nlarge planar specimens. The proposed technique utilizes an electromagnetic\nmeasurement system using electrical coils with commercial LCR meters, but also\na novel custom-made meter suitable for factory environments, offering a\npractical solution for quality control in prefabrication of high-performance\nstructural elements. This study details the theoretical background,\nexperimental setup and methodology, and provides an evaluation of the\ndiagnostic system's effectiveness and accuracy. The results demonstrate a\nstrong correlation between the electromagnetic measurements and the actual\nfiber parameters, confirming the method's reliability."
+    },
+    "authors": [
+      {
+        "name": "Václav Papež"
+      },
+      {
+        "name": "Karel Künzel"
+      },
+      {
+        "name": "Petr Konrád"
+      },
+      {
+        "name": "Kristýna Carrera"
+      },
+      {
+        "name": "Petr Konvalinka"
+      }
+    ],
+    "author_detail": {
+      "name": "Petr Konvalinka"
+    },
+    "author": "Petr Konvalinka",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2510.06272v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2510.06272v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "physics.ins-det",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "physics.ins-det",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2509.23422v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2509.23422v1",
+    "updated": "2025-09-27T17:35:03Z",
+    "updated_parsed": [
+      2025,
+      9,
+      27,
+      17,
+      35,
+      3,
+      5,
+      270,
+      0
+    ],
+    "published": "2025-09-27T17:35:03Z",
+    "published_parsed": [
+      2025,
+      9,
+      27,
+      17,
+      35,
+      3,
+      5,
+      270,
+      0
+    ],
+    "title": "Cryogenic Materials Repository: A Public Resource and New Measurements\n  for Cryogenic Research Applications",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Cryogenic Materials Repository: A Public Resource and New Measurements\n  for Cryogenic Research Applications"
+    },
+    "summary": "Low-temperature systems play a vital role in a variety of scientific research\napplications, including the next generation of cosmology and astrophysics\ntelescopes. More ambitious cryogenic applications require precise estimates of\nthe thermal conductivity of materials and thermal joints to meet project goals.\nWe present the development of the Cryogenic Material Repository (CMR), a public\nGitHub repository of cryogenic material properties data created to support and\nenable researchers across scientific disciplines to accurately and efficiently\ndesign and assess cryogenic systems. We also present updated sub-Kelvin thermal\nconductivity results for select carbon fiber reinforced polymer and aluminum\nalloy samples.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Low-temperature systems play a vital role in a variety of scientific research\napplications, including the next generation of cosmology and astrophysics\ntelescopes. More ambitious cryogenic applications require precise estimates of\nthe thermal conductivity of materials and thermal joints to meet project goals.\nWe present the development of the Cryogenic Material Repository (CMR), a public\nGitHub repository of cryogenic material properties data created to support and\nenable researchers across scientific disciplines to accurately and efficiently\ndesign and assess cryogenic systems. We also present updated sub-Kelvin thermal\nconductivity results for select carbon fiber reinforced polymer and aluminum\nalloy samples."
+    },
+    "authors": [
+      {
+        "name": "Henry E. Nachman"
+      },
+      {
+        "name": "Oorie Desai"
+      },
+      {
+        "name": "Nicholas Galitzki"
+      },
+      {
+        "name": "Daniel Lee"
+      },
+      {
+        "name": "JB Lloyd"
+      },
+      {
+        "name": "Tannishtha Nandi"
+      },
+      {
+        "name": "Ani Pagni"
+      },
+      {
+        "name": "Ray Radebaugh"
+      },
+      {
+        "name": "Elle C. Shaw"
+      }
+    ],
+    "author_detail": {
+      "name": "Elle C. Shaw"
+    },
+    "arxiv_affiliation": "Department of Physics, The University of Texas at Austin, Weinberg Institute for Theoretical Physics, Texas Center for Cosmology and Astroparticle Physics, Austin, TX, USA",
+    "author": "Elle C. Shaw",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2509.23422v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2509.23422v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "astro-ph.IM",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "astro-ph.IM",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "physics.ins-det",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2509.20011v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2509.20011v1",
+    "updated": "2025-09-24T11:29:41Z",
+    "updated_parsed": [
+      2025,
+      9,
+      24,
+      11,
+      29,
+      41,
+      2,
+      267,
+      0
+    ],
+    "published": "2025-09-24T11:29:41Z",
+    "published_parsed": [
+      2025,
+      9,
+      24,
+      11,
+      29,
+      41,
+      2,
+      267,
+      0
+    ],
+    "title": "Characterizing failure morphologies in fiber-reinforced composites via\n  k-means clustering based multiscale framework",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Characterizing failure morphologies in fiber-reinforced composites via\n  k-means clustering based multiscale framework"
+    },
+    "summary": "A novel homogenization methodology is proposed for analyzing the failure of\nfiber-reinforced composite materials, utilizing elastic and eigen influence\ntensors within a damage informed transformation field analysis (D-TFA)\nframework. This approach includes a technique for calculating macroscopic\ndamage under uniform stress and strain conditions, offering more realistic\nsimulations. Computational efficiency is enhanced through a reduced-order\nmodeling strategy, while elastic and eigen strain distribution driven k-means\nclustering methods are employed to partition the microscale domain. The model's\nperformance is assessed by simulating the response of a representative volume\nelement (RVE) treated as a homogenized continuum. Subsequently, a comparative\nassessment is carried out to check the efficacy of two clustering schemes.\nDamage morphologies are calculated using proposed framework and compared with\npredictions obtained using finite element method. Furthermore, open-hole\nspecimen tests are simulated and failure paths are predicted for the domains\nwith different fiber layups. Ultimately, we show that D-TFA can accurately\ncapture damage patterns and directional strengths, providing improved\npredictions of the mechanical behavior of composite materials. It has been\ndemonstrated that higher cluster counts are crucial for capturing a more\naccurate stress-strain response, especially for complex microstructures.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "A novel homogenization methodology is proposed for analyzing the failure of\nfiber-reinforced composite materials, utilizing elastic and eigen influence\ntensors within a damage informed transformation field analysis (D-TFA)\nframework. This approach includes a technique for calculating macroscopic\ndamage under uniform stress and strain conditions, offering more realistic\nsimulations. Computational efficiency is enhanced through a reduced-order\nmodeling strategy, while elastic and eigen strain distribution driven k-means\nclustering methods are employed to partition the microscale domain. The model's\nperformance is assessed by simulating the response of a representative volume\nelement (RVE) treated as a homogenized continuum. Subsequently, a comparative\nassessment is carried out to check the efficacy of two clustering schemes.\nDamage morphologies are calculated using proposed framework and compared with\npredictions obtained using finite element method. Furthermore, open-hole\nspecimen tests are simulated and failure paths are predicted for the domains\nwith different fiber layups. Ultimately, we show that D-TFA can accurately\ncapture damage patterns and directional strengths, providing improved\npredictions of the mechanical behavior of composite materials. It has been\ndemonstrated that higher cluster counts are crucial for capturing a more\naccurate stress-strain response, especially for complex microstructures."
+    },
+    "authors": [
+      {
+        "name": "Harpreet Singh"
+      }
+    ],
+    "author_detail": {
+      "name": "Harpreet Singh"
+    },
+    "author": "Harpreet Singh",
+    "arxiv_doi": "10.1016/j.compstruc.2025.107928",
+    "links": [
+      {
+        "title": "doi",
+        "href": "http://dx.doi.org/10.1016/j.compstruc.2025.107928",
+        "rel": "related",
+        "type": "text/html"
+      },
+      {
+        "href": "http://arxiv.org/abs/2509.20011v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2509.20011v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_comment": "36 pages, 14 figures",
+    "arxiv_journal_ref": "Computers & Structures, 317, 107928 (2025)",
+    "arxiv_primary_category": {
+      "term": "cs.CE",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cs.CE",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "physics.comp-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2509.20413v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2509.20413v1",
+    "updated": "2025-09-24T08:32:47Z",
+    "updated_parsed": [
+      2025,
+      9,
+      24,
+      8,
+      32,
+      47,
+      2,
+      267,
+      0
+    ],
+    "published": "2025-09-24T08:32:47Z",
+    "published_parsed": [
+      2025,
+      9,
+      24,
+      8,
+      32,
+      47,
+      2,
+      267,
+      0
+    ],
+    "title": "Introduction to Engineering Materials",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Introduction to Engineering Materials"
+    },
+    "summary": "This lecture presents an overview of the basic concepts and fundamentals of\nEngineering Materials within the framework of accelerator applications. After a\nshort introduction, main concepts relative to the structure of matter are\nreviewed, like crystalline structures, defects and dislocations, phase diagrams\nand transformations. The microscopic description is correlated with physical\nproperties of materials, focusing in metallurgical aspects like deformation and\nstrengthening. Main groups of materials are addressed and described, namely,\nmetals and alloys, ceramics, polymers, composite materials, and advanced\nmaterials, where brush-strokes of tangible applications in particle\naccelerators and detectors are given. Deterioration aspects of materials are\nalso presented, like corrosion in metals and degradation in plastics.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "This lecture presents an overview of the basic concepts and fundamentals of\nEngineering Materials within the framework of accelerator applications. After a\nshort introduction, main concepts relative to the structure of matter are\nreviewed, like crystalline structures, defects and dislocations, phase diagrams\nand transformations. The microscopic description is correlated with physical\nproperties of materials, focusing in metallurgical aspects like deformation and\nstrengthening. Main groups of materials are addressed and described, namely,\nmetals and alloys, ceramics, polymers, composite materials, and advanced\nmaterials, where brush-strokes of tangible applications in particle\naccelerators and detectors are given. Deterioration aspects of materials are\nalso presented, like corrosion in metals and degradation in plastics."
+    },
+    "authors": [
+      {
+        "name": "Ana Arauzo"
+      }
+    ],
+    "author_detail": {
+      "name": "Ana Arauzo"
+    },
+    "author": "Ana Arauzo",
+    "arxiv_comment": "10 pages, contribution to the CAS - CERN Accelerator School:\n  Mechanical & Materials Engineering for Particle Accelerators and Detectors,\n  2-15 June 2024, Sint-Michielsgestel, Netherlands",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2509.20413v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2509.20413v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "physics.acc-ph",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "physics.acc-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cond-mat.mtrl-sci",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2509.21355v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2509.21355v1",
+    "updated": "2025-09-20T03:32:31Z",
+    "updated_parsed": [
+      2025,
+      9,
+      20,
+      3,
+      32,
+      31,
+      5,
+      263,
+      0
+    ],
+    "published": "2025-09-20T03:32:31Z",
+    "published_parsed": [
+      2025,
+      9,
+      20,
+      3,
+      32,
+      31,
+      5,
+      263,
+      0
+    ],
+    "title": "Domain-Informed Genetic Superposition Programming: A Case Study on SFRC\n  Beams",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Domain-Informed Genetic Superposition Programming: A Case Study on SFRC\n  Beams"
+    },
+    "summary": "This study presents domain-informed genetic superposition programming\n(DIGSP), a symbolic regression framework tailored for engineering systems\ngoverned by separable physical mechanisms. DIGSP partitions the input space\ninto domain-specific feature subsets and evolves independent genetic\nprogramming (GP) populations to model material-specific effects. Early\nevolution occurs in isolation, while ensemble fitness promotes inter-population\ncooperation. To enable symbolic superposition, an adaptive hierarchical\nsymbolic abstraction mechanism (AHSAM) is triggered after stagnation across all\npopulations. AHSAM performs analysis of variance- (ANOVA) based filtering to\nidentify statistically significant individuals, compresses them into symbolic\nconstructs, and injects them into all populations through a validation-guided\npruning cycle. The DIGSP is benchmarked against a baseline multi-gene genetic\nprogramming (BGP) model using a dataset of steel fiber-reinforced concrete\n(SFRC) beams. Across 30 independent trials with 65% training, 10% validation,\nand 25% testing splits, DIGSP consistently outperformed BGP in training and\ntest root mean squared error (RMSE). The Wilcoxon rank-sum test confirmed\nstatistical significance (p < 0.01), and DIGSP showed tighter error\ndistributions and fewer outliers. No significant difference was observed in\nvalidation RMSE due to limited sample size. These results demonstrate that\ndomain-informed structural decomposition and symbolic abstraction improve\nconvergence and generalization. DIGSP offers a principled and interpretable\nmodeling strategy for systems where symbolic superposition aligns with the\nunderlying physical structure.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "This study presents domain-informed genetic superposition programming\n(DIGSP), a symbolic regression framework tailored for engineering systems\ngoverned by separable physical mechanisms. DIGSP partitions the input space\ninto domain-specific feature subsets and evolves independent genetic\nprogramming (GP) populations to model material-specific effects. Early\nevolution occurs in isolation, while ensemble fitness promotes inter-population\ncooperation. To enable symbolic superposition, an adaptive hierarchical\nsymbolic abstraction mechanism (AHSAM) is triggered after stagnation across all\npopulations. AHSAM performs analysis of variance- (ANOVA) based filtering to\nidentify statistically significant individuals, compresses them into symbolic\nconstructs, and injects them into all populations through a validation-guided\npruning cycle. The DIGSP is benchmarked against a baseline multi-gene genetic\nprogramming (BGP) model using a dataset of steel fiber-reinforced concrete\n(SFRC) beams. Across 30 independent trials with 65% training, 10% validation,\nand 25% testing splits, DIGSP consistently outperformed BGP in training and\ntest root mean squared error (RMSE). The Wilcoxon rank-sum test confirmed\nstatistical significance (p < 0.01), and DIGSP showed tighter error\ndistributions and fewer outliers. No significant difference was observed in\nvalidation RMSE due to limited sample size. These results demonstrate that\ndomain-informed structural decomposition and symbolic abstraction improve\nconvergence and generalization. DIGSP offers a principled and interpretable\nmodeling strategy for systems where symbolic superposition aligns with the\nunderlying physical structure."
+    },
+    "authors": [
+      {
+        "name": "Mohammad Sadegh Khorshidi"
+      },
+      {
+        "name": "Navid Yazdanjue"
+      },
+      {
+        "name": "Hassan Gharoun"
+      },
+      {
+        "name": "Mohammad Reza Nikoo"
+      },
+      {
+        "name": "Fang Chen"
+      },
+      {
+        "name": "Amir H. Gandomi"
+      }
+    ],
+    "author_detail": {
+      "name": "Amir H. Gandomi"
+    },
+    "author": "Amir H. Gandomi",
+    "arxiv_comment": "11 pages, 6 tables, 4 figures",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2509.21355v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2509.21355v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "cs.NE",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "cs.NE",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "cs.AI",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      },
+      {
+        "term": "68T20, 68W50",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  },
+  {
+    "id": "http://arxiv.org/abs/2509.10894v1",
+    "guidislink": true,
+    "link": "http://arxiv.org/abs/2509.10894v1",
+    "updated": "2025-09-13T16:53:14Z",
+    "updated_parsed": [
+      2025,
+      9,
+      13,
+      16,
+      53,
+      14,
+      5,
+      256,
+      0
+    ],
+    "published": "2025-09-13T16:53:14Z",
+    "published_parsed": [
+      2025,
+      9,
+      13,
+      16,
+      53,
+      14,
+      5,
+      256,
+      0
+    ],
+    "title": "A novel IR-SRGAN assisted super-resolution evaluation of photothermal\n  coherence tomography for impact damage in toughened thermoplastic CFRP\n  laminates under room temperature and low temperature",
+    "title_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "A novel IR-SRGAN assisted super-resolution evaluation of photothermal\n  coherence tomography for impact damage in toughened thermoplastic CFRP\n  laminates under room temperature and low temperature"
+    },
+    "summary": "Evaluating impact-induced damage in composite materials under varying\ntemperature conditions is essential for ensuring structural integrity and\nreliable performance in aerospace, polar, and other extreme-environment\napplications. As matrix brittleness increases at low temperatures, damage\nmechanisms shift: impact events that produce only minor delaminations at\nambient conditions can trigger extensive matrix cracking, fiber/matrix\ndebonding, or interfacial failure under severe cold loads, thereby degrading\nresidual strength and fatigue life. Precision detection and quantification of\nsubsurface damage features (e.g., delamination area, crack morphology,\ninterface separation) are critical for subsequent mechanical characterization\nand life prediction. In this study, infrared thermography (IRT) coupled with a\nnewly developed frequency multiplexed photothermal correlation tomography\n(FM-PCT) is employed to capture three-dimensional subsurface damage signatures\nwith depth resolution approaching that of X-ray micro-computed tomography.\nHowever, the inherent limitations of IRT, including restricted frame rate and\nlateral thermal diffusion, reduce spatial resolution and thus the accuracy of\ndamage size measurement. To address this, we develop a new transfer\nlearning-based infrared super-resolution generative adversarial network\n(IR-SRGAN) that enhances both lateral and depth-resolved imaging fidelity based\non limited thermographic datasets.",
+    "summary_detail": {
+      "type": "text/plain",
+      "language": null,
+      "base": "",
+      "value": "Evaluating impact-induced damage in composite materials under varying\ntemperature conditions is essential for ensuring structural integrity and\nreliable performance in aerospace, polar, and other extreme-environment\napplications. As matrix brittleness increases at low temperatures, damage\nmechanisms shift: impact events that produce only minor delaminations at\nambient conditions can trigger extensive matrix cracking, fiber/matrix\ndebonding, or interfacial failure under severe cold loads, thereby degrading\nresidual strength and fatigue life. Precision detection and quantification of\nsubsurface damage features (e.g., delamination area, crack morphology,\ninterface separation) are critical for subsequent mechanical characterization\nand life prediction. In this study, infrared thermography (IRT) coupled with a\nnewly developed frequency multiplexed photothermal correlation tomography\n(FM-PCT) is employed to capture three-dimensional subsurface damage signatures\nwith depth resolution approaching that of X-ray micro-computed tomography.\nHowever, the inherent limitations of IRT, including restricted frame rate and\nlateral thermal diffusion, reduce spatial resolution and thus the accuracy of\ndamage size measurement. To address this, we develop a new transfer\nlearning-based infrared super-resolution generative adversarial network\n(IR-SRGAN) that enhances both lateral and depth-resolved imaging fidelity based\non limited thermographic datasets."
+    },
+    "authors": [
+      {
+        "name": "Pengfei Zhu"
+      },
+      {
+        "name": "Hai Zhang"
+      },
+      {
+        "name": "Stefano Sfarra"
+      },
+      {
+        "name": "Fabrizio Sarasini"
+      },
+      {
+        "name": "Zijing Ding"
+      },
+      {
+        "name": "Clemente Ibarra-Castanedo"
+      },
+      {
+        "name": "Xavier Maldague"
+      }
+    ],
+    "author_detail": {
+      "name": "Xavier Maldague"
+    },
+    "author": "Xavier Maldague",
+    "links": [
+      {
+        "href": "http://arxiv.org/abs/2509.10894v1",
+        "rel": "alternate",
+        "type": "text/html"
+      },
+      {
+        "title": "pdf",
+        "href": "http://arxiv.org/pdf/2509.10894v1",
+        "rel": "related",
+        "type": "application/pdf"
+      }
+    ],
+    "arxiv_primary_category": {
+      "term": "physics.app-ph",
+      "scheme": "http://arxiv.org/schemas/atom"
+    },
+    "tags": [
+      {
+        "term": "physics.app-ph",
+        "scheme": "http://arxiv.org/schemas/atom",
+        "label": null
+      }
+    ]
+  }
+]
